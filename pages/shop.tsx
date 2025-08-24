@@ -459,7 +459,7 @@ export default function Shop() {
 										</li>
 										<li className="flex items-start space-x-2">
 											<span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-											<span>Enter Till Number: <span className="font-bold text-primary">123456</span></span>
+											<span>Enter Till Number: <span className="font-bold text-primary">308787</span></span>
 										</li>
 										<li className="flex items-start space-x-2">
 											<span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
@@ -482,7 +482,7 @@ export default function Shop() {
 										<li>• Keep your payment confirmation message</li>
 										<li>• Payment will be processed within 24 hours</li>
 										<li>• You&apos;ll receive an email confirmation</li>
-										<li>• For support, contact: support@yipn.com</li>
+										<li>• For support, contact: yogaintheparknairobi@gmail.com</li>
 									</ul>
 								</div>
 							</div>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaChartBar, FaBox, FaExclamationTriangle, FaUsers, FaPlus, FaEdit, FaTrash, FaTimes, FaSpinner, FaLock } from "react-icons/fa";
+import { FaChartBar, FaBox, FaExclamationTriangle, FaUsers, FaPlus, FaEdit, FaTrash, FaTimes, FaSpinner, FaLock, FaImage, FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 import AdminAuthModal from "../components/AdminAuthModal";
-import { analyticsService, productService, testFirebaseConnection, imageService } from "../lib/firebase-services";
-import { Product } from "../lib/firebase-services";
+import { analyticsService, productService, testFirebaseConnection, imageService, galleryService } from "../lib/firebase-services";
+import { Product, GalleryMedia } from "../lib/firebase-services";
 
 const Admin = () => {
 	const [merchandise, setMerchandise] = useState<Product[]>([]);
@@ -35,6 +35,15 @@ const Admin = () => {
 	const [firebaseStatus, setFirebaseStatus] = useState<string>("Initializing...");
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [showAuthModal, setShowAuthModal] = useState(true);
+	
+	// Gallery Management State
+	const [galleryPhotos, setGalleryPhotos] = useState<GalleryMedia[]>([]);
+	const [pendingPhotos, setPendingPhotos] = useState<GalleryMedia[]>([]);
+	const [approvedPhotos, setApprovedPhotos] = useState<GalleryMedia[]>([]);
+	const [selectedPhoto, setSelectedPhoto] = useState<GalleryMedia | null>(null);
+	const [showPhotoModal, setShowPhotoModal] = useState(false);
+	const [galleryLoading, setGalleryLoading] = useState(false);
+	
 	// const [authError, setAuthError] = useState("");
 	const [stats, setStats] = useState({
 		totalEvents: 0,
@@ -104,6 +113,10 @@ const Admin = () => {
 
 			setMerchandise(products);
 			setStats(dashboardStats);
+			
+			// Load gallery data
+			await loadGalleryData();
+			
 			setFirebaseStatus("Data loaded successfully");
 		} catch (error: unknown) {
 			console.error("Error loading data:", error);
@@ -119,6 +132,61 @@ const Admin = () => {
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const loadGalleryData = async () => {
+		try {
+			setGalleryLoading(true);
+			setFirebaseStatus("Loading gallery data...");
+			const [pending, approved] = await Promise.all([
+				galleryService.getPendingMedia(),
+				galleryService.getAllMedia(),
+			]);
+			setPendingPhotos(pending);
+			setApprovedPhotos(approved);
+			setGalleryLoading(false);
+			setFirebaseStatus("Gallery data loaded successfully");
+		} catch (error) {
+			console.error("Error loading gallery data:", error);
+			setFirebaseStatus(`Gallery data loading failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		}
+	};
+
+	// Gallery Management Functions
+	const handleApprovePhoto = async (photoId: string) => {
+		try {
+			setFirebaseStatus("Approving photo...");
+			await galleryService.approveMedia(photoId);
+			await loadGalleryData();
+			setFirebaseStatus("Photo approved successfully");
+		} catch (error) {
+			console.error("Error approving photo:", error);
+			setFirebaseStatus(`Failed to approve photo: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		}
+	};
+
+	const handleDeletePhoto = async (photoId: string) => {
+		if (window.confirm("Are you sure you want to delete this photo? This action cannot be undone.")) {
+			try {
+				setFirebaseStatus("Deleting photo...");
+				await galleryService.deleteMedia(photoId);
+				await loadGalleryData();
+				setFirebaseStatus("Photo deleted successfully");
+			} catch (error) {
+				console.error("Error deleting photo:", error);
+				setFirebaseStatus(`Failed to delete photo: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			}
+		}
+	};
+
+	const openPhotoModal = (photo: GalleryMedia) => {
+		setSelectedPhoto(photo);
+		setShowPhotoModal(true);
+	};
+
+	const closePhotoModal = () => {
+		setSelectedPhoto(null);
+		setShowPhotoModal(false);
 	};
 
 	const handleAddProduct = async () => {
@@ -649,6 +717,154 @@ const Admin = () => {
 							</div>
 						</div>
 
+						{/* Gallery Management */}
+						<div className="bg-card rounded-lg shadow-card p-8 mb-8">
+							<div className="flex justify-between items-center mb-6">
+								<div>
+									<h2 className="text-2xl font-bold text-primary">Gallery Management</h2>
+									<p className="text-muted-foreground">Approve, reject, or manage community-submitted photos</p>
+								</div>
+								<button
+									onClick={loadGalleryData}
+									disabled={galleryLoading}
+									className="px-4 py-2 rounded bg-secondary text-secondary-foreground font-semibold hover:scale-105 transition shadow-button hover:shadow-button-hover disabled:opacity-50"
+								>
+									{galleryLoading ? <FaSpinner className="inline mr-2 animate-spin" /> : <FaImage className="inline mr-2" />}
+									{galleryLoading ? 'Loading...' : 'Refresh Gallery'}
+								</button>
+							</div>
+
+							{/* Gallery Stats */}
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+								<div className="bg-muted rounded-lg p-4 text-center">
+									<div className="text-2xl font-bold text-primary">{pendingPhotos.length}</div>
+									<div className="text-sm text-muted-foreground">Pending Approval</div>
+								</div>
+								<div className="bg-muted rounded-lg p-4 text-center">
+									<div className="text-2xl font-bold text-secondary">{approvedPhotos.length}</div>
+									<div className="text-sm text-muted-foreground">Approved Photos</div>
+								</div>
+								<div className="bg-muted rounded-lg p-4 text-center">
+									<div className="text-2xl font-bold text-wellness">{pendingPhotos.length + approvedPhotos.length}</div>
+									<div className="text-sm text-muted-foreground">Total Photos</div>
+								</div>
+							</div>
+
+							{/* Pending Photos Section */}
+							{pendingPhotos.length > 0 && (
+								<div className="mb-8">
+									<h3 className="text-lg font-semibold text-primary mb-4 flex items-center">
+										<FaExclamationTriangle className="text-amber-500 mr-2" />
+										Pending Approval ({pendingPhotos.length})
+									</h3>
+									<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+										{pendingPhotos.map((photo) => (
+											<div key={photo.id} className="bg-background border border-border rounded-lg overflow-hidden hover:shadow-card transition">
+												<div className="aspect-square bg-muted overflow-hidden">
+													<img
+														src={photo.imageUrl}
+														alt={photo.title}
+														className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+														onClick={() => openPhotoModal(photo)}
+													/>
+												</div>
+												<div className="p-4">
+													<h4 className="font-medium text-foreground mb-2 line-clamp-2">{photo.title}</h4>
+													{photo.description && (
+														<p className="text-sm text-muted-foreground mb-3 line-clamp-2">{photo.description}</p>
+													)}
+													<div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+														<span>By: {photo.photographer || 'Unknown'}</span>
+														<span>{photo.date ? new Date(photo.date).toLocaleDateString() : 'Unknown date'}</span>
+													</div>
+													<div className="flex space-x-2">
+														<button
+															onClick={() => handleApprovePhoto(photo.id!)}
+															className="flex-1 px-3 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+														>
+															<FaCheck className="inline mr-1" />
+															Approve
+														</button>
+														<button
+															onClick={() => openPhotoModal(photo)}
+															className="px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded hover:bg-secondary/80 transition-colors"
+														>
+															<FaEye className="inline mr-1" />
+															View
+														</button>
+														<button
+															onClick={() => handleDeletePhoto(photo.id!)}
+															className="px-3 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+														>
+															<FaTrash className="inline mr-1" />
+														</button>
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
+
+							{/* Approved Photos Section */}
+							{approvedPhotos.length > 0 && (
+								<div>
+									<h3 className="text-lg font-semibold text-primary mb-4 flex items-center">
+										<FaCheck className="text-green-500 mr-2" />
+										Approved Photos ({approvedPhotos.length})
+									</h3>
+									<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+										{approvedPhotos.map((photo) => (
+											<div key={photo.id} className="bg-background border border-border rounded-lg overflow-hidden hover:shadow-card transition">
+												<div className="aspect-square bg-muted overflow-hidden">
+													<img
+														src={photo.imageUrl}
+														alt={photo.title}
+														className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+														onClick={() => openPhotoModal(photo)}
+													/>
+												</div>
+												<div className="p-4">
+													<h4 className="font-medium text-foreground mb-2 line-clamp-2">{photo.title}</h4>
+													{photo.description && (
+														<p className="text-sm text-muted-foreground mb-3 line-clamp-2">{photo.description}</p>
+													)}
+													<div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+														<span>By: {photo.photographer || 'Unknown'}</span>
+														<span>{photo.date ? new Date(photo.date).toLocaleDateString() : 'Unknown date'}</span>
+													</div>
+													<div className="flex space-x-2">
+														<button
+															onClick={() => openPhotoModal(photo)}
+															className="flex-1 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded hover:bg-secondary/80 transition-colors"
+														>
+															<FaEye className="inline mr-1" />
+															View Details
+														</button>
+														<button
+															onClick={() => handleDeletePhoto(photo.id!)}
+															className="px-3 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+														>
+															<FaTrash className="inline mr-1" />
+														</button>
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
+
+							{/* No Photos Message */}
+							{pendingPhotos.length === 0 && approvedPhotos.length === 0 && (
+								<div className="text-center py-8 text-muted-foreground">
+									<FaImage className="text-4xl mx-auto mb-4 text-muted" />
+									<p>No gallery photos found.</p>
+									<p className="text-sm">Photos will appear here once community members upload them.</p>
+								</div>
+							)}
+						</div>
+
 						{/* Add Product Modal */}
 						{isAddProductOpen && (
 							<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
@@ -935,6 +1151,133 @@ const Admin = () => {
 											>
 												Cancel
 											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						)}
+
+						{/* Photo Detail Modal */}
+						{showPhotoModal && selectedPhoto && (
+							<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+								<div className="bg-card rounded-lg shadow-card w-full max-w-4xl max-h-[90vh] flex flex-col">
+									{/* Fixed Header */}
+									<div className="flex justify-between items-center p-6 border-b border-border flex-shrink-0">
+										<h3 className="text-xl font-bold text-primary">Photo Details</h3>
+										<button
+											onClick={closePhotoModal}
+											className="text-muted-foreground hover:text-foreground p-2 rounded-full hover:bg-muted transition-colors"
+										>
+											<FaTimes />
+										</button>
+									</div>
+									
+									{/* Scrollable Content */}
+									<div className="flex-1 overflow-y-auto p-6">
+										<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+											{/* Image Display */}
+											<div className="space-y-4">
+												<div className="aspect-square bg-muted rounded-lg overflow-hidden">
+													<img
+														src={selectedPhoto.imageUrl}
+														alt={selectedPhoto.title}
+														className="w-full h-full object-cover"
+													/>
+												</div>
+												{selectedPhoto.thumbnailUrl && selectedPhoto.thumbnailUrl !== selectedPhoto.imageUrl && (
+													<div className="aspect-square bg-muted rounded-lg overflow-hidden">
+														<img
+															src={selectedPhoto.thumbnailUrl}
+															alt={`${selectedPhoto.title} thumbnail`}
+															className="w-full h-full object-cover"
+														/>
+													</div>
+												)}
+											</div>
+											
+											{/* Photo Information */}
+											<div className="space-y-4">
+												<div>
+													<h4 className="text-lg font-semibold text-foreground mb-2">{selectedPhoto.title}</h4>
+													{selectedPhoto.description && (
+														<p className="text-muted-foreground">{selectedPhoto.description}</p>
+													)}
+												</div>
+												
+												<div className="space-y-3">
+													<div className="flex items-center justify-between">
+														<span className="text-sm font-medium text-muted-foreground">Photographer:</span>
+														<span className="text-sm text-foreground">{selectedPhoto.photographer || 'Unknown'}</span>
+													</div>
+													<div className="flex items-center justify-between">
+														<span className="text-sm font-medium text-muted-foreground">Category:</span>
+														<span className="text-sm text-foreground capitalize">{selectedPhoto.category}</span>
+													</div>
+													<div className="flex items-center justify-between">
+														<span className="text-sm font-medium text-muted-foreground">Location:</span>
+														<span className="text-sm text-foreground">{selectedPhoto.location || 'Not specified'}</span>
+													</div>
+													<div className="flex items-center justify-between">
+														<span className="text-sm font-medium text-muted-foreground">Date:</span>
+														<span className="text-sm text-foreground">
+															{selectedPhoto.date ? new Date(selectedPhoto.date).toLocaleDateString() : 'Unknown'}
+														</span>
+													</div>
+													<div className="flex items-center justify-between">
+														<span className="text-sm font-medium text-muted-foreground">Status:</span>
+														<span className={`text-sm px-2 py-1 rounded-full ${
+															selectedPhoto.isApproved 
+																? 'bg-green-100 text-green-800' 
+																: 'bg-amber-100 text-amber-800'
+														}`}>
+															{selectedPhoto.isApproved ? 'Approved' : 'Pending Approval'}
+														</span>
+													</div>
+												</div>
+												
+												{/* Tags */}
+												{selectedPhoto.tags && selectedPhoto.tags.length > 0 && (
+													<div>
+														<span className="text-sm font-medium text-muted-foreground block mb-2">Tags:</span>
+														<div className="flex flex-wrap gap-2">
+															{selectedPhoto.tags.map((tag, index) => (
+																<span
+																	key={index}
+																	className="px-2 py-1 bg-muted text-xs text-muted-foreground rounded-full"
+																>
+																	{tag}
+																</span>
+															))}
+														</div>
+													</div>
+												)}
+												
+												{/* Action Buttons */}
+												<div className="pt-4 border-t border-border">
+													{!selectedPhoto.isApproved && (
+														<button
+															onClick={() => {
+																handleApprovePhoto(selectedPhoto.id!);
+																closePhotoModal();
+															}}
+															className="w-full px-4 py-2 bg-green-500 text-white font-semibold rounded hover:bg-green-600 transition-colors mb-3"
+														>
+															<FaCheck className="inline mr-2" />
+															Approve Photo
+														</button>
+													)}
+													<button
+														onClick={() => {
+															handleDeletePhoto(selectedPhoto.id!);
+															closePhotoModal();
+														}}
+														className="w-full px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition-colors"
+													>
+														<FaTrash className="inline mr-2" />
+														Delete Photo
+													</button>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>

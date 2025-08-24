@@ -1,31 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navigation';
 import Footer from '../components/Footer';
 import Link from 'next/link';
-import { FaUpload, FaImage, FaVideo, FaTimes, FaUser, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaUpload, FaImage, FaVideo, FaTimes, FaUser, FaEnvelope, FaPhone, FaSpinner, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
+import { galleryService, imageService } from '../lib/firebase-services';
 
 interface UploadedMedia {
   id: string;
+  title: string;
+  description?: string;
+  imageUrl: string;
+  thumbnailUrl?: string;
+  category: 'edition-2';
+  tags: string[];
+  photographer: string;
+  photographerEmail: string;
+  photographerPhone: string;
+  isApproved: boolean;
+  createdAt: Date;
+}
+
+interface UploadForm {
   name: string;
   email: string;
   phone: string;
   files: File[];
-  timestamp: Date;
 }
 
 const GalleryEdition2 = () => {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadedMedia, setUploadedMedia] = useState<UploadedMedia[]>([]);
-  const [uploadForm, setUploadForm] = useState({
+  const [uploadForm, setUploadForm] = useState<UploadForm>({
     name: '',
     email: '',
     phone: '',
-    files: [] as File[]
+    files: []
   });
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const upcomingEvent = true; // Toggle this based on event status
+
+  // Load existing gallery media on component mount
+  useEffect(() => {
+    loadGalleryMedia();
+  }, []);
+
+  const loadGalleryMedia = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Fetch approved edition-2 media from the database
+      const media = await galleryService.getMediaByCategory('edition-2');
+      
+      // Transform the data to match our interface
+      const transformedMedia: UploadedMedia[] = media.map(item => ({
+        id: item.id || '',
+        title: item.title,
+        description: item.description,
+        imageUrl: item.imageUrl,
+        thumbnailUrl: item.thumbnailUrl,
+        category: 'edition-2' as const,
+        tags: item.tags || [],
+        photographer: item.photographer || 'Unknown',
+        photographerEmail: '', // Not stored in GalleryMedia interface
+        photographerPhone: '', // Not stored in GalleryMedia interface
+        isApproved: item.isApproved,
+        createdAt: item.createdAt ? new Date(item.createdAt.toDate()) : new Date()
+      }));
+      
+      setUploadedMedia(transformedMedia);
+    } catch (error) {
+      console.error('Error loading gallery media:', error);
+      setError('Failed to load gallery media. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
@@ -45,34 +100,79 @@ const GalleryEdition2 = () => {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadForm.name || !uploadForm.email || !uploadForm.phone || uploadForm.files.length === 0) {
-      alert('Please fill in all fields and select at least one file');
+      setError('Please fill in all fields and select at least one file');
       return;
     }
 
     setIsUploading(true);
+    setError(null);
+    setSuccessMessage(null);
     
-    // Simulate upload process
-    setTimeout(() => {
-      const newMedia: UploadedMedia = {
-        id: Date.now().toString(),
-        name: uploadForm.name,
-        email: uploadForm.email,
-        phone: uploadForm.phone,
-        files: uploadForm.files,
-        timestamp: new Date()
-      };
+    try {
+      // Upload each file and create gallery media entries
+      const uploadPromises = uploadForm.files.map(async (file) => {
+        // Upload image to Firebase Storage
+        const imageUrl = await imageService.uploadImage(file, 'gallery/edition-2');
+        
+        // Create gallery media entry in Firestore
+        const mediaData = {
+          title: `Photo by ${uploadForm.name}`,
+          description: `Shared memory from ${uploadForm.name}`,
+          imageUrl: imageUrl,
+          thumbnailUrl: imageUrl, // Use same URL for thumbnail for now
+          category: 'edition-2' as const,
+          tags: ['user-submitted', 'edition-2', 'community'],
+          photographer: uploadForm.name,
+          location: 'Nairobi, Kenya',
+          date: new Date(),
+          isApproved: false // Requires admin approval
+        };
+        
+        // Add to database collection
+        const mediaId = await galleryService.createMedia(mediaData);
+        
+        return {
+          id: mediaId,
+          title: mediaData.title,
+          description: mediaData.description,
+          imageUrl: mediaData.imageUrl,
+          thumbnailUrl: mediaData.thumbnailUrl,
+          category: mediaData.category,
+          tags: mediaData.tags,
+          photographer: mediaData.photographer,
+          photographerEmail: uploadForm.email,
+          photographerPhone: uploadForm.phone,
+          isApproved: mediaData.isApproved,
+          createdAt: new Date()
+        };
+      });
 
-      setUploadedMedia(prev => [newMedia, ...prev]);
+      // Wait for all uploads to complete
+      const newMedia = await Promise.all(uploadPromises);
+      
+      // Update local state
+      setUploadedMedia(prev => [...newMedia, ...prev]);
+      
+      // Reset form
       setUploadForm({
         name: '',
         email: '',
         phone: '',
         files: []
       });
+      
       setShowUploadModal(false);
+      setSuccessMessage(`Successfully uploaded ${newMedia.length} photo(s)! They will be reviewed and approved by our team.`);
+      
+      // Reload gallery to show all media
+      await loadGalleryMedia();
+      
+    } catch (error) {
+      console.error('Error uploading media:', error);
+      setError(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
       setIsUploading(false);
-      alert('Thank you for sharing your memories! Your photos and videos have been uploaded successfully.');
-    }, 2000);
+    }
   };
 
   const resetForm = () => {
@@ -82,6 +182,8 @@ const GalleryEdition2 = () => {
       phone: '',
       files: []
     });
+    setError(null);
+    setSuccessMessage(null);
   };
 
   if (upcomingEvent) {
@@ -201,7 +303,28 @@ const GalleryEdition2 = () => {
             </section>
 
             {/* Community Uploads Section */}
-            {uploadedMedia.length > 0 && (
+            {isLoading ? (
+              <section className="py-16 bg-muted/30 flex justify-center items-center">
+                <FaSpinner className="w-12 h-12 text-secondary animate-spin" />
+                <p className="ml-4 text-lg text-muted-foreground">Loading gallery...</p>
+              </section>
+            ) : error ? (
+              <section className="py-16 bg-red-50 border border-red-200 rounded-lg text-center">
+                <FaExclamationTriangle className="w-12 h-12 text-red-500 mb-4" />
+                <p className="text-lg text-red-800">{error}</p>
+              </section>
+            ) : uploadedMedia.length === 0 ? (
+              <section className="py-16 bg-muted/30 text-center">
+                <p className="text-lg text-muted-foreground">No photos or videos shared yet from Edition 2. Be the first to upload!</p>
+                <button 
+                  onClick={() => setShowUploadModal(true)}
+                  className="mt-6 inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors"
+                >
+                  <FaUpload className="w-5 h-5" />
+                  <span>Upload Your Memories</span>
+                </button>
+              </section>
+            ) : (
               <section className="py-16 bg-muted/30">
                 <div className="container mx-auto px-4">
                   <div className="max-w-6xl mx-auto">
@@ -214,31 +337,49 @@ const GalleryEdition2 = () => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {uploadedMedia.map((media) => (
-                        <div key={media.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div key={media.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                          {/* Image Display */}
+                          <div className="aspect-square bg-muted overflow-hidden">
+                            <img
+                              src={media.imageUrl}
+                              alt={media.title}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                          
+                          {/* Media Info */}
                           <div className="p-4">
                             <div className="flex items-center space-x-3 mb-3">
                               <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
                                 <FaUser className="w-5 h-5 text-white" />
                               </div>
                               <div>
-                                <p className="font-semibold text-sm">{media.name}</p>
+                                <p className="font-semibold text-sm">{media.photographer}</p>
                                 <p className="text-xs text-muted-foreground">
-                                  {media.timestamp.toLocaleDateString()}
+                                  {media.createdAt.toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
                             
                             <div className="space-y-2">
-                              {media.files.map((file, index) => (
-                                <div key={index} className="flex items-center space-x-2 text-sm">
-                                  {file.type.startsWith('image/') ? (
-                                    <FaImage className="w-4 h-4 text-blue-500" />
-                                  ) : (
-                                    <FaVideo className="w-4 h-4 text-red-500" />
-                                  )}
-                                  <span className="truncate">{file.name}</span>
+                              <h3 className="font-medium text-sm text-foreground">{media.title}</h3>
+                              {media.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-2">{media.description}</p>
+                              )}
+                              
+                              {/* Tags */}
+                              {media.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {media.tags.slice(0, 3).map((tag, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-2 py-1 bg-muted text-xs text-muted-foreground rounded-full"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
                                 </div>
-                              ))}
+                              )}
                             </div>
                           </div>
                         </div>
@@ -314,6 +455,13 @@ const GalleryEdition2 = () => {
                     </button>
                   </div>
                   
+                  {successMessage && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 text-center text-green-800">
+                      <FaCheck className="w-6 h-6 inline-block mr-2" />
+                      {successMessage}
+                    </div>
+                  )}
+
                   <form onSubmit={handleUpload} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
@@ -393,28 +541,38 @@ const GalleryEdition2 = () => {
                     {uploadForm.files.length > 0 && (
                       <div className="space-y-3">
                         <h4 className="font-medium text-foreground">Selected Files:</h4>
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                           {uploadForm.files.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                              <div className="flex items-center space-x-3">
+                            <div key={index} className="relative group">
+                              <div className="aspect-square bg-muted rounded-lg overflow-hidden border-2 border-border">
                                 {file.type.startsWith('image/') ? (
-                                  <FaImage className="w-5 h-5 text-blue-500" />
+                                  <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={file.name}
+                                    className="w-full h-full object-cover"
+                                  />
                                 ) : (
-                                  <FaVideo className="w-5 h-5 text-red-500" />
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <FaVideo className="w-8 h-8 text-red-500" />
+                                  </div>
                                 )}
-                                <div>
-                                  <p className="font-medium text-sm">{file.name}</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                                  </p>
-                                </div>
                               </div>
+                              
+                              {/* File Info Overlay */}
+                              <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-xs">
+                                <p className="truncate font-medium">{file.name}</p>
+                                <p className="text-gray-300">
+                                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                                </p>
+                              </div>
+                              
+                              {/* Remove Button */}
                               <button
                                 type="button"
                                 onClick={() => removeFile(index)}
-                                className="text-red-500 hover:text-red-700 transition-colors"
+                                className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                               >
-                                <FaTimes className="w-4 h-4" />
+                                <FaTimes className="w-3 h-3" />
                               </button>
                             </div>
                           ))}
@@ -434,7 +592,7 @@ const GalleryEdition2 = () => {
                       >
                         {isUploading ? (
                           <>
-                            <FaUpload className="inline mr-2 animate-pulse" />
+                            <FaSpinner className="inline mr-2 animate-spin" />
                             Uploading...
                           </>
                         ) : (

@@ -43,6 +43,7 @@ export default function Events() {
 	const [isPurchased, setIsPurchased] = useState(false);
 	const [ticketNumbers, setTicketNumbers] = useState<string[]>([]);
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [showEdition1Modal, setShowEdition1Modal] = useState(false);
 
 	const currentEvent = mockEvents[0];
 
@@ -228,12 +229,20 @@ export default function Events() {
 							<div className="bg-card rounded-2xl shadow-card p-8">
 								<div className="text-center mb-6">
 									<h2 className="text-2xl font-bold text-foreground mb-2">Book Your Tickets</h2>
-									<p className="text-muted-foreground">
+									<p className="text-muted-foreground mb-6">
 										Secure your spot for this amazing wellness experience
 									</p>
-								</div>
-								<form onSubmit={handlePurchase} className="space-y-6">
-									<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+									
+									{/* KenyaBuzz Poster */}
+									<div className="mb-6">
+										<img 
+											src="https://static.kenyabuzz.com/posters/events/1756018213231.webp" 
+											alt="Yoga in the Park Event Poster" 
+											className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+										/>
+									</div>
+									
+									<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 										<div className="text-center p-4 border rounded-lg transition-all duration-300 hover:border-secondary hover:shadow-md">
 											<p className="font-semibold text-lg text-foreground">Individual</p>
 											<p className="text-2xl font-bold text-secondary">KSh 2,000</p>
@@ -250,102 +259,187 @@ export default function Events() {
 											<p className="text-sm text-muted-foreground">4 tickets</p>
 										</div>
 									</div>
-
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-										<div className="space-y-2">
-											<label className="block text-sm font-medium text-foreground">Ticket Type</label>
-											<select 
-												value={selectedTicketType} 
-												onChange={(e) => setSelectedTicketType(e.target.value)}
-												className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-background text-foreground"
-											>
-												<option value="">Select ticket type</option>
-												<option value="individual">Individual - KSh 2,000</option>
-												<option value="couple">Couple - KSh 3,800</option>
-												<option value="group4">Group of 4 - KSh 7,600</option>
-											</select>
-										</div>
-
-										<div className="space-y-2">
-											<label className="block text-sm font-medium text-foreground">Quantity</label>
-											<select 
-												value={quantity} 
-												onChange={(e) => setQuantity(parseInt(e.target.value))}
-												className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-background text-foreground"
-											>
-												{[1, 2, 3, 4, 5].map((num) => (
-													<option key={num} value={num}>{num}</option>
-												))}
-											</select>
-										</div>
-									</div>
-
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-										<div className="space-y-2">
-											<label className="block text-sm font-medium text-foreground">Full Name</label>
-											<input
-												type="text"
-												value={buyerName}
-												onChange={(e) => setBuyerName(e.target.value)}
-												placeholder="Enter your full name"
-												required
-												className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-background text-foreground"
-											/>
-										</div>
-
-										<div className="space-y-2">
-											<label className="block text-sm font-medium text-foreground">Email Address</label>
-											<input
-												type="email"
-												value={buyerEmail}
-												onChange={(e) => setBuyerEmail(e.target.value)}
-												placeholder="Enter your email address"
-												required
-												className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-background text-foreground"
-											/>
-										</div>
-									</div>
-
-									{selectedTicketType && (
-										<div className="bg-muted rounded-lg p-6">
-											<h4 className="font-semibold mb-2 text-foreground">Order Summary</h4>
-											<div className="flex justify-between items-center mb-2">
-												<span className="text-foreground">{selectedTicketType} ticket(s) x {quantity}</span>
-												<span className="font-semibold text-foreground">KSh {getTotalPrice().toLocaleString()}</span>
-											</div>
-											<div className="flex justify-between items-center text-sm text-muted-foreground">
-												<span>Total tickets: {getTicketQuantity(selectedTicketType)}</span>
-											</div>
-										</div>
-									)}
-
-									<button 
-										type="submit" 
-										disabled={!selectedTicketType || !buyerName || !buyerEmail || isProcessing}
-										className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 ${
-											!selectedTicketType || !buyerName || !buyerEmail || isProcessing
-												? "bg-muted text-muted-foreground cursor-not-allowed"
-												: "bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary/90 hover:to-secondary/90 shadow-lg hover:shadow-xl transform hover:scale-105"
-										}`}
+									
+									<a 
+										href="https://kenyabuzz.com/events/event/yoga-in-the-park-1" 
+										target="_blank" 
+										rel="noopener noreferrer"
+										className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:from-primary/90 hover:to-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
 									>
-										{isProcessing ? (
-											<>
-												<FaSpinner className="inline mr-3 animate-spin" />
-												Processing...
-											</>
-										) : (
-											<>
-												<FaTicketAlt className="inline mr-3" />
-												Purchase Tickets - KSh {getTotalPrice().toLocaleString()}
-											</>
-										)}
-									</button>
-								</form>
+										<FaTicketAlt className="w-6 h-6" />
+										<span>Buy Tickets on KenyaBuzz</span>
+									</a>
+								</div>
 							</div>
 						</>
 					)}
 				</div>
 			</div>
+			
+			{/* Edition 1 Highlights Section */}
+			<section className="py-20 bg-muted/30">
+				<div className="container mx-auto px-4">
+					<div className="max-w-6xl mx-auto">
+						<div className="text-center mb-16">
+							<h2 className="text-3xl md:text-4xl font-bold mb-6 animate-slide-up text-foreground">
+								Edition 1 Highlights
+							</h2>
+							<p className="text-lg text-muted-foreground max-w-3xl mx-auto animate-slide-up slide-up-delay-200">
+								Relive the magic of our first edition and see what made it such a special experience for our community.
+							</p>
+						</div>
+						
+						<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+							<div className="space-y-6 animate-slide-up slide-up-delay-300">
+								<h3 className="text-2xl font-bold text-foreground">
+									A Groundbreaking Success
+								</h3>
+								<p className="text-muted-foreground leading-relaxed">
+									Our inaugural event brought together over 150 wellness enthusiasts from across Nairobi, 
+									creating an unforgettable day of yoga, meditation, and community connection.
+								</p>
+								<p className="text-muted-foreground leading-relaxed">
+									The event featured multiple yoga sessions, guided meditation workshops, wellness talks, 
+									and plenty of opportunities for participants to connect and share their wellness journeys.
+								</p>
+								
+								<div className="grid grid-cols-2 gap-4">
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">150+</p>
+										<p className="text-sm text-muted-foreground">Participants</p>
+									</div>
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">8</p>
+										<p className="text-sm text-muted-foreground">Instructors</p>
+									</div>
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">6</p>
+										<p className="text-sm text-muted-foreground">Sessions</p>
+									</div>
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">4</p>
+										<p className="text-sm text-muted-foreground">Hours</p>
+									</div>
+								</div>
+								
+								<div className="flex flex-col sm:flex-row gap-4">
+									<a 
+										href="/gallery-edition-1" 
+										className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+									>
+										<span>View Gallery</span>
+									</a>
+									<button 
+										onClick={() => setShowEdition1Modal(true)}
+										className="inline-flex items-center justify-center space-x-2 px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
+									>
+										<span>Learn More</span>
+									</button>
+								</div>
+							</div>
+							
+							<div className="grid grid-cols-2 gap-4 animate-slide-up slide-up-delay-400">
+								<div className="space-y-4">
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+											alt="Edition 1 yoga session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+											alt="Edition 1 meditation session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			
+			{/* Edition 1 Modal */}
+			{showEdition1Modal && (
+				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+					<div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+						<div className="p-8">
+							<div className="flex justify-between items-start mb-6">
+								<h3 className="text-2xl font-bold text-foreground">Edition 1: The Beginning</h3>
+								<button 
+									onClick={() => setShowEdition1Modal(false)}
+									className="text-muted-foreground hover:text-foreground transition-colors"
+								>
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+									</svg>
+								</button>
+							</div>
+							
+							<div className="space-y-6">
+								<div>
+									<h4 className="text-xl font-semibold text-foreground mb-3">Event Overview</h4>
+									<p className="text-muted-foreground leading-relaxed">
+										Edition 1 marked the beginning of our journey to bring yoga and wellness to the heart of Nairobi. 
+										Held at the beautiful TuWork Nairobi, this inaugural event exceeded all expectations and set the 
+										standard for future editions.
+									</p>
+								</div>
+								
+								<div>
+									<h4 className="text-xl font-semibold text-foreground mb-3">What Happened</h4>
+									<ul className="space-y-2 text-muted-foreground">
+										<li className="flex items-start space-x-2">
+											<span className="text-green-500 mt-1">•</span>
+											<span>Opening ceremony with traditional Kenyan blessings</span>
+										</li>
+										<li className="flex items-start space-x-2">
+											<span className="text-green-500 mt-1">•</span>
+											<span>Multiple yoga sessions for different skill levels</span>
+										</li>
+										<li className="flex items-start space-x-2">
+											<span className="text-green-500 mt-1">•</span>
+											<span>Guided meditation and mindfulness workshops</span>
+										</li>
+										<li className="flex items-start space-x-2">
+											<span className="text-green-500 mt-1">•</span>
+											<span>Wellness talks from certified instructors</span>
+										</li>
+										<li className="flex items-start space-x-2">
+											<span className="text-green-500 mt-1">•</span>
+											<span>Community networking and connection building</span>
+										</li>
+										<li className="flex items-start space-x-2">
+											<span className="text-green-500 mt-1">•</span>
+											<span>Closing ceremony with group meditation</span>
+										</li>
+									</ul>
+								</div>
+								
+								<div>
+									<h4 className="text-xl font-semibold text-foreground mb-3">Impact & Legacy</h4>
+									<p className="text-muted-foreground leading-relaxed">
+										Edition 1 not only introduced many people to the practice of yoga but also created a lasting 
+										community that continues to grow. The success of this event inspired us to make YIPN a regular 
+										occurrence, bringing wellness to more people across Nairobi.
+									</p>
+								</div>
+								
+								<div className="pt-6 border-t">
+									<a 
+										href="/gallery-edition-1" 
+										className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+									>
+										<span>View Full Gallery</span>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 			
 			<Footer />
 		</div>

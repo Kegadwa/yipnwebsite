@@ -7,6 +7,14 @@ export default function NotFound() {
 		<div className="min-h-screen flex items-center justify-center bg-background">
 			<div className="text-center px-4">
 				<div className="mb-8">
+					{/* YIPN Logo */}
+					<div className="mb-6">
+						<img 
+							src="/2.png" 
+							alt="YIPN Logo" 
+							className="w-16 h-16 mx-auto object-contain"
+						/>
+					</div>
 					<FaExclamationTriangle className="text-6xl text-destructive mx-auto mb-4" />
 					<h1 className="text-4xl font-bold text-foreground mb-4">404</h1>
 					<h2 className="text-2xl font-semibold text-muted-foreground mb-4">

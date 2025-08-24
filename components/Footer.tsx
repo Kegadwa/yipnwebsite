@@ -10,9 +10,11 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-primary-foreground text-primary flex items-center justify-center font-bold animate-float">
-                <FaOm className="w-4 h-4" />
-              </div>
+              <img 
+                src="/2.png" 
+                alt="YIPN Logo" 
+                className="w-8 h-8 object-contain"
+              />
               <span className="text-lg font-bold">YIPN™</span>
             </div>
             <p className="text-sm opacity-80">

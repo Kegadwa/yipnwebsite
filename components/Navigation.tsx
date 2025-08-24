@@ -61,9 +61,11 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg animate-bounce-in">
-              Y
-            </div>
+            <img 
+              src="/2.png" 
+              alt="YIPN Logo" 
+              className="w-10 h-10 object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation */}

@@ -196,7 +196,7 @@ export default function Community() {
                     <div key={social.name} className="flex items-center justify-between p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                       <div className="flex items-center space-x-4">
                         <span className="text-2xl">
-                          {social.name === 'Instagram' ? '📸' : social.name === 'Facebook' ? '��' : '🐦'}
+                          {social.name === 'Instagram' ? '📸' : social.name === 'Facebook' ? '📘' : '🐦'}
                         </span>
                         <div>
                           <p className="font-semibold">{social.name}</p>

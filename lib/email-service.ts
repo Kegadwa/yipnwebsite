@@ -45,7 +45,7 @@ export const emailService = {
   },
 
   // Send order confirmation email
-  async sendOrderConfirmation(orderData: any): Promise<boolean> {
+  async sendOrderConfirmation(orderData: OrderEmailData): Promise<boolean> {
     try {
       const emailData: EmailData = {
         to: orderData.customerEmail,
@@ -65,7 +65,7 @@ export const emailService = {
   },
 
   // Send event reminder email
-  async sendEventReminder(eventData: any, attendees: any[]): Promise<boolean> {
+  async sendEventReminder(eventData: EventEmailData, attendees: AttendeeEmailData[]): Promise<boolean> {
     try {
       const promises = attendees.map(attendee => {
         const emailData: EmailData = {
@@ -173,7 +173,7 @@ Nairobi, Kenya
   `;
 }
 
-function generateOrderConfirmationHTML(order: any): string {
+function generateOrderConfirmationHTML(order: OrderEmailData): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -225,7 +225,7 @@ function generateOrderConfirmationHTML(order: any): string {
   `;
 }
 
-function generateOrderConfirmationText(order: any): string {
+function generateOrderConfirmationText(order: OrderEmailData): string {
   return `
 Order Confirmation - YIPN™ Shop
 
@@ -248,7 +248,7 @@ Nairobi, Kenya
   `;
 }
 
-function generateEventReminderHTML(event: any, attendee: any): string {
+function generateEventReminderHTML(event: EventEmailData, attendee: AttendeeEmailData): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -300,7 +300,7 @@ function generateEventReminderHTML(event: any, attendee: any): string {
   `;
 }
 
-function generateEventReminderText(event: any, attendee: any): string {
+function generateEventReminderText(event: EventEmailData, attendee: AttendeeEmailData): string {
   return `
 Event Reminder - YIPN™
 

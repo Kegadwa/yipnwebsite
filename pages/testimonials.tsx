@@ -103,7 +103,7 @@ const Testimonials = () => {
             <div className="bg-white rounded-lg shadow-lg p-12 text-center bg-gradient-to-r from-blue-50 to-orange-50">
               <span className="text-5xl text-secondary mx-auto mb-6 block">💬</span>
               <blockquote className="text-xl md:text-2xl italic text-gray-800 mb-6 leading-relaxed">
-                "{mockTestimonials[0].quote}"
+                &quot;{mockTestimonials[0].quote}&quot;
               </blockquote>
               <div className="flex items-center justify-center mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -138,7 +138,7 @@ const Testimonials = () => {
                       ))}
                     </div>
                     <blockquote className="text-gray-600 italic mb-6 leading-relaxed">
-                      "{testimonial.quote}"
+                      &quot;{testimonial.quote}&quot;
                     </blockquote>
                     <div className="flex items-center justify-between">
                       <div>
@@ -209,7 +209,7 @@ const Testimonials = () => {
               <span className="text-6xl text-secondary mx-auto mb-6 block">💬</span>
               <h3 className="text-2xl font-bold mb-4 text-gray-800">Share Your YIPN Story</h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Have you experienced transformation through YIPN? We'd love to hear about your journey 
+                Have you experienced transformation through YIPN? We&apos;d love to hear about your journey 
                 and how our wellness community has impacted your life. Your story might inspire others 
                 to begin their own wellness path.
               </p>

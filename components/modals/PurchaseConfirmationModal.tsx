@@ -79,14 +79,14 @@ const PurchaseConfirmationModal = ({ isOpen, onClose, purchaseDetails }: Purchas
           <div className="bg-background border border-border p-4 rounded-lg space-y-3">
             <h3 className="font-semibold text-foreground flex items-center space-x-2">
               <Mail className="w-4 h-4" />
-              <span>What's Next?</span>
+              <span>What&apos;s Next?</span>
             </h3>
             <div className="text-sm text-muted-foreground space-y-2">
               <p>✓ Confirmation email sent to {buyerEmail}</p>
               {type === 'ticket' && (
                 <>
                   <p>✓ Bring your ticket numbers to the event</p>
-                  <p>✓ Don't forget your yoga mat and water bottle</p>
+                  <p>✓ Don&apos;t forget your yoga mat and water bottle</p>
                 </>
               )}
               {type === 'merchandise' && (

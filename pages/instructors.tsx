@@ -93,7 +93,7 @@ const Instructors = () => {
           <div className="bg-white rounded-lg shadow-lg p-12 bg-gradient-to-r from-blue-50 to-orange-50">
             <h3 className="text-2xl font-bold mb-4">Want to Join Our Instructor Team?</h3>
             <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-              We're always looking for passionate, certified yoga instructors and wellness practitioners 
+              We&apos;re always looking for passionate, certified yoga instructors and wellness practitioners 
               who share our vision of creating transformative community experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -117,7 +117,7 @@ const Instructors = () => {
               </p>
               <FaQuoteLeft className="text-4xl text-secondary mb-4" />
               <p className="text-lg italic text-gray-800 mb-4">
-                Teaching yoga isn't just about guiding poses - it's about holding space for transformation, 
+                Teaching yoga isn&apos;t just about guiding poses - it&apos;s about holding space for transformation, 
                 creating community, and helping each student discover their own inner wisdom and strength.
               </p>
               <p className="text-gray-600">- Sarah Kamau, Lead Instructor</p>

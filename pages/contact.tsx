@@ -22,7 +22,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto text-white/90">
-            Have questions about our events, want to join our community, or need support? We'd love to hear from you.
+            Have questions about our events, want to join our community, or need support? We&apos;d love to hear from you.
           </p>
         </div>
       </section>

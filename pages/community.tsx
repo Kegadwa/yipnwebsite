@@ -42,7 +42,7 @@ const Community = () => {
             YIPN Community
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto text-white/90">
-            Connect with fellow wellness enthusiasts, share your journey, and be part of Nairobi's vibrant yoga community.
+            Connect with fellow wellness enthusiasts, share your journey, and be part of Nairobi&apos;s vibrant yoga community.
           </p>
         </div>
       </section>
@@ -56,7 +56,7 @@ const Community = () => {
               Join Our Community
             </h1>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Become part of Nairobi's thriving wellness community. Connect with like-minded individuals, 
+              Become part of Nairobi&apos;s thriving wellness community. Connect with like-minded individuals, 
               stay updated on events, and embark on a journey of transformation together.
             </p>
           </div>
@@ -104,7 +104,7 @@ const Community = () => {
                   Welcome to the YIPN Community!
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Thank you {name}! You'll receive our newsletter with event updates, 
+                  Thank you {name}! You&apos;ll receive our newsletter with event updates, 
                   wellness tips, and community highlights.
                 </p>
                 <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2 mx-auto">
@@ -150,7 +150,7 @@ const Community = () => {
                   </form>
                   
                   <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-                    <h4 className="font-semibold mb-2">You'll receive:</h4>
+                    <h4 className="font-semibold mb-2">You&apos;ll receive:</h4>
                     <ul className="space-y-1 text-sm text-gray-600">
                       <li className="flex items-center">
                         <span className="mr-2 text-green-500">✅</span>
@@ -180,7 +180,7 @@ const Community = () => {
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Get in Touch</h3>
               <p className="text-gray-600 mb-6">
-                We'd love to hear from you. Reach out with any questions or just to say hello!
+                We&apos;d love to hear from you. Reach out with any questions or just to say hello!
               </p>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -188,7 +188,7 @@ const Community = () => {
                   <div>
                     <p className="font-semibold">Email Us</p>
                     <p className="text-gray-600">info@yogaintheparknairobi.com</p>
-                    <p className="text-sm text-gray-500">We'll get back to you within 24 hours</p>
+                    <p className="text-sm text-gray-500">We&apos;ll get back to you within 24 hours</p>
                   </div>
                 </div>
                 

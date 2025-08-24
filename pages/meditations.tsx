@@ -76,7 +76,7 @@ const Meditations = () => {
                     </form>
                     
                     <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-                      <h4 className="font-semibold mb-2">What you'll get access to:</h4>
+                      <h4 className="font-semibold mb-2">What you&apos;ll get access to:</h4>
                       <ul className="space-y-1 text-sm text-gray-600">
                         <li className="flex items-center">
                           <span className="mr-2 text-green-500">✅</span>
@@ -169,7 +169,7 @@ const Meditations = () => {
                           <ul className="space-y-2 text-sm text-gray-600">
                             <li className="flex items-start">
                               <span className="mr-2 text-yellow-500">⭐</span>
-                              Find a quiet, comfortable space where you won't be disturbed
+                              Find a quiet, comfortable space where you won&apos;t be disturbed
                             </li>
                             <li className="flex items-start">
                               <span className="mr-2 text-yellow-500">⭐</span>

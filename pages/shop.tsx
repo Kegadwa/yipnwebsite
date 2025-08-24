@@ -455,7 +455,7 @@ export default function Shop() {
 										</li>
 										<li className="flex items-start space-x-2">
 											<span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-											<span>Select "Buy Goods and Services"</span>
+											<span>Select &quot;Buy Goods and Services&quot;</span>
 										</li>
 										<li className="flex items-start space-x-2">
 											<span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
@@ -481,7 +481,7 @@ export default function Shop() {
 									<ul className="text-sm text-green-700 space-y-1">
 										<li>• Keep your payment confirmation message</li>
 										<li>• Payment will be processed within 24 hours</li>
-										<li>• You'll receive an email confirmation</li>
+										<li>• You&apos;ll receive an email confirmation</li>
 										<li>• For support, contact: support@yipn.com</li>
 									</ul>
 								</div>

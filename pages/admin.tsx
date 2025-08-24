@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaChartBar, FaBox, FaExclamationTriangle, FaUsers, FaPlus, FaEdit, FaTrash, FaTimes, FaSpinner, FaLock, FaUpload, FaImage } from "react-icons/fa";
+import { FaChartBar, FaBox, FaExclamationTriangle, FaUsers, FaPlus, FaEdit, FaTrash, FaTimes, FaSpinner, FaLock } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 import AdminAuthModal from "../components/AdminAuthModal";
-import { analyticsService, productService, eventService, ticketService, orderService, testFirebaseConnection, imageService } from "../lib/firebase-services";
+import { analyticsService, productService, testFirebaseConnection, imageService } from "../lib/firebase-services";
 import { Product } from "../lib/firebase-services";
 
 const Admin = () => {
@@ -35,7 +35,7 @@ const Admin = () => {
 	const [firebaseStatus, setFirebaseStatus] = useState<string>("Initializing...");
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [showAuthModal, setShowAuthModal] = useState(true);
-	const [authError, setAuthError] = useState("");
+	// const [authError, setAuthError] = useState("");
 	const [stats, setStats] = useState({
 		totalEvents: 0,
 		totalTickets: 0,
@@ -60,9 +60,10 @@ const Admin = () => {
 		if (password === ADMIN_PASSWORD) {
 			setIsAuthenticated(true);
 			setShowAuthModal(false);
-			setAuthError("");
+			// setAuthError("");
 		} else {
-			setAuthError("Invalid admin password. Please try again.");
+			// setAuthError("Invalid admin password. Please try again.");
+			alert("Invalid admin password. Please try again.");
 		}
 	};
 
@@ -534,7 +535,7 @@ const Admin = () => {
 												await productService.initializeProductsCollection();
 												setFirebaseStatus("Products collection initialized");
 												await loadData();
-											} catch (error) {
+											} catch {
 												setFirebaseStatus("Failed to initialize products collection");
 											}
 										}}

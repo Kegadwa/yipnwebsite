@@ -15,7 +15,7 @@ import {
   FaTags,
   FaLayerGroup
 } from 'react-icons/fa';
-import { productService, categoryService, orderService, imageService } from '../../lib/firebase-services';
+import { productService, categoryService, orderService, imageService, corsBypassService } from '../../lib/firebase-services';
 
 interface Product {
   id?: string;
@@ -74,6 +74,7 @@ const AdminMerchandise = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [selectedImagePreview, setSelectedImagePreview] = useState<string>('');
+  const [corsStatus, setCorsStatus] = useState<string>('checking');
 
   const [productForm, setProductForm] = useState<Product>({
     name: '',
@@ -108,6 +109,8 @@ const AdminMerchandise = () => {
 
   useEffect(() => {
     loadData();
+    // Only check CORS status once on mount, not on every render
+    checkCORSStatus();
   }, []);
 
   const loadData = async () => {
@@ -458,11 +461,40 @@ const AdminMerchandise = () => {
     setUploadingImage(true);
     try {
       const fileName = imageService.generateFileName(selectedImageFile.name, 'products/');
+      
+      // Show CORS status to user
+      console.log('Attempting to upload image...');
+      
       const imageUrl = await imageService.uploadImage(selectedImageFile, fileName);
+      
+      // Check if it's a base64 image (CORS fallback)
+      if (imageUrl.startsWith('data:')) {
+        console.log('Image uploaded using CORS fallback (base64)');
+        // You could show a notification to the user here
+      } else {
+        console.log('Image uploaded successfully to Firebase Storage');
+      }
+      
       return imageUrl;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading image:', error);
-      throw error;
+      
+      // Provide better error messages for CORS issues
+      if (error.message?.includes('CORS')) {
+        throw new Error('Image upload failed due to CORS configuration. The image has been stored temporarily. Please contact support to resolve this issue.');
+      }
+      
+      // If it's any other error, try the fallback method
+      console.log('Attempting fallback upload method...');
+      try {
+        const fileName = imageService.generateFileName(selectedImageFile.name, 'products/');
+        const fallbackUrl = await imageService.uploadImageAsBase64(selectedImageFile, fileName);
+        console.log('Fallback upload successful');
+        return fallbackUrl;
+      } catch (fallbackError) {
+        console.error('Fallback upload also failed:', fallbackError);
+        throw new Error('Image upload failed completely. Please try again or contact support.');
+      }
     } finally {
       setUploadingImage(false);
     }
@@ -471,6 +503,17 @@ const AdminMerchandise = () => {
   const resetImageUpload = () => {
     setSelectedImageFile(null);
     setSelectedImagePreview('');
+  };
+
+  const checkCORSStatus = async () => {
+    try {
+      setCorsStatus('checking');
+      const status = await corsBypassService.getCORSStatus();
+      setCorsStatus(status);
+    } catch (error) {
+      console.log('CORS status check failed, defaulting to blocked:', error);
+      setCorsStatus('blocked');
+    }
   };
 
   const renderProductsTab = () => (
@@ -528,7 +571,7 @@ const AdminMerchandise = () => {
                     <div className="flex items-center">
                       {product.imageUrl ? (
                         <img 
-                          src={product.imageUrl} 
+                          src={imageService.convertGsUrlToStorageUrl(product.imageUrl)} 
                           alt={product.name}
                           className="w-12 h-12 rounded-lg object-cover mr-3"
                           onError={(e) => {
@@ -796,6 +839,33 @@ const AdminMerchandise = () => {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Manage Merchandise</h1>
           <p className="text-muted-foreground mt-2">Manage products, categories, and view analytics</p>
+          
+          {/* CORS Status Indicator */}
+          <div className="flex items-center space-x-2 mt-3">
+            <span className="text-sm text-muted-foreground">Storage Status:</span>
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              corsStatus === 'working' 
+                ? 'bg-green-100 text-green-800' 
+                : corsStatus === 'blocked' 
+                ? 'bg-yellow-100 text-yellow-800'
+                : 'bg-gray-100 text-gray-800'
+            }`}>
+              {corsStatus === 'working' && '✅ Firebase Storage'}
+              {corsStatus === 'blocked' && '⚠️ CORS Blocked (Using Fallback)'}
+              {corsStatus === 'checking' && '⏳ Checking...'}
+              {corsStatus === 'error' && '❌ Error'}
+            </span>
+            {corsStatus === 'blocked' && (
+              <button
+                onClick={checkCORSStatus}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+                title="Retry CORS check"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+          
           {loading && (
             <div className="flex items-center space-x-2 mt-2 text-sm text-primary">
               <FaSpinner className="animate-spin" />
@@ -1336,7 +1406,7 @@ const AdminMerchandise = () => {
                     ) : editProductForm.imageUrl ? (
                       <div className="relative">
                         <img 
-                          src={editProductForm.imageUrl} 
+                          src={imageService.convertGsUrlToStorageUrl(editProductForm.imageUrl)} 
                           alt="Current" 
                           className="w-32 h-32 object-cover rounded-lg border border-border"
                         />

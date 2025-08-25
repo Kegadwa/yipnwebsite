@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaSpinner, FaSearch, FaShoppingCart, FaHeart, FaTimes, FaTrash } from "react-icons/fa";
-import { productService, testFirebaseConnection } from "../lib/firebase-services";
+import { productService, testFirebaseConnection, imageService } from "../lib/firebase-services";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 
@@ -60,6 +60,14 @@ export default function Shop() {
 			const allProducts = await productService.readAll();
 			console.log("Products loaded:", allProducts);
 			console.log("Products length:", allProducts.length);
+			
+			// Log image URLs for debugging
+			allProducts.forEach((product: Product) => {
+				if (product.imageUrl) {
+					console.log(`Product: ${product.name}, Original URL: ${product.imageUrl}, Converted URL: ${imageService.convertGsUrlToStorageUrl(product.imageUrl)}`);
+				}
+			});
+			
 			console.log("Products data:", JSON.stringify(allProducts, null, 2));
 			setProducts(allProducts);
 			setFilteredProducts(allProducts);
@@ -252,7 +260,7 @@ export default function Shop() {
 									<div className="relative h-64 bg-muted overflow-hidden">
 										{product.imageUrl ? (
 											<img
-												src={product.imageUrl}
+												src={imageService.convertGsUrlToStorageUrl(product.imageUrl)}
 												alt={product.name}
 												className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
 												onError={(e) => {
@@ -369,9 +377,13 @@ export default function Shop() {
 											<div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
 												{item.product.imageUrl ? (
 													<img
-														src={item.product.imageUrl}
+														src={imageService.convertGsUrlToStorageUrl(item.product.imageUrl)}
 														alt={item.product.name}
 														className="w-full h-full object-cover"
+														onError={(e) => {
+															const target = e.currentTarget as HTMLImageElement;
+															target.style.display = 'none';
+														}}
 													/>
 												) : (
 													<FaHeart className="text-3xl text-muted" />

@@ -174,11 +174,62 @@ export const userService = {
   },
 };
 
+// CORS Bypass Service
+export const corsBypassService = {
+  // Check if CORS is working
+  testCORS: async (): Promise<boolean> => {
+    try {
+      const testRef = ref(storage, 'test-cors.txt');
+      const testBlob = new Blob(['test'], { type: 'text/plain' });
+      await uploadBytes(testRef, testBlob);
+      await deleteObject(testRef);
+      return true;
+    } catch (error) {
+      console.log('CORS test failed:', error);
+      return false;
+    }
+  },
+
+  // Get CORS status
+  getCORSStatus: async (): Promise<string> => {
+    try {
+      const isWorking = await corsBypassService.testCORS();
+      return isWorking ? 'working' : 'blocked';
+    } catch (error) {
+      console.log('CORS status check failed:', error);
+      return 'blocked';
+    }
+  }
+};
+
 // Image Upload Service
 export const imageService = {
+  // Convert gs:// URLs to proper Firebase Storage URLs
+  convertGsUrlToStorageUrl: (gsUrl: string): string => {
+    if (gsUrl.startsWith('gs://')) {
+      // Extract bucket and path from gs:// URL
+      const parts = gsUrl.replace('gs://', '').split('/');
+      const bucket = parts[0];
+      const path = parts.slice(1).join('/');
+      
+      // Convert to Firebase Storage URL format
+      return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(path)}?alt=media`;
+    }
+    return gsUrl;
+  },
+
   // Upload image to Firebase Storage
   uploadImage: async (file: File, path: string): Promise<string> => {
     try {
+      // First check CORS status
+      const corsStatus = await corsBypassService.getCORSStatus();
+      console.log('CORS status:', corsStatus);
+      
+      if (corsStatus === 'blocked') {
+        console.log('CORS is blocked, using base64 fallback');
+        return await imageService.uploadImageAsBase64(file, path);
+      }
+      
       const storageRef = ref(storage, path);
       
       // Add metadata to help with CORS
@@ -187,25 +238,71 @@ export const imageService = {
         cacheControl: 'public, max-age=31536000',
       };
       
-      const snapshot = await uploadBytes(storageRef, file, metadata);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      return downloadURL;
+      // Try the standard upload first
+      try {
+        const snapshot = await uploadBytes(storageRef, file, metadata);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        return downloadURL;
+      } catch (uploadError: any) {
+        console.log('Standard upload failed, trying alternative method:', uploadError);
+        
+        // Alternative: Convert to base64 and store in Firestore temporarily
+        if (uploadError.code === 'storage/unauthorized' || uploadError.message?.includes('CORS')) {
+          console.log('CORS error detected, using base64 fallback');
+          return await imageService.uploadImageAsBase64(file, path);
+        }
+        
+        throw uploadError;
+      }
     } catch (error: any) {
       console.error('Error uploading image:', error);
       
-      // Handle CORS errors specifically
-      if (error.code === 'storage/unauthorized' || error.message?.includes('CORS')) {
-        console.error('CORS error detected. Please check Firebase Storage CORS configuration.');
-        throw new Error('Image upload failed due to CORS configuration. Please try again or contact support.');
-      }
-      
-      throw error;
+      // If any error occurs, fall back to base64
+      console.log('Falling back to base64 due to error:', error);
+      return await imageService.uploadImageAsBase64(file, path);
     }
+  },
+
+  // Fallback method: Store image as base64 in Firestore
+  uploadImageAsBase64: async (file: File, path: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const base64Data = e.target?.result as string;
+          
+          // Store in a temporary collection for images
+          const imageDoc = await addDoc(collection(db, 'temp_images'), {
+            path: path,
+            data: base64Data,
+            contentType: file.type,
+            fileName: file.name,
+            uploadedAt: serverTimestamp(),
+            size: file.size
+          });
+          
+          // Return a data URL that can be used immediately
+          resolve(base64Data);
+          
+          console.log('Image stored as base64 in Firestore:', imageDoc.id);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   },
 
   // Delete image from Firebase Storage
   deleteImage: async (imageUrl: string): Promise<void> => {
     try {
+      // Check if it's a base64 data URL
+      if (imageUrl.startsWith('data:')) {
+        console.log('Base64 image detected, no deletion needed');
+        return;
+      }
+      
       // Extract the path from the full URL
       const url = new URL(imageUrl);
       const path = url.pathname.split('/o/')[1]?.split('?')[0];

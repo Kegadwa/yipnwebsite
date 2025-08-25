@@ -26,8 +26,6 @@ import {
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 import AdminAuthModal from "../components/AdminAuthModal";
-import { useAuth } from "../contexts/AuthContext";
-import { testFirebaseConnection } from "../lib/firebase-services";
 
 // Import subpage components
 import AdminDashboard from "../components/admin/AdminDashboard";
@@ -38,85 +36,45 @@ import AdminMerchandise from "../components/admin/AdminMerchandise";
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [firebaseStatus, setFirebaseStatus] = useState<string>("Initializing...");
-  const [loading, setLoading] = useState(true);
-  
-  const { currentUser, loading: authLoading, signOut, hasPermission } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Load data on component mount
-  useEffect(() => {
-    if (currentUser) {
-      initializeFirebase();
-    }
-  }, [currentUser]);
-
-  const initializeFirebase = async () => {
-    try {
-      setFirebaseStatus("Connecting to Firebase...");
-      const connected = await testFirebaseConnection();
-      if (!connected) {
-        throw new Error("Failed to connect to Firebase");
-      }
-      setFirebaseStatus("Connected to Firebase");
-      setLoading(false);
-    } catch (error) {
-      console.error("Firebase initialization failed:", error);
-      setFirebaseStatus(
-        `Firebase Error: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+  const handleAuthSuccess = () => {
+    setIsAuthenticated(true);
+    setLoading(false);
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      setActiveTab('dashboard');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setActiveTab('dashboard');
   };
 
-  const renderActiveTab = () => {
+    const renderActiveTab = () => {
     switch (activeTab) {
       case 'dashboard':
         return <AdminDashboard />;
       case 'instructors':
-        return hasPermission('canManageInstructors') ? <AdminInstructors /> : <AccessDenied />;
+        return <AdminInstructors />;
       case 'blog':
-        return hasPermission('canManageBlog') ? <AdminBlog /> : <AccessDenied />;
+        return <AdminBlog />;
       case 'merchandise':
-        return hasPermission('canManageMerchandise') ? <AdminMerchandise /> : <AccessDenied />;
+        return <AdminMerchandise />;
       default:
         return <AdminDashboard />;
     }
   };
 
   // Show auth modal if not authenticated
-  if (!currentUser && !authLoading) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
-          <AdminAuthModal 
+        <div className="flex-1 flex items-center justify-center bg-muted">
+          <AdminAuthModal
             isOpen={true} 
             onClose={() => {}} 
+            onSuccess={handleAuthSuccess}
           />
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  // Show loading state
-  if (authLoading || loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">{firebaseStatus}</p>
-          </div>
         </div>
         <Footer />
       </div>
@@ -127,33 +85,30 @@ const Admin = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-1 flex bg-gray-100">
+      <div className="flex-1 flex bg-muted">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-lg">
-          <div className="p-6 border-b border-gray-200">
+        <div className="w-64 bg-card shadow-lg">
+                    <div className="p-6 border-b border-border">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <FaUserCog className="text-blue-600" />
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <FaUserCog className="text-primary" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Admin Panel</h2>
-                <p className="text-sm text-gray-500">{currentUser?.displayName}</p>
-                <p className="text-xs text-blue-600 capitalize">{currentUser?.role}</p>
+                <h2 className="text-lg font-semibold text-foreground">Admin Panel</h2>
+                <p className="text-sm text-muted-foreground">Administrator</p>
+                <p className="text-xs text-primary capitalize">Admin</p>
               </div>
             </div>
           </div>
 
           <nav className="p-4 space-y-2">
             {[
-              { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt, permission: null },
-              { id: 'instructors', label: 'Instructors', icon: FaUserTie, permission: 'canManageInstructors' },
-              { id: 'blog', label: 'Blog', icon: FaBlog, permission: 'canManageBlog' },
-              { id: 'merchandise', label: 'Merchandise', icon: FaShoppingCart, permission: 'canManageMerchandise' },
+              { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt },
+              { id: 'instructors', label: 'Instructors', icon: FaUserTie },
+              { id: 'blog', label: 'Blog', icon: FaBlog },
+              { id: 'merchandise', label: 'Merchandise', icon: FaShoppingCart },
             ].map((tab) => {
               const Icon = tab.icon;
-              const hasAccess = !tab.permission || hasPermission(tab.permission as any);
-              
-              if (!hasAccess) return null;
               
               return (
                 <button
@@ -161,8 +116,8 @@ const Admin = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-blue-100 text-blue-700 border-r-2 border-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-primary/10 text-primary border-r-2 border-primary'
+                      : 'text-foreground hover:bg-muted'
                   }`}
                 >
                   <Icon className="text-lg" />
@@ -172,10 +127,10 @@ const Admin = () => {
             })}
           </nav>
 
-          <div className="p-4 border-t border-gray-200">
+                    <div className="p-4 border-t border-border">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-destructive hover:bg-destructive/10 transition-colors"
             >
               <FaSignOutAlt />
               <span>Sign Out</span>
@@ -199,11 +154,11 @@ const Admin = () => {
 // Access Denied Component
 const AccessDenied = () => (
   <div className="text-center py-12">
-    <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-      <FaLock className="text-4xl text-red-600" />
+    <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
+      <FaLock className="text-4xl text-destructive" />
     </div>
-    <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
-    <p className="text-gray-600 max-w-md mx-auto">
+    <h2 className="text-2xl font-bold text-foreground mb-4">Access Denied</h2>
+    <p className="text-muted-foreground max-w-md mx-auto">
       You don't have permission to access this section. Please contact your administrator if you need access.
     </p>
   </div>

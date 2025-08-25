@@ -55,13 +55,13 @@ const AdminDashboard = () => {
   };
 
   const StatCard = ({ title, value, icon: Icon, color, change }: any) => (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-card rounded-lg shadow-md p-6 border border-border">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold text-foreground">{value}</p>
           {change && (
-            <p className={`text-sm ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-sm ${change > 0 ? 'text-wellness' : 'text-destructive'}`}>
               {change > 0 ? '+' : ''}{change}% from last month
             </p>
           )}
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
 
   const QuickActionCard = ({ title, description, icon: Icon, color, onClick }: any) => (
     <div 
-      className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+      className="bg-card rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow border border-border"
       onClick={onClick}
     >
       <div className="flex items-center space-x-4">
@@ -83,8 +83,8 @@ const AdminDashboard = () => {
           <Icon className="text-white text-xl" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          <p className="text-gray-600">{description}</p>
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+          <p className="text-muted-foreground">{description}</p>
         </div>
       </div>
     </div>
@@ -95,10 +95,10 @@ const AdminDashboard = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-          <p className="text-gray-600 mt-2">Welcome back! Here's what's happening with your website.</p>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard Overview</h1>
+          <p className="text-muted-foreground mt-2">Welcome back! Here's what's happening with your website.</p>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-muted-foreground">
           Last updated: {new Date().toLocaleString()}
         </div>
       </div>
@@ -159,7 +159,7 @@ const AdminDashboard = () => {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold text-foreground mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <QuickActionCard
             title="Add Instructor"
@@ -194,22 +194,22 @@ const AdminDashboard = () => {
 
       {/* Recent Activity */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
-        <div className="bg-white rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold text-foreground mb-4">Recent Activity</h2>
+        <div className="bg-card rounded-lg shadow-md border border-border">
           <div className="p-6">
             <div className="space-y-4">
               {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg">
+                <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-muted rounded-lg">
                   <div className={`w-2 h-2 rounded-full ${
                     activity.type === 'instructor' ? 'bg-blue-500' :
                     activity.type === 'blog' ? 'bg-green-500' :
                     activity.type === 'product' ? 'bg-purple-500' : 'bg-orange-500'
                   }`} />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                    <p className="text-sm text-gray-600">{activity.details}</p>
+                    <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                    <p className="text-sm text-muted-foreground">{activity.details}</p>
                   </div>
-                  <span className="text-xs text-gray-500">{activity.time}</span>
+                  <span className="text-xs text-muted-foreground">{activity.time}</span>
                 </div>
               ))}
             </div>
@@ -219,28 +219,28 @@ const AdminDashboard = () => {
 
       {/* System Status */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">System Status</h2>
+        <h2 className="text-xl font-semibold text-foreground mb-4">System Status</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Firebase Connection</h3>
+          <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Firebase Connection</h3>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-green-600 font-medium">Connected</span>
+              <div className="w-3 h-3 bg-wellness rounded-full"></div>
+              <span className="text-wellness font-medium">Connected</span>
             </div>
-            <p className="text-sm text-gray-600 mt-2">All services are running normally</p>
+            <p className="text-sm text-muted-foreground mt-2">All services are running normally</p>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Storage Usage</h3>
+          <div className="bg-card rounded-lg shadow-md p-6 border border-border">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Storage Usage</h3>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Images & Files</span>
                 <span>2.4 GB / 5 GB</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '48%' }}></div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full" style={{ width: '48%' }}></div>
               </div>
-              <p className="text-xs text-gray-500">48% of storage used</p>
+              <p className="text-xs text-muted-foreground">48% of storage used</p>
             </div>
           </div>
         </div>

@@ -324,12 +324,12 @@ const AdminBlog = () => {
   const BlogModal = ({ isOpen, onClose, title, children }: any) => (
     isOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between p-6 border-b">
-            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+        <div className="bg-card rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto border border-border">
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h2 className="text-2xl font-bold text-foreground">{title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-muted-foreground hover:text-foreground"
               title="Close modal"
               aria-label="Close modal"
             >
@@ -349,12 +349,12 @@ const AdminBlog = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Manage Blog</h1>
-          <p className="text-gray-600 mt-2">Create, edit, and manage your blog content</p>
+          <h1 className="text-3xl font-bold text-foreground">Manage Blog</h1>
+          <p className="text-muted-foreground mt-2">Create, edit, and manage your blog content</p>
         </div>
         <button
           onClick={openAddModal}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
+          className="bg-wellness hover:bg-wellness/80 text-wellness-foreground px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
         >
           <FaPlus />
           <span>New Blog Post</span>
@@ -362,7 +362,7 @@ const AdminBlog = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6 border border-border">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-2">
             <input
@@ -370,14 +370,14 @@ const AdminBlog = () => {
               placeholder="Search blog posts by title, excerpt, or author..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
             />
           </div>
           <div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
               aria-label="Filter by category"
             >
               <option value="all">All Categories</option>
@@ -390,7 +390,7 @@ const AdminBlog = () => {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
               aria-label="Filter by status"
             >
               <option value="all">All Status</option>
@@ -399,42 +399,42 @@ const AdminBlog = () => {
             </select>
           </div>
         </div>
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-muted-foreground">
           {filteredPosts.length} of {blogPosts.length} posts
         </div>
       </div>
 
       {/* Blog Posts List */}
-      <div className="bg-white rounded-lg shadow-md">
+      <div className="bg-card rounded-lg shadow-md border border-border">
         {loading ? (
           <div className="flex items-center justify-center p-12">
-            <FaSpinner className="animate-spin text-4xl text-green-600" />
+            <FaSpinner className="animate-spin text-4xl text-wellness" />
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Post
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Author
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-card divide-y divide-border">
                 {filteredPosts.map((post) => (
-                  <tr key={post.id} className="hover:bg-gray-50">
+                  <tr key={post.id} className="hover:bg-muted">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
@@ -445,17 +445,17 @@ const AdminBlog = () => {
                               className="w-16 h-16 rounded-lg object-cover"
                             />
                           ) : (
-                            <FaNewspaper className="text-gray-400 text-xl" />
+                            <FaNewspaper className="text-muted-foreground text-xl" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate">
+                          <div className="text-sm font-medium text-foreground truncate">
                             {post.title}
                           </div>
-                          <div className="text-sm text-gray-500 truncate">
+                          <div className="text-sm text-muted-foreground truncate">
                             {post.excerpt}
                           </div>
-                          <div className="flex items-center space-x-4 text-xs text-gray-400 mt-1">
+                          <div className="flex items-center space-x-4 text-xs text-muted-foreground mt-1">
                             <span className="flex items-center">
                               <FaCalendarAlt className="mr-1" />
                               {post.publishDate.toLocaleDateString()}
@@ -469,10 +469,10 @@ const AdminBlog = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{post.author}</div>
+                      <div className="text-sm text-foreground">{post.author}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary/20 text-primary">
                         {post.category}
                       </span>
                     </td>
@@ -481,8 +481,8 @@ const AdminBlog = () => {
                         onClick={() => togglePublishStatus(post.id!)}
                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full cursor-pointer ${
                           post.isPublished 
-                            ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                            : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                            ? 'bg-wellness/20 text-wellness hover:bg-wellness/30' 
+                            : 'bg-secondary/20 text-secondary hover:bg-secondary/30'
                         }`}
                       >
                         {post.isPublished ? 'Published' : 'Draft'}
@@ -492,21 +492,21 @@ const AdminBlog = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => openViewModal(post)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-primary hover:text-primary/80"
                           title="View"
                         >
                           <FaEye />
                         </button>
                         <button
                           onClick={() => openEditModal(post)}
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className="text-secondary hover:text-secondary/80"
                           title="Edit"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => handleDelete(post.id!)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-destructive hover:text-destructive/80"
                           title="Delete"
                         >
                           <FaTrash />
@@ -531,10 +531,10 @@ const AdminBlog = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
+              <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
               
               <div>
-                <label htmlFor="blog-title" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-title" className="block text-sm font-medium text-foreground mb-2">
                   Title *
                 </label>
                 <input
@@ -542,13 +542,13 @@ const AdminBlog = () => {
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="blog-excerpt" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-excerpt" className="block text-sm font-medium text-foreground mb-2">
                   Excerpt *
                 </label>
                 <textarea
@@ -556,13 +556,13 @@ const AdminBlog = () => {
                   value={formData.excerpt}
                   onChange={(e) => handleInputChange('excerpt', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="blog-author" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-author" className="block text-sm font-medium text-foreground mb-2">
                   Author *
                 </label>
                 <input
@@ -570,20 +570,20 @@ const AdminBlog = () => {
                   type="text"
                   value={formData.author}
                   onChange={(e) => handleInputChange('author', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="blog-category" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-category" className="block text-sm font-medium text-foreground mb-2">
                   Category *
                 </label>
                 <select
                   id="blog-category"
                   value={formData.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                   required
                   aria-label="Select blog category"
                 >
@@ -597,10 +597,10 @@ const AdminBlog = () => {
 
             {/* Additional Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Additional Details</h3>
+              <h3 className="text-lg font-semibold text-foreground">Additional Details</h3>
               
               <div>
-                <label htmlFor="blog-publish-date" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-publish-date" className="block text-sm font-medium text-foreground mb-2">
                   Publish Date
                 </label>
                 <input
@@ -608,12 +608,12 @@ const AdminBlog = () => {
                   type="date"
                   value={formData.publishDate.toISOString().split('T')[0]}
                   onChange={(e) => handleInputChange('publishDate', new Date(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                 />
               </div>
 
               <div>
-                <label htmlFor="blog-tags" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-tags" className="block text-sm font-medium text-foreground mb-2">
                   Tags (comma-separated)
                 </label>
                 <input
@@ -622,12 +622,12 @@ const AdminBlog = () => {
                   value={formData.tags.join(', ')}
                   onChange={(e) => handleTagsChange(e.target.value)}
                   placeholder="yoga, wellness, beginners"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                 />
               </div>
 
               <div>
-                <label htmlFor="blog-read-time" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-read-time" className="block text-sm font-medium text-foreground mb-2">
                   Read Time (minutes)
                 </label>
                 <input
@@ -636,12 +636,12 @@ const AdminBlog = () => {
                   value={formData.readTime}
                   onChange={(e) => handleInputChange('readTime', parseInt(e.target.value))}
                   min="1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Featured Image
                 </label>
                 <div className="flex items-center space-x-4">
@@ -654,7 +654,7 @@ const AdminBlog = () => {
                   />
                   <label
                     htmlFor="blog-image-upload"
-                    className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md flex items-center space-x-2 transition-colors"
+                    className="cursor-pointer bg-muted hover:bg-muted/80 px-4 py-2 rounded-md flex items-center space-x-2 transition-colors text-foreground"
                   >
                     <FaImage />
                     <span>Upload Image</span>
@@ -670,14 +670,14 @@ const AdminBlog = () => {
               </div>
 
               <div>
-                <label htmlFor="blog-status" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="blog-status" className="block text-sm font-medium text-foreground mb-2">
                   Status
                 </label>
                 <select
                   id="blog-status"
                   value={formData.isPublished ? 'published' : 'draft'}
                   onChange={(e) => handleInputChange('isPublished', e.target.value === 'published')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                   aria-label="Select blog status"
                 >
                   <option value="draft">Draft</option>
@@ -689,9 +689,9 @@ const AdminBlog = () => {
 
           {/* Content */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Content</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Content</h3>
             <div>
-              <label htmlFor="blog-content" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="blog-content" className="block text-sm font-medium text-foreground mb-2">
                 Content *
               </label>
               <textarea
@@ -699,29 +699,29 @@ const AdminBlog = () => {
                 value={formData.content}
                 onChange={(e) => handleInputChange('content', e.target.value)}
                 rows={15}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent font-mono text-sm bg-input text-foreground"
                 placeholder="Write your blog post content here. You can use HTML tags for formatting."
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 You can use basic HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt;
               </p>
             </div>
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t">
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border">
             <button
               type="button"
               onClick={closeModal}
-              className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-border rounded-md text-muted-foreground hover:bg-muted transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 transition-colors flex items-center space-x-2"
+              className="px-6 py-2 bg-wellness text-wellness-foreground rounded-md hover:bg-wellness/80 disabled:opacity-50 transition-colors flex items-center space-x-2"
             >
               {loading ? <FaSpinner className="animate-spin" /> : <FaSave />}
               <span>{isAddModalOpen ? 'Create Post' : 'Save Changes'}</span>
@@ -749,8 +749,8 @@ const AdminBlog = () => {
                   />
                 )}
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{selectedPost.title}</h1>
-                  <div className="flex items-center space-x-6 text-gray-600 mt-2">
+                  <h1 className="text-3xl font-bold text-foreground">{selectedPost.title}</h1>
+                  <div className="flex items-center space-x-6 text-muted-foreground mt-2">
                     <span className="flex items-center">
                       <FaUser className="mr-2" />
                       {selectedPost.author}
@@ -765,22 +765,22 @@ const AdminBlog = () => {
                     </span>
                   </div>
                   <div className="mt-2">
-                    <span className="inline-flex px-2 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <span className="inline-flex px-2 py-1 text-sm font-semibold rounded-full bg-primary/20 text-primary">
                       {selectedPost.category}
                     </span>
                   </div>
                 </div>
               </div>
-              <p className="text-lg text-gray-700 italic">{selectedPost.excerpt}</p>
+              <p className="text-lg text-muted-foreground italic">{selectedPost.excerpt}</p>
             </div>
 
             {/* Tags */}
             {selectedPost.tags.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Tags</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {selectedPost.tags.map((tag, index) => (
-                    <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                    <span key={index} className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
                       {tag}
                     </span>
                   ))}
@@ -790,7 +790,7 @@ const AdminBlog = () => {
 
             {/* Content */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Content</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Content</h3>
               <div 
                 className="prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: selectedPost.content }}
@@ -798,13 +798,13 @@ const AdminBlog = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end space-x-4 pt-6 border-t">
+            <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border">
               <button
                 onClick={() => {
                   closeModal();
                   openEditModal(selectedPost);
                 }}
-                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2"
+                className="px-6 py-2 bg-wellness text-wellness-foreground rounded-md hover:bg-wellness/80 transition-colors flex items-center space-x-2"
               >
                 <FaEdit />
                 <span>Edit Post</span>

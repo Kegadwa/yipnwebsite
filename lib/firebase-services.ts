@@ -1,6 +1,4 @@
-import { initializeApp } from 'firebase/app';
 import { 
-  getFirestore, 
   collection, 
   doc, 
   getDocs, 
@@ -15,17 +13,18 @@ import {
   onSnapshot,
   writeBatch,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  Query,
+  CollectionReference,
+  DocumentData
 } from 'firebase/firestore';
 import { 
-  getStorage, 
   ref, 
   uploadBytes, 
   getDownloadURL, 
   deleteObject 
 } from 'firebase/storage';
 import { 
-  getAuth, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   signOut,
@@ -33,21 +32,8 @@ import {
   User as FirebaseUser
 } from 'firebase/auth';
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const auth = getAuth(app);
+// Import Firebase instances from the main firebase.ts file
+import { db, storage, auth } from './firebase';
 
 // User Roles and Permissions
 export enum UserRole {
@@ -194,11 +180,25 @@ export const imageService = {
   uploadImage: async (file: File, path: string): Promise<string> => {
     try {
       const storageRef = ref(storage, path);
-      const snapshot = await uploadBytes(storageRef, file);
+      
+      // Add metadata to help with CORS
+      const metadata = {
+        contentType: file.type,
+        cacheControl: 'public, max-age=31536000',
+      };
+      
+      const snapshot = await uploadBytes(storageRef, file, metadata);
       const downloadURL = await getDownloadURL(snapshot.ref);
       return downloadURL;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading image:', error);
+      
+      // Handle CORS errors specifically
+      if (error.code === 'storage/unauthorized' || error.message?.includes('CORS')) {
+        console.error('CORS error detected. Please check Firebase Storage CORS configuration.');
+        throw new Error('Image upload failed due to CORS configuration. Please try again or contact support.');
+      }
+      
       throw error;
     }
   },
@@ -206,7 +206,16 @@ export const imageService = {
   // Delete image from Firebase Storage
   deleteImage: async (imageUrl: string): Promise<void> => {
     try {
-      const imageRef = ref(storage, imageUrl);
+      // Extract the path from the full URL
+      const url = new URL(imageUrl);
+      const path = url.pathname.split('/o/')[1]?.split('?')[0];
+      
+      if (!path) {
+        throw new Error('Invalid image URL format');
+      }
+      
+      const decodedPath = decodeURIComponent(path);
+      const imageRef = ref(storage, decodedPath);
       await deleteObject(imageRef);
     } catch (error) {
       console.error('Error deleting image:', error);
@@ -228,7 +237,7 @@ export const dataService = {
   // Export data to JSON
   exportData: async (collectionName: string, filters?: any): Promise<any[]> => {
     try {
-      let q = collection(db, collectionName);
+      let q: Query<DocumentData> = collection(db, collectionName);
       
       if (filters) {
         Object.entries(filters).forEach(([key, value]) => {
@@ -295,7 +304,7 @@ export const realtimeService = {
     orderByField?: string,
     limitCount?: number
   ) => {
-    let q = collection(db, collectionName);
+    let q: Query<DocumentData> = collection(db, collectionName);
     
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -377,7 +386,7 @@ export const createCRUDService = <T extends { id?: string }>(
   // Read all documents
   readAll: async (filters?: any): Promise<T[]> => {
     try {
-      let q = collection(db, collectionName);
+      let q: Query<DocumentData> = collection(db, collectionName);
       
       if (filters) {
         Object.entries(filters).forEach(([key, value]) => {

@@ -303,12 +303,12 @@ const AdminInstructors = () => {
   const InstructorModal = ({ isOpen, onClose, title, children }: any) => (
     isOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between p-6 border-b">
-            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+        <div className="bg-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-border">
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h2 className="text-2xl font-bold text-foreground">{title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-muted-foreground hover:text-foreground"
               title="Close modal"
               aria-label="Close modal"
             >
@@ -328,15 +328,15 @@ const AdminInstructors = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Manage Instructors</h1>
-          <p className="text-gray-600 mt-2">Add, edit, and manage instructor profiles</p>
+          <h1 className="text-3xl font-bold text-foreground">Manage Instructors</h1>
+          <p className="text-muted-foreground mt-2">Add, edit, and manage instructor profiles</p>
         </div>
         <div className="flex items-center space-x-3">
           {hasPermission('canExportData') && (
             <button
               onClick={handleExportData}
               disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
+              className="bg-wellness hover:bg-wellness/80 text-wellness-foreground px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
               title="Export data"
             >
               <FaDownload />
@@ -348,7 +348,7 @@ const AdminInstructors = () => {
             <button
               onClick={() => setShowImportModal(true)}
               disabled={loading}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
+              className="bg-accent hover:bg-accent/80 text-accent-foreground px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
               title="Import data"
             >
               <FaUpload />
@@ -359,7 +359,7 @@ const AdminInstructors = () => {
           {hasPermission('canManageInstructors') && (
             <button
               onClick={openAddModal}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
+              className="bg-primary hover:bg-primary/80 text-primary-foreground px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
             >
               <FaPlus />
               <span>Add Instructor</span>
@@ -369,7 +369,7 @@ const AdminInstructors = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6 border border-border">
         <div className="flex items-center space-x-4">
           <div className="flex-1">
             <input
@@ -377,49 +377,49 @@ const AdminInstructors = () => {
               placeholder="Search instructors by name, style, or location..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
             />
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground">
             {filteredInstructors.length} of {instructors.length} instructors
           </div>
         </div>
       </div>
 
       {/* Instructors List */}
-      <div className="bg-white rounded-lg shadow-md">
+      <div className="bg-card rounded-lg shadow-md border border-border">
         {loading ? (
           <div className="flex items-center justify-center p-12">
-            <FaSpinner className="animate-spin text-4xl text-blue-600" />
+            <FaSpinner className="animate-spin text-4xl text-primary" />
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Instructor
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Style
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Location
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-card divide-y divide-border">
                 {filteredInstructors.map((instructor) => (
-                  <tr key={instructor.id} className="hover:bg-gray-50">
+                  <tr key={instructor.id} className="hover:bg-muted">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mr-4">
                           {instructor.imageUrl ? (
                             <img 
                               src={instructor.imageUrl} 
@@ -427,26 +427,26 @@ const AdminInstructors = () => {
                               className="w-12 h-12 rounded-full object-cover"
                             />
                           ) : (
-                            <FaUserTie className="text-gray-400 text-xl" />
+                            <FaUserTie className="text-muted-foreground text-xl" />
                           )}
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{instructor.name}</div>
-                          <div className="text-sm text-gray-500">{instructor.fullName}</div>
+                          <div className="text-sm font-medium text-foreground">{instructor.name}</div>
+                          <div className="text-sm text-muted-foreground">{instructor.fullName}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{instructor.style}</div>
+                      <div className="text-sm text-foreground">{instructor.style}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{instructor.location}</div>
+                      <div className="text-sm text-foreground">{instructor.location}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         instructor.isActive 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
+                          ? 'bg-wellness/20 text-wellness' 
+                          : 'bg-destructive/20 text-destructive'
                       }`}>
                         {instructor.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -455,7 +455,7 @@ const AdminInstructors = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => openViewModal(instructor)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-primary hover:text-primary/80"
                           title="View"
                         >
                           <FaEye />
@@ -464,7 +464,7 @@ const AdminInstructors = () => {
                         {hasPermission('canManageInstructors') && (
                           <button
                             onClick={() => openEditModal(instructor)}
-                            className="text-indigo-600 hover:text-indigo-900"
+                            className="text-secondary hover:text-secondary/80"
                             title="Edit"
                           >
                             <FaEdit />
@@ -474,7 +474,7 @@ const AdminInstructors = () => {
                         {hasPermission('canDeleteContent') && (
                           <button
                             onClick={() => handleDelete(instructor.id!)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-destructive hover:text-destructive/80"
                             title="Delete"
                           >
                             <FaTrash />
@@ -500,10 +500,10 @@ const AdminInstructors = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
+              <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
               
               <div>
-                <label htmlFor="instructor-name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-name" className="block text-sm font-medium text-foreground mb-2">
                   Display Name *
                 </label>
                 <input
@@ -511,13 +511,13 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="instructor-fullname" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-fullname" className="block text-sm font-medium text-foreground mb-2">
                   Full Name *
                 </label>
                 <input
@@ -525,13 +525,13 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="instructor-nickname" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-nickname" className="block text-sm font-medium text-foreground mb-2">
                   Nickname
                 </label>
                 <input
@@ -539,12 +539,12 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.nickname}
                   onChange={(e) => handleInputChange('nickname', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                 />
               </div>
 
               <div>
-                <label htmlFor="instructor-style" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-style" className="block text-sm font-medium text-foreground mb-2">
                   Style/Specialties *
                 </label>
                 <input
@@ -552,13 +552,13 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.style}
                   onChange={(e) => handleInputChange('style', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="instructor-location" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-location" className="block text-sm font-medium text-foreground mb-2">
                   Location *
                 </label>
                 <input
@@ -566,7 +566,7 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
@@ -574,10 +574,10 @@ const AdminInstructors = () => {
 
             {/* Bio and Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Bio & Details</h3>
+              <h3 className="text-lg font-semibold text-foreground">Bio & Details</h3>
               
               <div>
-                <label htmlFor="instructor-bio" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-bio" className="block text-sm font-medium text-foreground mb-2">
                   Bio *
                 </label>
                 <textarea
@@ -585,13 +585,13 @@ const AdminInstructors = () => {
                   value={formData.bio}
                   onChange={(e) => handleInputChange('bio', e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="instructor-image" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-image" className="block text-sm font-medium text-foreground mb-2">
                   Profile Image
                 </label>
                 <div className="space-y-3">
@@ -605,7 +605,7 @@ const AdminInstructors = () => {
                     />
                     <label
                       htmlFor="image-upload"
-                      className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md flex items-center space-x-2 transition-colors"
+                      className="cursor-pointer bg-muted hover:bg-muted/80 px-4 py-2 rounded-md flex items-center space-x-2 transition-colors text-foreground"
                     >
                       <FaImage />
                       <span>Upload Image</span>
@@ -621,16 +621,16 @@ const AdminInstructors = () => {
                   
                   {/* Upload Progress */}
                   {uploadProgress > 0 && uploadProgress < 100 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2">
                       <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-primary h-2 rounded-full transition-all duration-300"
                         style={{ width: `${uploadProgress}%` }}
                       ></div>
                     </div>
                   )}
                   
                   {uploadProgress === 100 && (
-                    <div className="text-green-600 text-sm flex items-center space-x-2">
+                    <div className="text-wellness text-sm flex items-center space-x-2">
                       <FaCheck />
                       <span>Image uploaded successfully!</span>
                     </div>
@@ -639,14 +639,14 @@ const AdminInstructors = () => {
               </div>
 
               <div>
-                <label htmlFor="instructor-status" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-status" className="block text-sm font-medium text-foreground mb-2">
                   Status
                 </label>
                 <select
                   id="instructor-status"
                   value={formData.isActive ? 'active' : 'inactive'}
                   onChange={(e) => handleInputChange('isActive', e.target.value === 'active')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -657,11 +657,11 @@ const AdminInstructors = () => {
 
           {/* Additional Sections */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
+                          <h3 className="text-lg font-semibold text-foreground">Additional Information</h3>
             
             {/* Qualifications */}
             <div>
-              <label htmlFor="instructor-qualifications" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="instructor-qualifications" className="block text-sm font-medium text-foreground mb-2">
                 Qualifications
               </label>
               <textarea
@@ -669,14 +669,14 @@ const AdminInstructors = () => {
                 value={formData.qualifications}
                 onChange={(e) => handleInputChange('qualifications', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
               />
             </div>
 
             {/* Mantra */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="instructor-mantra" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-mantra" className="block text-sm font-medium text-foreground mb-2">
                   Personal Mantra
                 </label>
                 <input
@@ -684,11 +684,11 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.mantra}
                   onChange={(e) => handleInputChange('mantra', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                 />
               </div>
               <div>
-                <label htmlFor="instructor-mantra-source" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-mantra-source" className="block text-sm font-medium text-foreground mb-2">
                   Mantra Source
                 </label>
                 <input
@@ -696,7 +696,7 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.mantraSource}
                   onChange={(e) => handleInputChange('mantraSource', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                 />
               </div>
             </div>
@@ -704,7 +704,7 @@ const AdminInstructors = () => {
             {/* Social Media */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="instructor-instagram" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="instructor-instagram" className="block text-sm font-medium text-foreground mb-2">
                   Instagram Handle
                 </label>
                 <input
@@ -712,37 +712,37 @@ const AdminInstructors = () => {
                   type="text"
                   value={formData.social?.instagram || ''}
                   onChange={(e) => handleInputChange('social', { ...formData.social, instagram: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                 />
               </div>
-              <div>
-                <label htmlFor="instructor-followers" className="block text-sm font-medium text-gray-700 mb-2">
-                  Followers
-                </label>
-                <input
-                  id="instructor-followers"
-                  type="text"
-                  value={formData.social?.followers || ''}
-                  onChange={(e) => handleInputChange('social', { ...formData.social, followers: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+                              <div>
+                  <label htmlFor="instructor-followers" className="block text-sm font-medium text-foreground mb-2">
+                    Followers
+                  </label>
+                  <input
+                    id="instructor-followers"
+                    type="text"
+                    value={formData.social?.followers || ''}
+                    onChange={(e) => handleInputChange('social', { ...formData.social, followers: e.target.value })}
+                    className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                  />
+                </div>
             </div>
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t">
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border">
             <button
               type="button"
               onClick={closeModal}
-              className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-border rounded-md text-muted-foreground hover:bg-muted transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center space-x-2"
+              className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/80 disabled:opacity-50 transition-colors flex items-center space-x-2"
             >
               {loading ? <FaSpinner className="animate-spin" /> : <FaSave />}
               <span>{isAddModalOpen ? 'Add Instructor' : 'Save Changes'}</span>
@@ -761,7 +761,7 @@ const AdminInstructors = () => {
           <div className="space-y-6">
             {/* Profile Header */}
             <div className="flex items-center space-x-6">
-              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center">
                 {selectedInstructor.imageUrl ? (
                   <img 
                     src={selectedInstructor.imageUrl} 
@@ -769,49 +769,49 @@ const AdminInstructors = () => {
                     className="w-24 h-24 rounded-full object-cover"
                   />
                 ) : (
-                  <FaUserTie className="text-gray-400 text-4xl" />
+                  <FaUserTie className="text-muted-foreground text-4xl" />
                 )}
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-gray-900">{selectedInstructor.name}</h3>
+                <h3 className="text-2xl font-bold text-foreground">{selectedInstructor.name}</h3>
                 {selectedInstructor.nickname && (
-                  <p className="text-lg text-blue-600">"{selectedInstructor.nickname}"</p>
+                  <p className="text-lg text-primary">"{selectedInstructor.nickname}"</p>
                 )}
-                <p className="text-gray-600">{selectedInstructor.fullName}</p>
-                <p className="text-gray-600">{selectedInstructor.location}</p>
+                <p className="text-muted-foreground">{selectedInstructor.fullName}</p>
+                <p className="text-muted-foreground">{selectedInstructor.location}</p>
               </div>
             </div>
 
             {/* Bio */}
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Bio</h4>
-              <p className="text-gray-700">{selectedInstructor.bio}</p>
+              <h4 className="text-lg font-semibold text-foreground mb-2">Bio</h4>
+              <p className="text-muted-foreground">{selectedInstructor.bio}</p>
             </div>
 
             {/* Style */}
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Style & Specialties</h4>
-              <p className="text-gray-700">{selectedInstructor.style}</p>
+              <h4 className="text-lg font-semibold text-foreground mb-2">Style & Specialties</h4>
+              <p className="text-muted-foreground">{selectedInstructor.style}</p>
             </div>
 
             {/* Qualifications */}
             {selectedInstructor.qualifications && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Qualifications</h4>
-                <p className="text-gray-700">{selectedInstructor.qualifications}</p>
+                <h4 className="text-lg font-semibold text-foreground mb-2">Qualifications</h4>
+                <p className="text-muted-foreground">{selectedInstructor.qualifications}</p>
               </div>
             )}
 
             {/* Mantra */}
             {selectedInstructor.mantra && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Personal Mantra</h4>
-                <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
-                  <blockquote className="italic text-gray-800 font-medium">
+                <h4 className="text-lg font-semibold text-foreground mb-2">Personal Mantra</h4>
+                <div className="bg-primary/10 p-4 rounded-lg border-l-4 border-primary">
+                  <blockquote className="italic text-foreground font-medium">
                     "{selectedInstructor.mantra}"
                   </blockquote>
                   {selectedInstructor.mantraSource && (
-                    <p className="text-gray-600 text-sm mt-2">{selectedInstructor.mantraSource}</p>
+                    <p className="text-muted-foreground text-sm mt-2">{selectedInstructor.mantraSource}</p>
                   )}
                 </div>
               </div>
@@ -820,11 +820,11 @@ const AdminInstructors = () => {
             {/* Career Highlights */}
             {selectedInstructor.career && selectedInstructor.career.length > 0 && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Career & Leadership</h4>
+                <h4 className="text-lg font-semibold text-foreground mb-2">Career & Leadership</h4>
                 <ul className="space-y-2">
                   {selectedInstructor.career.map((item, index) => (
-                    <li key={index} className="text-gray-700 flex items-start">
-                      <span className="text-blue-500 mr-2">•</span>
+                    <li key={index} className="text-muted-foreground flex items-start">
+                      <span className="text-primary mr-2">•</span>
                       {item}
                     </li>
                   ))}
@@ -835,15 +835,15 @@ const AdminInstructors = () => {
             {/* Social Media */}
             {selectedInstructor.social && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Social Presence</h4>
+                <h4 className="text-lg font-semibold text-foreground mb-2">Social Presence</h4>
                 <div className="space-y-2">
                   {selectedInstructor.social.instagram && (
-                    <p className="text-gray-700">
+                    <p className="text-muted-foreground">
                       <strong>Instagram:</strong> {selectedInstructor.social.instagram}
                     </p>
                   )}
                   {selectedInstructor.social.followers && (
-                    <p className="text-gray-700">
+                    <p className="text-muted-foreground">
                       <strong>Followers:</strong> {selectedInstructor.social.followers}
                     </p>
                   )}
@@ -854,11 +854,11 @@ const AdminInstructors = () => {
             {/* Event Highlights */}
             {selectedInstructor.highlights && selectedInstructor.highlights.length > 0 && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Event Highlights</h4>
+                <h4 className="text-lg font-semibold text-foreground mb-2">Event Highlights</h4>
                 <ul className="space-y-2">
                   {selectedInstructor.highlights.map((highlight, index) => (
-                    <li key={index} className="text-gray-700 flex items-start">
-                      <span className="text-green-500 mr-2">•</span>
+                    <li key={index} className="text-muted-foreground flex items-start">
+                      <span className="text-wellness mr-2">•</span>
                       {highlight}
                     </li>
                   ))}
@@ -869,9 +869,9 @@ const AdminInstructors = () => {
             {/* Quote */}
             {selectedInstructor.quote && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Featured Quote</h4>
-                <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
-                  <blockquote className="italic text-gray-800 font-medium">
+                <h4 className="text-lg font-semibold text-foreground mb-2">Featured Quote</h4>
+                <div className="bg-wellness/10 p-4 rounded-lg border-l-4 border-wellness">
+                  <blockquote className="italic text-foreground font-medium">
                     "{selectedInstructor.quote}"
                   </blockquote>
                 </div>
@@ -880,13 +880,13 @@ const AdminInstructors = () => {
 
             {/* Actions */}
             {hasPermission('canManageInstructors') && (
-              <div className="flex items-center justify-end space-x-4 pt-6 border-t">
+              <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border">
                 <button
                   onClick={() => {
                     closeModal();
                     openEditModal(selectedInstructor);
                   }}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/80 transition-colors flex items-center space-x-2"
                 >
                   <FaEdit />
                   <span>Edit Profile</span>
@@ -900,12 +900,12 @@ const AdminInstructors = () => {
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-card rounded-lg max-w-md w-full p-6 border border-border">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Import Instructors</h3>
+              <h3 className="text-lg font-semibold text-foreground">Import Instructors</h3>
               <button
                 onClick={() => setShowImportModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-muted-foreground hover:text-foreground"
                 title="Close import modal"
                 aria-label="Close import modal"
               >
@@ -915,7 +915,7 @@ const AdminInstructors = () => {
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="import-file" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="import-file" className="block text-sm font-medium text-foreground mb-2">
                   Select JSON File
                 </label>
                 <input
@@ -923,14 +923,14 @@ const AdminInstructors = () => {
                   type="file"
                   accept=".json"
                   onChange={(e) => setImportFile(e.target.files?.[0] || null)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                 />
               </div>
               
-              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+              <div className="bg-secondary/10 border border-secondary/20 rounded-md p-3">
                 <div className="flex items-center space-x-2">
-                  <FaExclamationTriangle className="text-yellow-600" />
-                  <p className="text-sm text-yellow-800">
+                  <FaExclamationTriangle className="text-secondary" />
+                  <p className="text-sm text-secondary">
                     Warning: Importing will overwrite existing data with the same IDs.
                   </p>
                 </div>
@@ -939,14 +939,14 @@ const AdminInstructors = () => {
               <div className="flex items-center justify-end space-x-3">
                 <button
                   onClick={() => setShowImportModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-border rounded-md text-muted-foreground hover:bg-muted transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleImportData}
                   disabled={!importFile || loading}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 transition-colors flex items-center space-x-2"
+                  className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/80 disabled:opacity-50 transition-colors flex items-center space-x-2"
                 >
                   {loading ? <FaSpinner className="animate-spin" /> : <FaUpload />}
                   <span>Import</span>

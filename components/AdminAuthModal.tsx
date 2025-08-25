@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
-import { FaLock, FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa';
-import { useAuth } from '../contexts/AuthContext';
+import { FaLock, FaEye, FaEyeSlash, FaSpinner, FaUser } from 'react-icons/fa';
 
 interface AdminAuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
-const AdminAuthModal: React.FC<AdminAuthModalProps> = ({ isOpen, onClose }) => {
-  const [email, setEmail] = useState('');
+const AdminAuthModal: React.FC<AdminAuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    try {
-      await signIn(email, password);
-      onClose();
-    } catch (error: any) {
-      console.error('Authentication error:', error);
-      setError(error.message || 'Authentication failed. Please check your credentials.');
-    } finally {
+    // Simple authentication check
+    if (username === 'admin' && password === 'YIPN2025') {
+      // Simulate loading
+      setTimeout(() => {
+        setLoading(false);
+        onSuccess();
+        onClose();
+      }, 1000);
+    } else {
       setLoading(false);
+      setError('Invalid username or password. Please try again.');
     }
   };
 
@@ -47,16 +48,16 @@ const AdminAuthModal: React.FC<AdminAuthModalProps> = ({ isOpen, onClose }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              Username
             </label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="admin@example.com"
+              placeholder="admin"
               required
             />
           </div>
@@ -102,7 +103,7 @@ const AdminAuthModal: React.FC<AdminAuthModalProps> = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading || !username || !password}
               className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
             >
               {loading ? (

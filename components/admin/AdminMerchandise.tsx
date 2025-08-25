@@ -25,6 +25,7 @@ interface Product {
   category: string;
   stock: number;
   imageUrl?: string;
+  additionalUrls: string[];
   tags: string[];
   isActive: boolean;
   variants?: ProductVariant[];
@@ -38,6 +39,7 @@ interface ProductVariant {
   type: 'color' | 'size' | 'text' | 'custom';
   options: string[];
   priceModifier?: number;
+  imageUrl?: string;
 }
 
 interface Category {
@@ -83,6 +85,7 @@ const AdminMerchandise = () => {
     category: '',
     stock: 0,
     imageUrl: '',
+    additionalUrls: [],
     tags: [],
     isActive: true,
     variants: []
@@ -95,6 +98,7 @@ const AdminMerchandise = () => {
     category: '',
     stock: 0,
     imageUrl: '',
+    additionalUrls: [],
     tags: [],
     isActive: true,
     variants: []
@@ -106,6 +110,9 @@ const AdminMerchandise = () => {
     imageUrl: '',
     isActive: true
   });
+
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [newAdditionalUrl, setNewAdditionalUrl] = useState('');
 
   useEffect(() => {
     loadData();
@@ -130,6 +137,7 @@ const AdminMerchandise = () => {
         category: product.category || '',
         stock: product.stock || 0,
         imageUrl: product.imageUrl || '',
+        additionalUrls: product.additionalUrls || [],
         tags: product.tags || [],
         isActive: product.isActive !== undefined ? product.isActive : true,
         variants: product.variants || [],
@@ -198,6 +206,7 @@ const AdminMerchandise = () => {
         category: productForm.category,
         stock: productForm.stock,
         imageUrl: imageUrl,
+        additionalUrls: productForm.additionalUrls,
         tags: productForm.tags,
         isActive: productForm.isActive,
         variants: productForm.variants
@@ -219,6 +228,7 @@ const AdminMerchandise = () => {
         category: '',
         stock: 0,
         imageUrl: '',
+        additionalUrls: [],
         tags: [],
         isActive: true,
         variants: []
@@ -320,6 +330,7 @@ const AdminMerchandise = () => {
       category: product.category,
       stock: product.stock,
       imageUrl: product.imageUrl || '',
+      additionalUrls: product.additionalUrls || [],
       tags: product.tags || [],
       isActive: product.isActive,
       variants: product.variants || []
@@ -348,6 +359,7 @@ const AdminMerchandise = () => {
         category: editProductForm.category,
         stock: editProductForm.stock,
         imageUrl: imageUrl,
+        additionalUrls: editProductForm.additionalUrls,
         tags: editProductForm.tags,
         isActive: editProductForm.isActive,
         variants: editProductForm.variants
@@ -370,6 +382,7 @@ const AdminMerchandise = () => {
         category: '',
         stock: 0,
         imageUrl: '',
+        additionalUrls: [],
         tags: [],
         isActive: true,
         variants: []
@@ -414,8 +427,10 @@ const AdminMerchandise = () => {
   const addVariantOption = (variantIndex: number) => {
     setProductForm(prev => ({
       ...prev,
-      variants: prev.variants?.map((variant, i) => 
-        i === variantIndex ? { ...variant, options: [...variant.options, ''] } : variant
+      variants: prev.variants?.map((variant, index) => 
+        index === variantIndex 
+          ? { ...variant, options: [...variant.options, ''] }
+          : variant
       ) || []
     }));
   };
@@ -423,11 +438,10 @@ const AdminMerchandise = () => {
   const removeVariantOption = (variantIndex: number, optionIndex: number) => {
     setProductForm(prev => ({
       ...prev,
-      variants: prev.variants?.map((variant, i) => 
-        i === variantIndex ? { 
-          ...variant, 
-          options: variant.options.filter((_, j) => j !== optionIndex) 
-        } : variant
+      variants: prev.variants?.map((variant, index) => 
+        index === variantIndex 
+          ? { ...variant, options: variant.options.filter((_, optIndex) => optIndex !== optionIndex) }
+          : variant
       ) || []
     }));
   };
@@ -500,9 +514,45 @@ const AdminMerchandise = () => {
     }
   };
 
+  const addAdditionalUrl = () => {
+    if (newAdditionalUrl.trim()) {
+      setProductForm(prev => ({
+        ...prev,
+        additionalUrls: [...(prev.additionalUrls || []), newAdditionalUrl.trim()]
+      }));
+      setNewAdditionalUrl('');
+    }
+  };
+
+  const removeAdditionalUrl = (index: number) => {
+    setProductForm(prev => ({
+      ...prev,
+      additionalUrls: prev.additionalUrls?.filter((_, i) => i !== index) || []
+    }));
+  };
+
+  const addEditAdditionalUrl = () => {
+    if (newAdditionalUrl.trim()) {
+      setEditProductForm(prev => ({
+        ...prev,
+        additionalUrls: [...(prev.additionalUrls || []), newAdditionalUrl.trim()]
+      }));
+      setNewAdditionalUrl('');
+    }
+  };
+
+  const removeEditAdditionalUrl = (index: number) => {
+    setEditProductForm(prev => ({
+      ...prev,
+      additionalUrls: prev.additionalUrls?.filter((_, i) => i !== index) || []
+    }));
+  };
+
   const resetImageUpload = () => {
     setSelectedImageFile(null);
     setSelectedImagePreview('');
+    setNewImageUrl('');
+    setNewAdditionalUrl('');
   };
 
   const checkCORSStatus = async () => {
@@ -514,6 +564,100 @@ const AdminMerchandise = () => {
       console.log('CORS status check failed, defaulting to blocked:', error);
       setCorsStatus('blocked');
     }
+  };
+
+  const getColorFromName = (colorName: string) => {
+    const colorMap: { [key: string]: string } = {
+      'black': '#000000',
+      'white': '#FFFFFF',
+      'red': '#FF0000',
+      'blue': '#0000FF',
+      'green': '#008000',
+      'yellow': '#FFFF00',
+      'purple': '#800080',
+      'orange': '#FFA500',
+      'pink': '#FFC0CB',
+      'brown': '#A52A2A',
+      'gray': '#808080',
+      'grey': '#808080',
+      'navy': '#000080',
+      'maroon': '#800000',
+      'olive': '#808000',
+      'teal': '#008080',
+      'lime': '#00FF00',
+      'aqua': '#00FFFF',
+      'fuchsia': '#FF00FF',
+      'silver': '#C0C0C0',
+      'gold': '#FFD700',
+      'indigo': '#4B0082',
+      'violet': '#EE82EE',
+      'coral': '#FF7F50',
+      'salmon': '#FA8072',
+      'khaki': '#F0E68C',
+      'plum': '#DDA0DD',
+      'turquoise': '#40E0D0',
+      'azure': '#F0FFFF',
+      'ivory': '#FFFFF0',
+      'wheat': '#F5DEB3',
+      'snow': '#FFFAFA',
+      'mistyrose': '#FFE4E1',
+      'lavender': '#E6E6FA',
+      'honeydew': '#F0FFF0',
+      'mintcream': '#F5FFFA',
+      'aliceblue': '#F0F8FF',
+      'ghostwhite': '#F8F8FF',
+      'whitesmoke': '#F5F5F5',
+      'seashell': '#FFF5EE',
+      'beige': '#F5F5DC',
+      'oldlace': '#FDF5E6',
+      'floralwhite': '#FFFAF0',
+      'cornsilk': '#FFF8DC',
+      'lemonchiffon': '#FFFACD',
+      'lightyellow': '#FFFFE0',
+      'lightcyan': '#E0FFFF',
+      'lightblue': '#ADD8E6',
+      'lightgreen': '#90EE90',
+      'lightpink': '#FFB6C1',
+      'lightsalmon': '#FFA07A',
+      'lightcoral': '#F08080',
+      'lightsteelblue': '#B0C4DE',
+      'lightgray': '#D3D3D3',
+      'lightgrey': '#D3D3D3',
+      'palegreen': '#98FB98',
+      'paleturquoise': '#AFEEEE',
+      'palevioletred': '#DB7093',
+      'papayawhip': '#FFEFD5',
+      'peachpuff': '#FFDAB9',
+      'powderblue': '#B0E0E6',
+      'rosybrown': '#BC8F8F',
+      'sandybrown': '#F4A460',
+      'skyblue': '#87CEEB',
+      'slategray': '#708090',
+      'slategrey': '#708090',
+      'springgreen': '#00FF7F',
+      'steelblue': '#4682B4',
+      'tan': '#D2B48C',
+      'thistle': '#D8BFD8',
+      'tomato': '#FF6347',
+      'yellowgreen': '#9ACD32'
+    };
+    
+    const normalizedName = colorName.toLowerCase().trim();
+    return colorMap[normalizedName] || '#CCCCCC'; // Default gray if color not found
+  };
+
+  const renderColorPreview = (colorName: string) => {
+    const colorHex = getColorFromName(colorName);
+    return (
+      <div className="flex items-center space-x-2">
+        <div 
+          className="w-4 h-4 rounded-full border border-gray-300" 
+          style={{ backgroundColor: colorHex }}
+          title={colorName}
+        />
+        <span className="text-sm">{colorName}</span>
+      </div>
+    );
   };
 
   const renderProductsTab = () => (
@@ -979,44 +1123,45 @@ const AdminMerchandise = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="product-image" className="block text-sm font-medium text-foreground mb-2">Product Image</label>
+                    <label htmlFor="product-image" className="block text-sm font-medium text-foreground mb-2">Product Image URL</label>
                     <div className="space-y-3">
-                      {selectedImagePreview ? (
+                      {productForm.imageUrl ? (
                         <div className="relative">
                           <img 
-                            src={selectedImagePreview} 
+                            src={productForm.imageUrl} 
                             alt="Preview" 
                             className="w-32 h-32 object-cover rounded-lg border border-gray-300"
                           />
                           <button
                             type="button"
-                            onClick={resetImageUpload}
+                            onClick={() => setProductForm(prev => ({ ...prev, imageUrl: '' }))}
                             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
                           >
                             ×
                           </button>
                         </div>
                       ) : (
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                        <div className="space-y-2">
                           <input
                             id="product-image"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleImageSelect(file);
-                            }}
-                            className="hidden"
+                            type="url"
+                            value={newImageUrl}
+                            onChange={(e) => setNewImageUrl(e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                           />
-                          <label htmlFor="product-image" className="cursor-pointer">
-                                                    <FaImage className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
-                        <span className="text-sm text-muted-foreground">
-                          Click to upload image
-                        </span>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
-                          </label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (newImageUrl.trim()) {
+                                setProductForm(prev => ({ ...prev, imageUrl: newImageUrl.trim() }));
+                                setNewImageUrl('');
+                              }
+                            }}
+                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-2 rounded-md transition-colors text-sm"
+                          >
+                            Set Image URL
+                          </button>
                         </div>
                       )}
                     </div>
@@ -1075,6 +1220,37 @@ const AdminMerchandise = () => {
                       <option value="true">Active</option>
                       <option value="false">Inactive</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Additional URLs Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-foreground">Additional Images</h3>
+                    <button
+                      type="button"
+                      onClick={() => addAdditionalUrl()}
+                      className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors"
+                    >
+                      <FaPlus className="mr-1" />
+                      Add URL
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {productForm.additionalUrls.map((url, index) => (
+                      <div key={index} className="flex items-center justify-between bg-muted/30 p-2 rounded-md">
+                        <span className="text-sm text-foreground">{url}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeAdditionalUrl(index)}
+                          className="text-destructive hover:text-destructive/80 transition-colors"
+                          title="Remove URL"
+                          aria-label="Remove URL"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -1167,6 +1343,9 @@ const AdminMerchandise = () => {
                                 placeholder="Option value"
                                 className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                               />
+                              {variant.type === 'color' && option && (
+                                renderColorPreview(option)
+                              )}
                               <button
                                 type="button"
                                 onClick={() => removeVariantOption(index, optionIndex)}
@@ -1385,60 +1564,51 @@ const AdminMerchandise = () => {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="edit-product-image" className="block text-sm font-medium text-foreground mb-2">Product Image</label>
-                  <div className="space-y-3">
-                    {selectedImagePreview ? (
-                      <div className="relative">
-                        <img 
-                          src={selectedImagePreview} 
-                          alt="Preview" 
-                          className="w-32 h-32 object-cover rounded-lg border border-border"
-                        />
-                        <button
-                          type="button"
-                          onClick={resetImageUpload}
-                          className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-destructive/80 transition-colors"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ) : editProductForm.imageUrl ? (
-                      <div className="relative">
-                        <img 
-                          src={imageService.convertGsUrlToStorageUrl(editProductForm.imageUrl)} 
-                          alt="Current" 
-                          className="w-32 h-32 object-cover rounded-lg border border-border"
-                        />
-                        <div className="mt-2 text-sm text-muted-foreground">Current image</div>
-                      </div>
-                    ) : (
-                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-muted transition-colors">
-                        <input
-                          id="edit-product-image"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleImageSelect(file);
-                          }}
-                          className="hidden"
-                        />
-                        <label htmlFor="edit-product-image" className="cursor-pointer">
-                          <FaImage className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
-                          <span className="text-sm text-muted-foreground">
-                            Click to upload new image
-                          </span>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            PNG, JPG, GIF up to 10MB
-                          </p>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="edit-product-image" className="block text-sm font-medium text-foreground mb-2">Product Image URL</label>
+                    <div className="space-y-3">
+                      {editProductForm.imageUrl ? (
+                        <div className="relative">
+                          <img 
+                            src={editProductForm.imageUrl} 
+                            alt="Preview" 
+                            className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setEditProductForm(prev => ({ ...prev, imageUrl: '' }))}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <input
+                            id="edit-product-image"
+                            type="url"
+                            value={newImageUrl}
+                            onChange={(e) => setNewImageUrl(e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (newImageUrl.trim()) {
+                                setEditProductForm(prev => ({ ...prev, imageUrl: newImageUrl.trim() }));
+                                setNewImageUrl('');
+                              }
+                            }}
+                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-2 rounded-md transition-colors text-sm"
+                          >
+                            Set Image URL
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   <div>
                     <label htmlFor="edit-product-tags" className="block text-sm font-medium text-foreground mb-2">Tags</label>
                     <input
@@ -1453,6 +1623,9 @@ const AdminMerchandise = () => {
                       className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="edit-product-stock" className="block text-sm font-medium text-foreground mb-2">Stock *</label>
                     <input
@@ -1490,6 +1663,37 @@ const AdminMerchandise = () => {
                       <option value="true">Active</option>
                       <option value="false">Inactive</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Additional URLs Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-foreground">Additional Images</h3>
+                    <button
+                      type="button"
+                      onClick={() => addEditAdditionalUrl()}
+                      className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors"
+                    >
+                      <FaPlus className="mr-1" />
+                      Add URL
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {editProductForm.additionalUrls.map((url, index) => (
+                      <div key={index} className="flex items-center justify-between bg-muted/30 p-2 rounded-md">
+                        <span className="text-sm text-foreground">{url}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeEditAdditionalUrl(index)}
+                          className="text-destructive hover:text-destructive/80 transition-colors"
+                          title="Remove URL"
+                          aria-label="Remove URL"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -1635,6 +1839,9 @@ const AdminMerchandise = () => {
                                 placeholder="Option value"
                                 className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                               />
+                              {variant.type === 'color' && option && (
+                                renderColorPreview(option)
+                              )}
                               <button
                                 type="button"
                                 onClick={() => {

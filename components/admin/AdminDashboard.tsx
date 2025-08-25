@@ -8,14 +8,18 @@ import {
   FaBox,
   FaUserTie,
   FaBlog,
-  FaDollarSign
+  FaDollarSign,
+  FaSpinner,
+  FaTags
 } from 'react-icons/fa';
+import { productService, categoryService, orderService, corsBypassService } from '../../lib/firebase-services';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalInstructors: 0,
     totalBlogPosts: 0,
     totalProducts: 0,
+    totalCategories: 0,
     totalOrders: 0,
     totalRevenue: 0,
     totalEvents: 0,
@@ -23,35 +27,105 @@ const AdminDashboard = () => {
     ticketRevenue: 0
   });
 
-  const [recentActivity, setRecentActivity] = useState([
-    { id: 1, type: 'instructor', action: 'Added new instructor', time: '2 hours ago', details: 'Zep Ouma profile updated' },
-    { id: 2, type: 'blog', action: 'Published new blog post', time: '4 hours ago', details: 'Yoga for Beginners Guide' },
-    { id: 3, type: 'product', action: 'Added new product', time: '1 day ago', details: 'Yoga Mat - Premium Edition' },
-    { id: 4, type: 'order', action: 'New order received', time: '1 day ago', details: 'Order #1234 - $89.99' }
-  ]);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [corsStatus, setCorsStatus] = useState<string>('checking');
 
   useEffect(() => {
     // Load dashboard statistics
     loadDashboardStats();
+    checkCORSStatus();
   }, []);
+
+  const checkCORSStatus = async () => {
+    try {
+      const status = await corsBypassService.getCORSStatus();
+      setCorsStatus(status);
+    } catch (error) {
+      console.error('Error checking CORS status:', error);
+      setCorsStatus('error');
+    }
+  };
 
   const loadDashboardStats = async () => {
     try {
-      // TODO: Implement actual data fetching from Firebase
-      // For now, using mock data
-      setStats({
-        totalInstructors: 2,
-        totalBlogPosts: 15,
-        totalProducts: 25,
-        totalOrders: 156,
-        totalRevenue: 12450.99,
-        totalEvents: 8,
-        totalTickets: 342,
-        ticketRevenue: 8560.00
+      setLoading(true);
+      
+      // Fetch all data from Firebase
+      const [products, categories, orders] = await Promise.all([
+        productService.readAll(),
+        categoryService.readAll(),
+        orderService.readAll()
+      ]);
+
+      // Calculate statistics
+      const totalProducts = products.length;
+      const totalCategories = categories.length;
+      const totalOrders = orders.length;
+      
+      // Calculate revenue from orders
+      const totalRevenue = orders.reduce((sum, order) => {
+        return sum + (order.totalAmount || 0);
+      }, 0);
+
+      // Get recent activity from the last 7 days
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const recentOrders = orders.filter(order => {
+        const orderDate = order.orderDate?.toDate ? order.orderDate.toDate() : new Date(order.orderDate);
+        return orderDate >= oneWeekAgo;
       });
+
+      const recentActivityData = recentOrders.map(order => ({
+        id: order.id,
+        type: 'order',
+        action: 'New order received',
+        time: getTimeAgo(order.orderDate),
+        details: `Order #${order.id.slice(-6)} - KSh ${order.totalAmount?.toLocaleString()}`
+      }));
+
+      // Add some sample activities for now (in production, you'd track all activities)
+      const sampleActivities = [
+        { id: '1', type: 'product', action: 'Products updated', time: '2 hours ago', details: `${totalProducts} products in catalog` },
+        { id: '2', type: 'category', action: 'Categories managed', time: '4 hours ago', details: `${totalCategories} categories available` }
+      ];
+
+      setRecentActivity([...recentActivityData, ...sampleActivities]);
+
+      setStats({
+        totalInstructors: 0, // TODO: Implement instructor service
+        totalBlogPosts: 0,   // TODO: Implement blog service
+        totalProducts,
+        totalCategories,
+        totalOrders,
+        totalRevenue,
+        totalEvents: 0,      // TODO: Implement event service
+        totalTickets: 0,     // TODO: Implement ticket service
+        ticketRevenue: 0     // TODO: Implement ticket service
+      });
+
     } catch (error) {
       console.error('Error loading dashboard stats:', error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const getTimeAgo = (date: any) => {
+    if (!date) return 'Unknown time';
+    
+    const now = new Date();
+    const orderDate = date.toDate ? date.toDate() : new Date(date);
+    const diffInHours = Math.floor((now.getTime() - orderDate.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Just now';
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    
+    return orderDate.toLocaleDateString();
   };
 
   const StatCard = ({ title, value, icon: Icon, color, change }: any) => (
@@ -60,7 +134,7 @@ const AdminDashboard = () => {
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
           <p className="text-2xl font-bold text-foreground">{value}</p>
-          {change && (
+          {change !== undefined && (
             <p className={`text-sm ${change > 0 ? 'text-wellness' : 'text-destructive'}`}>
               {change > 0 ? '+' : ''}{change}% from last month
             </p>
@@ -90,6 +164,17 @@ const AdminDashboard = () => {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <FaSpinner className="animate-spin text-4xl mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -106,54 +191,28 @@ const AdminDashboard = () => {
       {/* Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Total Instructors"
-          value={stats.totalInstructors}
-          icon={FaUserTie}
-          color="bg-blue-500"
-          change={12}
-        />
-        <StatCard
-          title="Blog Posts"
-          value={stats.totalBlogPosts}
-          icon={FaBlog}
-          color="bg-green-500"
-          change={8}
-        />
-        <StatCard
-          title="Products"
+          title="Total Products"
           value={stats.totalProducts}
           icon={FaBox}
           color="bg-purple-500"
-          change={-3}
         />
         <StatCard
-          title="Total Revenue"
-          value={`$${stats.totalRevenue.toLocaleString()}`}
-          icon={FaDollarSign}
-          color="bg-yellow-500"
-          change={15}
-        />
-      </div>
-
-      {/* Additional Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard
-          title="Events"
-          value={stats.totalEvents}
-          icon={FaCalendarAlt}
-          color="bg-indigo-500"
-        />
-        <StatCard
-          title="Tickets Sold"
-          value={stats.totalTickets}
-          icon={FaChartLine}
-          color="bg-pink-500"
-        />
-        <StatCard
-          title="Orders"
+          title="Total Orders"
           value={stats.totalOrders}
           icon={FaShoppingCart}
           color="bg-orange-500"
+        />
+        <StatCard
+          title="Total Revenue"
+          value={`KSh ${stats.totalRevenue.toLocaleString()}`}
+          icon={FaDollarSign}
+          color="bg-yellow-500"
+        />
+        <StatCard
+          title="Categories"
+          value={stats.totalCategories || 0}
+          icon={FaTags}
+          color="bg-green-500"
         />
       </div>
 
@@ -161,20 +220,6 @@ const AdminDashboard = () => {
       <div>
         <h2 className="text-xl font-semibold text-foreground mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <QuickActionCard
-            title="Add Instructor"
-            description="Create new instructor profile"
-            icon={FaUserTie}
-            color="bg-blue-500"
-            onClick={() => window.location.href = '/admin?tab=instructors'}
-          />
-          <QuickActionCard
-            title="Write Blog Post"
-            description="Create new blog content"
-            icon={FaBlog}
-            color="bg-green-500"
-            onClick={() => window.location.href = '/admin?tab=blog'}
-          />
           <QuickActionCard
             title="Add Product"
             description="Create new merchandise item"
@@ -189,6 +234,20 @@ const AdminDashboard = () => {
             color="bg-yellow-500"
             onClick={() => {}}
           />
+          <QuickActionCard
+            title="Manage Orders"
+            description="View and process orders"
+            icon={FaShoppingCart}
+            color="bg-orange-500"
+            onClick={() => window.location.href = '/admin?tab=merchandise'}
+          />
+          <QuickActionCard
+            title="Refresh Data"
+            description="Reload all dashboard data"
+            icon={FaSpinner}
+            color="bg-blue-500"
+            onClick={loadDashboardStats}
+          />
         </div>
       </div>
 
@@ -197,22 +256,28 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-semibold text-foreground mb-4">Recent Activity</h2>
         <div className="bg-card rounded-lg shadow-md border border-border">
           <div className="p-6">
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-muted rounded-lg">
-                  <div className={`w-2 h-2 rounded-full ${
-                    activity.type === 'instructor' ? 'bg-blue-500' :
-                    activity.type === 'blog' ? 'bg-green-500' :
-                    activity.type === 'product' ? 'bg-purple-500' : 'bg-orange-500'
-                  }`} />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{activity.action}</p>
-                    <p className="text-sm text-muted-foreground">{activity.details}</p>
+            {recentActivity.length > 0 ? (
+              <div className="space-y-4">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-muted rounded-lg">
+                    <div className={`w-2 h-2 rounded-full ${
+                      activity.type === 'instructor' ? 'bg-blue-500' :
+                      activity.type === 'blog' ? 'bg-green-500' :
+                      activity.type === 'product' ? 'bg-purple-500' : 'bg-orange-500'
+                    }`} />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                      <p className="text-sm text-muted-foreground">{activity.details}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{activity.time}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">{activity.time}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No recent activity to display</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -224,23 +289,48 @@ const AdminDashboard = () => {
           <div className="bg-card rounded-lg shadow-md p-6 border border-border">
             <h3 className="text-lg font-semibold text-foreground mb-4">Firebase Connection</h3>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-wellness rounded-full"></div>
-              <span className="text-wellness font-medium">Connected</span>
+              <div className={`w-3 h-3 rounded-full ${
+                corsStatus === 'working' ? 'bg-wellness' : 
+                corsStatus === 'blocked' ? 'bg-yellow-500' : 'bg-red-500'
+              }`}></div>
+              <span className={`font-medium ${
+                corsStatus === 'working' ? 'text-wellness' : 
+                corsStatus === 'blocked' ? 'text-yellow-600' : 'text-red-600'
+              }`}>
+                {corsStatus === 'working' ? 'Connected' : 
+                 corsStatus === 'blocked' ? 'Limited Access' : 'Connection Error'}
+              </span>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">All services are running normally</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {corsStatus === 'working' ? 'All services are running normally' :
+               corsStatus === 'blocked' ? 'Using fallback methods for file uploads' :
+               'Unable to connect to Firebase services'}
+            </p>
           </div>
           
           <div className="bg-card rounded-lg shadow-md p-6 border border-border">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Storage Usage</h3>
-            <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Data Summary</h3>
+            <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span>Images & Files</span>
-                <span>2.4 GB / 5 GB</span>
+                <span>Products</span>
+                <span className="font-medium">{stats.totalProducts}</span>
               </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '48%' }}></div>
+              <div className="flex justify-between text-sm">
+                <span>Orders</span>
+                <span className="font-medium">{stats.totalOrders}</span>
               </div>
-              <p className="text-xs text-muted-foreground">48% of storage used</p>
+              <div className="flex justify-between text-sm">
+                <span>Total Revenue</span>
+                <span className="font-medium">KSh {stats.totalRevenue.toLocaleString()}</span>
+              </div>
+              <div className="pt-2 border-t border-border">
+                <button
+                  onClick={loadDashboardStats}
+                  className="w-full bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm"
+                >
+                  Refresh Data
+                </button>
+              </div>
             </div>
           </div>
         </div>

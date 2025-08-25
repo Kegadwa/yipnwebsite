@@ -12,6 +12,7 @@ interface Product {
 	category: string;
 	stock: number;
 	imageUrl?: string;
+	additionalUrls?: string[];
 	tags: string[];
 	isActive: boolean;
 	variants?: any[];
@@ -31,8 +32,89 @@ interface ProductModalProps {
 	product: Product | null;
 	isOpen: boolean;
 	onClose: () => void;
-	onAddToCart: (product: Product, quantity: number) => void;
+	onAddToCart: (product: Product, quantity: number, selectedVariants: { [key: string]: string }) => void;
 }
+
+// Color detection function
+const getColorFromName = (colorName: string) => {
+	const colorMap: { [key: string]: string } = {
+		'black': '#000000',
+		'white': '#FFFFFF',
+		'red': '#FF0000',
+		'blue': '#0000FF',
+		'green': '#008000',
+		'yellow': '#FFFF00',
+		'purple': '#800080',
+		'orange': '#FFA500',
+		'pink': '#FFC0CB',
+		'brown': '#A52A2A',
+		'gray': '#808080',
+		'grey': '#808080',
+		'navy': '#000080',
+		'maroon': '#800000',
+		'olive': '#808000',
+		'teal': '#008080',
+		'lime': '#00FF00',
+		'aqua': '#00FFFF',
+		'fuchsia': '#FF00FF',
+		'silver': '#C0C0C0',
+		'gold': '#FFD700',
+		'indigo': '#4B0082',
+		'violet': '#EE82EE',
+		'coral': '#FF7F50',
+		'salmon': '#FA8072',
+		'khaki': '#F0E68C',
+		'plum': '#DDA0DD',
+		'turquoise': '#40E0D0',
+		'azure': '#F0FFFF',
+		'ivory': '#FFFFF0',
+		'snow': '#FFFAFA',
+		'mistyrose': '#FFE4E1',
+		'lavender': '#E6E6FA',
+		'honeydew': '#F0FFF0',
+		'mintcream': '#F5FFFA',
+		'aliceblue': '#F0F8FF',
+		'ghostwhite': '#F8F8FF',
+		'whitesmoke': '#F5F5F5',
+		'seashell': '#FFF5EE',
+		'beige': '#F5F5DC',
+		'oldlace': '#FDF5E6',
+		'floralwhite': '#FFFAF0',
+		'cornsilk': '#FFF8DC',
+		'lemonchiffon': '#FFFACD',
+		'lightyellow': '#FFFFE0',
+		'lightcyan': '#E0FFFF',
+		'lightblue': '#ADD8E6',
+		'lightgreen': '#90EE90',
+		'lightpink': '#FFB6C1',
+		'lightsalmon': '#FFA07A',
+		'lightcoral': '#F08080',
+		'lightsteelblue': '#B0C4DE',
+		'lightgray': '#D3D3D3',
+		'lightgrey': '#D3D3D3',
+		'palegreen': '#98FB98',
+		'paleturquoise': '#AFEEEE',
+		'palevioletred': '#DB7093',
+		'papayawhip': '#FFEFD5',
+		'peachpuff': '#FFDAB9',
+		'powderblue': '#B0E0E6',
+		'rosybrown': '#BC8F8F',
+		'sandybrown': '#F4A460',
+		'skyblue': '#87CEEB',
+		'slategray': '#708090',
+		'slategrey': '#708090',
+		'springgreen': '#00FF7F',
+		'steelblue': '#4682B4',
+		'tan': '#D2B48C',
+		'thistle': '#D8BFD8',
+		'tomato': '#FF6347',
+		'wheat': '#F5DEB3',
+		'yellowgreen': '#9ACD32'
+	};
+	
+	const normalizedName = colorName.toLowerCase().trim();
+	return colorMap[normalizedName] || '#CCCCCC'; // Default gray if color not found
+};
 
 const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, onAddToCart }) => {
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -41,10 +123,23 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 
 	if (!product) return null;
 
-	const images = product.imageUrl ? [product.imageUrl] : [];
+	// Combine main image with additional URLs
+	const images = [
+		...(product.imageUrl ? [product.imageUrl] : []),
+		...(product.additionalUrls || [])
+	];
 	
+	// Check if all required variants are selected
+	const requiredVariants = product.variants?.filter((v: any) => v.type === 'color' || v.type === 'size') || [];
+	const allVariantsSelected = requiredVariants.every((variant: any) => selectedVariants[variant.name]);
+
 	const handleAddToCart = () => {
-		onAddToCart(product, quantity);
+		if (requiredVariants.length > 0 && !allVariantsSelected) {
+			alert('Please select all required variants before adding to cart');
+			return;
+		}
+		
+		onAddToCart(product, quantity, selectedVariants);
 		onClose();
 	};
 
@@ -57,22 +152,22 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 	};
 
 	return (
-		<div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-			<div className={`bg-card rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+		<div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+			<div className={`bg-card rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
 				{/* Header */}
-				<div className="flex justify-between items-center p-6 border-b border-border">
-					<h2 className="text-2xl font-bold text-foreground">{product.name}</h2>
+				<div className="flex justify-between items-center p-4 sm:p-6 border-b border-border">
+					<h2 className="text-lg sm:text-2xl font-bold text-foreground truncate pr-4">{product.name}</h2>
 					<button
 						onClick={onClose}
-						className="w-10 h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
+						className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground flex-shrink-0"
 					>
-						<FaTimes className="w-5 h-5" />
+						<FaTimes className="w-4 h-4 sm:w-5 sm:h-5" />
 					</button>
 				</div>
 
 				<div className="flex flex-col lg:flex-row">
 					{/* Left Side - Image Carousel */}
-					<div className="lg:w-1/2 p-6">
+					<div className="lg:w-1/2 p-4 sm:p-6">
 						<div className="relative aspect-square bg-muted rounded-xl overflow-hidden">
 							{images.length > 0 ? (
 								<>
@@ -85,34 +180,34 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 										<>
 											<button
 												onClick={prevImage}
-												className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:scale-110"
+												className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:scale-110"
 											>
-												<FaChevronLeft className="w-4 h-4" />
+												<FaChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
 											</button>
 											<button
 												onClick={nextImage}
-												className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:scale-110"
+												className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 hover:scale-110"
 											>
-												<FaChevronRight className="w-4 h-4" />
+												<FaChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
 											</button>
 										</>
 									)}
 								</>
 							) : (
 								<div className="w-full h-full flex items-center justify-center">
-									<FaHeart className="text-6xl text-muted" />
+									<FaHeart className="text-4xl sm:text-6xl text-muted" />
 								</div>
 							)}
 						</div>
 
 						{/* Image Thumbnails */}
 						{images.length > 1 && (
-							<div className="flex gap-2 mt-4 justify-center">
+							<div className="flex gap-2 mt-4 justify-center overflow-x-auto pb-2">
 								{images.map((_, index) => (
 									<button
 										key={index}
 										onClick={() => setSelectedImageIndex(index)}
-										className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+										className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 flex-shrink-0 ${
 											index === selectedImageIndex
 												? 'border-primary scale-110'
 												: 'border-border hover:border-primary/50'
@@ -130,39 +225,46 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 					</div>
 
 					{/* Right Side - Product Details */}
-					<div className="lg:w-1/2 p-6 space-y-6">
+					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6">
 						{/* Price */}
-						<div className="text-3xl font-bold text-primary">
+						<div className="text-2xl sm:text-3xl font-bold text-primary">
 							KSh {product.price.toLocaleString()}
 						</div>
 
 						{/* Description */}
-						<div className="space-y-3">
-							<h3 className="text-lg font-semibold text-foreground">Description</h3>
-							<p className="text-muted-foreground leading-relaxed">{product.description}</p>
+						<div className="space-y-2 sm:space-y-3">
+							<h3 className="text-base sm:text-lg font-semibold text-foreground">Description</h3>
+							<p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{product.description}</p>
 						</div>
 
 						{/* Variants */}
 						{product.variants && product.variants.length > 0 && (
-							<div className="space-y-3">
-								<h3 className="text-lg font-semibold text-foreground">Variants</h3>
-								<div className="space-y-3">
+							<div className="space-y-2 sm:space-y-3">
+								<h3 className="text-base sm:text-lg font-semibold text-foreground">Variants</h3>
+								<div className="space-y-2 sm:space-y-3">
 									{product.variants.map((variant: any, index: number) => (
 										<div key={index} className="space-y-2">
 											<label className="text-sm font-medium text-muted-foreground">
-												{variant.name}
+												{variant.name} {requiredVariants.some(v => v.name === variant.name) && <span className="text-red-500">*</span>}
 											</label>
-											<div className="flex gap-2">
+											<div className="flex flex-wrap gap-2">
 												{variant.options.map((option: string, optIndex: number) => (
 													<button
 														key={optIndex}
 														onClick={() => setSelectedVariants(prev => ({ ...prev, [variant.name]: option }))}
-														className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+														className={`px-2 py-1 sm:px-3 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
 															selectedVariants[variant.name] === option
 																? 'bg-primary text-primary-foreground border-2 border-primary'
 																: 'bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-2 border-transparent'
 														}`}
 													>
+														{variant.type === 'color' && (
+															<div 
+																className="w-3 h-3 rounded-full border border-gray-300" 
+																style={{ backgroundColor: getColorFromName(option) }}
+																title={option}
+															/>
+														)}
 														{option}
 													</button>
 												))}
@@ -174,21 +276,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 						)}
 
 						{/* Quantity */}
-						<div className="space-y-3">
-							<h3 className="text-lg font-semibold text-foreground">Quantity</h3>
+						<div className="space-y-2 sm:space-y-3">
+							<h3 className="text-base sm:text-lg font-semibold text-foreground">Quantity</h3>
 							<div className="flex items-center gap-3">
 								<button
 									onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-									className="w-10 h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
+									className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
 								>
-									<FaMinus className="w-4 h-4" />
+									<FaMinus className="w-3 h-3 sm:w-4 sm:h-4" />
 								</button>
-								<span className="w-16 text-center text-lg font-semibold">{quantity}</span>
+								<span className="w-12 sm:w-16 text-center text-base sm:text-lg font-semibold">{quantity}</span>
 								<button
 									onClick={() => setQuantity(prev => prev + 1)}
-									className="w-10 h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
+									className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
 								>
-									<FaPlus className="w-4 h-4" />
+									<FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
 								</button>
 							</div>
 						</div>
@@ -197,13 +299,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 						<div className="space-y-3 pt-4">
 							<button
 								onClick={handleAddToCart}
-								className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+								className="w-full bg-primary text-primary-foreground py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
 							>
 								Add to Cart
 							</button>
 							<button
 								onClick={onClose}
-								className="w-full bg-muted text-muted-foreground py-3 rounded-xl font-medium hover:bg-muted/80 transition-colors border-2 border-transparent hover:border-border"
+								className="w-full bg-muted text-muted-foreground py-2 sm:py-3 rounded-xl font-medium hover:bg-muted/80 transition-colors border-2 border-transparent hover:border-border"
 							>
 								Continue Shopping
 							</button>
@@ -215,12 +317,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 	);
 };
 
+interface CartItem {
+	product: Product;
+	quantity: number;
+	selectedVariants?: { [key: string]: string };
+}
+
 export default function Shop() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+	const [cart, setCart] = useState<CartItem[]>([]);
 	const [firebaseStatus, setFirebaseStatus] = useState<string>("");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -335,37 +443,52 @@ export default function Shop() {
 		setFilteredProducts(filtered);
 	}, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
-	const addToCart = (product: Product, quantity: number = 1) => {
+	const addToCart = (product: Product, quantity: number = 1, selectedVariants?: { [key: string]: string }) => {
 		setCart(prevCart => {
-			const existingItem = prevCart.find(item => item.product.id === product.id);
-			if (existingItem) {
-				return prevCart.map(item =>
-					item.product.id === product.id
-						? { ...item, quantity: item.quantity + quantity }
-						: item
-				);
+			// Create a unique key for the cart item based on product and variants
+			const variantKey = selectedVariants ? JSON.stringify(selectedVariants) : 'default';
+			const existingItemIndex = prevCart.findIndex(item => 
+				item.product.id === product.id && 
+				JSON.stringify(item.selectedVariants || {}) === variantKey
+			);
+			
+			if (existingItemIndex !== -1) {
+				// Update existing item quantity
+				const updatedCart = [...prevCart];
+				updatedCart[existingItemIndex].quantity += quantity;
+				return updatedCart;
 			} else {
-				return [...prevCart, { product, quantity }];
+				// Add new item
+				return [...prevCart, { 
+					product, 
+					quantity, 
+					selectedVariants: selectedVariants || {} 
+				}];
 			}
 		});
 		setShowCart(true);
 	};
 
-	const removeFromCart = (productId: string) => {
-		setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
+	const removeFromCart = (cartItem: CartItem) => {
+		setCart(prevCart => prevCart.filter(item => 
+			!(item.product.id === cartItem.product.id && 
+			  JSON.stringify(item.selectedVariants || {}) === JSON.stringify(cartItem.selectedVariants || {}))
+		));
 	};
 
-	const updateCartQuantity = (productId: string, quantity: number) => {
+	const updateCartQuantity = (cartItem: CartItem, quantity: number) => {
 		if (quantity <= 0) {
-			removeFromCart(productId);
+			removeFromCart(cartItem);
 			return;
 		}
 		setCart(prevCart =>
-			prevCart.map(item =>
-				item.product.id === productId
-					? { ...item, quantity }
-					: item
-			)
+			prevCart.map(item => {
+				if (item.product.id === cartItem.product.id && 
+					JSON.stringify(item.selectedVariants || {}) === JSON.stringify(cartItem.selectedVariants || {})) {
+					return { ...item, quantity };
+				}
+				return item;
+			})
 		);
 	};
 
@@ -551,22 +674,44 @@ export default function Shop() {
 								>
 									{/* Photo Container */}
 									<div className="relative aspect-[1/1.2] bg-muted overflow-hidden rounded-t-2xl">
-										{product.imageUrl ? (
-											<img
-												src={imageService.convertGsUrlToStorageUrl(product.imageUrl)}
-												alt={product.name}
-												className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-												onError={(e) => {
-													const target = e.currentTarget as HTMLImageElement;
-													target.style.display = 'none';
-													const nextSibling = target.nextElementSibling as HTMLElement;
-													if (nextSibling) nextSibling.style.display = 'flex';
-												}}
-											/>
-										) : null}
-										<div className={`absolute inset-0 flex items-center justify-center ${product.imageUrl ? 'hidden' : 'flex'}`}>
-											<FaHeart className="text-6xl text-muted" />
-										</div>
+										{/* Combine main image with additional URLs for slideshow */}
+										{(() => {
+											const allImages = [
+												...(product.imageUrl ? [product.imageUrl] : []),
+												...(product.additionalUrls || [])
+											];
+											
+											if (allImages.length > 0) {
+												return (
+													<div className="relative w-full h-full">
+														<img
+															src={imageService.convertGsUrlToStorageUrl(allImages[0])}
+															alt={product.name}
+															className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+															onError={(e) => {
+																const target = e.currentTarget as HTMLImageElement;
+																target.style.display = 'none';
+																const nextSibling = target.nextElementSibling as HTMLElement;
+																if (nextSibling) nextSibling.style.display = 'flex';
+															}}
+														/>
+														
+														{/* Image counter for multiple images */}
+														{allImages.length > 1 && (
+															<div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+																1/{allImages.length}
+															</div>
+														)}
+													</div>
+												);
+											} else {
+												return (
+													<div className="w-full h-full flex items-center justify-center">
+														<FaHeart className="text-6xl text-muted" />
+													</div>
+												);
+											}
+										})()}
 									</div>
 
 									{/* Product Info */}
@@ -585,7 +730,7 @@ export default function Shop() {
 												</span>
 											</div>
 											
-											{/* Variants Preview */}
+																						{/* Variants Preview */}
 											{product.variants && product.variants.length > 0 && (
 												<div className="flex flex-wrap gap-2">
 													{product.variants.slice(0, 2).map((variant: any, vIndex: number) => (
@@ -595,7 +740,10 @@ export default function Shop() {
 																{variant.options.slice(0, 3).map((option: string, oIndex: number) => (
 																	<span
 																		key={oIndex}
-																		className="w-3 h-3 rounded-full bg-secondary border-2 border-background shadow-sm"
+																		className="w-3 h-3 rounded-full border-2 border-background shadow-sm"
+																		style={{ 
+																			backgroundColor: variant.type === 'color' ? getColorFromName(option) : '#CCCCCC'
+																		}}
 																		title={option}
 																	/>
 																))}
@@ -626,9 +774,19 @@ export default function Shop() {
 													<FaEye className="w-4 h-4" />
 												</button>
 												<button 
-													onClick={() => addToCart(product)}
+													onClick={() => {
+														// Check if product has required variants
+														const hasRequiredVariants = product.variants?.some((v: any) => v.type === 'color' || v.type === 'size');
+														if (hasRequiredVariants) {
+															// Open modal for variant selection
+															openProductModal(product);
+														} else {
+															// Add to cart directly if no variants
+															addToCart(product);
+														}
+													}}
 													className="w-12 h-12 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-105"
-													title="Add to Cart"
+													title={product.variants?.some((v: any) => v.type === 'color' || v.type === 'size') ? "Select Variants" : "Add to Cart"}
 												>
 													<FaShoppingCart className="w-4 h-4" />
 												</button>
@@ -685,7 +843,7 @@ export default function Shop() {
 							<>
 								<div className="space-y-4 mb-6">
 									{cart.map((item) => (
-										<div key={item.product.id} className="flex items-center space-x-4 p-4 border border-border rounded-xl bg-muted bg-opacity-30">
+										<div key={`${item.product.id}-${JSON.stringify(item.selectedVariants || {})}`} className="flex items-center space-x-4 p-4 border border-border rounded-xl bg-muted bg-opacity-30">
 											<div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
 												{item.product.imageUrl ? (
 													<img
@@ -704,26 +862,38 @@ export default function Shop() {
 											<div className="flex-1 min-w-0">
 												<h4 className="font-semibold text-foreground text-base mb-1 truncate">{item.product.name}</h4>
 												<p className="text-muted-foreground text-sm mb-2">{item.product.description}</p>
+												
+												{/* Display selected variants */}
+												{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+													<div className="flex flex-wrap gap-1 mb-2">
+														{Object.entries(item.selectedVariants).map(([variantName, variantValue]) => (
+															<span key={variantName} className="inline-block px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
+																{variantName}: {variantValue}
+															</span>
+														))}
+													</div>
+												)}
+												
 												<p className="text-lg font-bold text-primary">KSh {item.product.price.toLocaleString()}</p>
 											</div>
 											<div className="flex items-center space-x-3">
 												<div className="flex items-center space-x-2 bg-background rounded-lg p-1">
 													<button
-														onClick={() => updateCartQuantity(item.product.id!, item.quantity - 1)}
+														onClick={() => updateCartQuantity(item, item.quantity - 1)}
 														className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
 													>
 														-
 													</button>
 													<span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
 													<button
-														onClick={() => updateCartQuantity(item.product.id!, item.quantity + 1)}
+														onClick={() => updateCartQuantity(item, item.quantity + 1)}
 														className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
 													>
 														+
 													</button>
 												</div>
 												<button
-													onClick={() => removeFromCart(item.product.id!)}
+													onClick={() => removeFromCart(item)}
 													className="text-destructive hover:text-destructive/80 p-2 rounded-full hover:bg-destructive hover:bg-opacity-10 transition-colors"
 													title="Remove item"
 												>

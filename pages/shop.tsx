@@ -225,7 +225,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 					</div>
 
 					{/* Right Side - Product Details */}
-					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6">
+					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-120px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
 						{/* Price */}
 						<div className="text-2xl sm:text-3xl font-bold text-primary">
 							KSh {product.price.toLocaleString()}
@@ -336,6 +336,14 @@ export default function Shop() {
 	const [sortBy, setSortBy] = useState<string>("newest");
 	const [showCart, setShowCart] = useState(false);
 	const [showMpesaPayment, setShowMpesaPayment] = useState(false);
+	const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+	const [checkoutFormData, setCheckoutFormData] = useState({
+		name: '',
+		email: '',
+		phone: '',
+		mpesaCode: ''
+	});
+	const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 	const [showProductModal, setShowProductModal] = useState(false);
 
@@ -498,6 +506,64 @@ export default function Shop() {
 
 	const getCartItemCount = () => {
 		return cart.reduce((total, item) => total + item.quantity, 0);
+	};
+
+	const handlePaymentComplete = () => {
+		setShowMpesaPayment(false);
+		setShowCheckoutForm(true);
+	};
+
+	const handleCheckoutFormSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsSubmittingOrder(true);
+
+		try {
+			// Prepare order data
+			const orderData = {
+				customerInfo: checkoutFormData,
+				items: cart,
+				total: getCartTotal(),
+				orderDate: new Date().toISOString(),
+				orderId: `YIPN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+			};
+
+			// Send email receipt
+			await sendOrderReceipt(orderData);
+
+			// Clear cart and show success
+			setCart([]);
+			setShowCheckoutForm(false);
+			setCheckoutFormData({ name: '', email: '', phone: '', mpesaCode: '' });
+			
+			// Show success message
+			alert('Order submitted successfully! Check your email for the receipt.');
+		} catch (error) {
+			console.error('Error submitting order:', error);
+			alert('Error submitting order. Please try again.');
+		} finally {
+			setIsSubmittingOrder(false);
+		}
+	};
+
+	const sendOrderReceipt = async (orderData: any) => {
+		try {
+			const response = await fetch('/api/send-order-receipt', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(orderData),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to send receipt');
+			}
+
+			return await response.json();
+		} catch (error) {
+			console.error('Error sending receipt:', error);
+			throw error;
+		}
 	};
 
 	const handleCheckout = () => {
@@ -1003,10 +1069,7 @@ export default function Shop() {
 
 							<div className="flex space-x-3 pt-4">
 								<button
-									onClick={() => {
-										setShowMpesaPayment(false);
-										setCart([]); // Clear cart after payment
-									}}
+									onClick={handlePaymentComplete}
 									className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors"
 								>
 									Payment Complete
@@ -1019,6 +1082,132 @@ export default function Shop() {
 								</button>
 							</div>
 						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Checkout Form Modal */}
+			{showCheckoutForm && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+					<div className="bg-card rounded-2xl shadow-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+						<div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+							<h3 className="text-2xl font-bold text-primary">Complete Your Order</h3>
+							<button
+								onClick={() => setShowCheckoutForm(false)}
+								className="w-10 h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
+								title="Close checkout form"
+								aria-label="Close checkout form"
+							>
+								<FaTimes className="w-5 h-5" />
+							</button>
+						</div>
+						
+						<form onSubmit={handleCheckoutFormSubmit} className="space-y-6">
+							<div className="space-y-4">
+								<div>
+									<label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+										Full Name *
+									</label>
+									<input
+										type="text"
+										id="name"
+										required
+										value={checkoutFormData.name}
+										onChange={(e) => setCheckoutFormData(prev => ({ ...prev, name: e.target.value }))}
+										className="w-full px-4 py-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+										placeholder="Enter your full name"
+									/>
+								</div>
+
+								<div>
+									<label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+										Email Address *
+									</label>
+									<input
+										type="email"
+										id="email"
+										required
+										value={checkoutFormData.email}
+										onChange={(e) => setCheckoutFormData(prev => ({ ...prev, email: e.target.value }))}
+										className="w-full px-4 py-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+										placeholder="Enter your email address"
+									/>
+								</div>
+
+								<div>
+									<label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+										Phone Number *
+									</label>
+									<input
+										type="tel"
+										id="phone"
+										required
+										value={checkoutFormData.phone}
+										onChange={(e) => setCheckoutFormData(prev => ({ ...prev, phone: e.target.value }))}
+										className="w-full px-4 py-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+										placeholder="Enter your phone number"
+									/>
+								</div>
+
+								<div>
+									<label htmlFor="mpesaCode" className="block text-sm font-medium text-foreground mb-2">
+										M-Pesa Transaction Code *
+									</label>
+									<input
+										type="text"
+										id="mpesaCode"
+										required
+										value={checkoutFormData.mpesaCode}
+										onChange={(e) => setCheckoutFormData(prev => ({ ...prev, mpesaCode: e.target.value.toUpperCase() }))}
+										className="w-full px-4 py-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 font-mono tracking-wider"
+										placeholder="Enter M-Pesa code"
+										style={{ textTransform: 'uppercase' }}
+									/>
+								</div>
+							</div>
+
+							<div className="bg-muted p-4 rounded-xl">
+								<h5 className="font-semibold text-foreground mb-3">Order Summary</h5>
+								<div className="space-y-2 text-sm">
+									{cart.map((item) => (
+										<div key={`${item.product.id}-${JSON.stringify(item.selectedVariants || {})}`} className="flex justify-between">
+											<span className="text-muted-foreground">
+												{item.product.name} x {item.quantity}
+												{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+													<span className="text-xs block text-muted-foreground">
+														({Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join(', ')})
+													</span>
+												)}
+											</span>
+											<span className="font-medium">KSh {(item.product.price * item.quantity).toLocaleString()}</span>
+										</div>
+									))}
+									<div className="border-t border-border pt-2 mt-2">
+										<div className="flex justify-between font-semibold">
+											<span>Total:</span>
+											<span className="text-primary">KSh {getCartTotal().toLocaleString()}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div className="flex space-x-3 pt-4">
+								<button
+									type="submit"
+									disabled={isSubmittingOrder}
+									className="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+								>
+									{isSubmittingOrder ? 'Submitting...' : 'Submit Order'}
+								</button>
+								<button
+									type="button"
+									onClick={() => setShowCheckoutForm(false)}
+									className="flex-1 px-4 py-3 bg-muted text-muted-foreground rounded-xl font-medium hover:bg-muted/80 transition-colors"
+								>
+									Cancel
+								</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			)}

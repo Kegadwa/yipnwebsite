@@ -585,6 +585,21 @@ export const emailService = {
     console.log('Sending ticket confirmation:', { ticketData, eventData });
     return true;
   },
+  
+  sendOrderConfirmation: async (orderData: any) => {
+    // TODO: Implement actual email service
+    console.log('Sending order confirmation:', orderData);
+    
+    // For now, we'll use a simple console log to simulate email sending
+    // In production, this would integrate with a real email service like SendGrid, AWS SES, etc.
+    console.log('=== ORDER RECEIPT EMAIL ===');
+    console.log('To:', orderData.customerEmail);
+    console.log('Subject: Your YIPN Order Receipt - ' + orderData.orderId);
+    console.log('Order Details:', orderData);
+    console.log('==========================');
+    
+    return true;
+  },
 };
 
 // Event interface for backward compatibility

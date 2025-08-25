@@ -21,13 +21,13 @@ export default function Footer() {
               Find your flow with Yoga in the Park Nairobi™. Building community through wellness, mindfulness, and connection with nature.
             </p>
             <div className="flex space-x-3">
-              <button className="opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 rounded p-2 animate-on-hover">
+              <button className="opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 rounded p-2 animate-on-hover" title="Follow us on Facebook" aria-label="Follow us on Facebook">
                 <FaFacebookF className="w-4 h-4" />
               </button>
-              <button className="opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 rounded p-2 animate-on-hover">
+              <button className="opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 rounded p-2 animate-on-hover" title="Follow us on Instagram" aria-label="Follow us on Instagram">
                 <FaInstagram className="w-4 h-4" />
               </button>
-              <button className="opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 rounded p-2 animate-on-hover">
+              <button className="opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 rounded p-2 animate-on-hover" title="Follow us on Twitter" aria-label="Follow us on Twitter">
                 <FaTwitter className="w-4 h-4" />
               </button>
             </div>

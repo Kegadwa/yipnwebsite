@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { FaSpinner, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaCheck, FaPrint } from "react-icons/fa";
 import { ticketService, emailService, Event } from "../lib/firebase-services";
 import Navigation from "../components/Navigation";
@@ -323,12 +324,12 @@ export default function Events() {
 								</div>
 								
 								<div className="flex flex-col sm:flex-row gap-4">
-									<a 
+									<Link 
 										href="/gallery-edition-1" 
 										className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
 									>
 										<span>View Gallery</span>
-									</a>
+									</Link>
 									<button 
 										onClick={() => setShowEdition1Modal(true)}
 										className="inline-flex items-center justify-center space-x-2 px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
@@ -371,6 +372,7 @@ export default function Events() {
 								<button 
 									onClick={() => setShowEdition1Modal(false)}
 									className="text-muted-foreground hover:text-foreground transition-colors"
+									title="Close modal"
 								>
 									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -428,12 +430,12 @@ export default function Events() {
 								</div>
 								
 								<div className="pt-6 border-t">
-									<a 
+									<Link 
 										href="/gallery-edition-1" 
 										className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
 									>
 										<span>View Full Gallery</span>
-									</a>
+									</Link>
 								</div>
 							</div>
 						</div>

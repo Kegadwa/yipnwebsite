@@ -55,10 +55,10 @@ const GalleryEdition2 = () => {
       setError(null);
       
       // Fetch approved edition-2 media from the database
-      const media = await galleryService.getMediaByCategory('edition-2');
+      const media = await galleryService.readAll({ category: 'edition-2' });
       
       // Transform the data to match our interface
-      const transformedMedia: UploadedMedia[] = media.map(item => ({
+      const transformedMedia: UploadedMedia[] = media.map((item: any) => ({
         id: item.id || '',
         title: item.title,
         description: item.description,
@@ -129,7 +129,7 @@ const GalleryEdition2 = () => {
         };
         
         // Add to database collection
-        const mediaId = await galleryService.createMedia(mediaData);
+        const mediaId = await galleryService.create(mediaData);
         
         return {
           id: mediaId,
@@ -450,6 +450,8 @@ const GalleryEdition2 = () => {
                         resetForm();
                       }}
                       className="text-muted-foreground hover:text-foreground transition-colors"
+                      title="Close upload modal"
+                      aria-label="Close upload modal"
                     >
                       <FaTimes className="w-6 h-6" />
                     </button>
@@ -571,6 +573,8 @@ const GalleryEdition2 = () => {
                                 type="button"
                                 onClick={() => removeFile(index)}
                                 className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                title="Remove file"
+                                aria-label="Remove file"
                               >
                                 <FaTimes className="w-3 h-3" />
                               </button>

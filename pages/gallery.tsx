@@ -2,7 +2,22 @@ import React, { useState, useEffect } from "react";
 import { FaCamera, FaVideo, FaHeart, FaShare, FaDownload, FaSpinner, FaPlus, FaTimes, FaUpload } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
-import { galleryService, GalleryMedia } from "../lib/firebase-services";
+import { galleryService } from "../lib/firebase-services";
+
+interface GalleryMedia {
+	id?: string;
+	title: string;
+	description?: string;
+	imageUrl: string;
+	thumbnailUrl?: string;
+	category: 'edition-1' | 'edition-2' | 'user-submitted';
+	tags: string[];
+	photographer?: string;
+	location?: string;
+	isApproved: boolean;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
 
 const Gallery = () => {
 	const [media, setMedia] = useState<GalleryMedia[]>([]);
@@ -32,9 +47,9 @@ const Gallery = () => {
 			let mediaData: GalleryMedia[];
 			
 			if (selectedCategory === 'all') {
-				mediaData = await galleryService.getAllMedia();
+				mediaData = await galleryService.readAll();
 			} else {
-				mediaData = await galleryService.getMediaByCategory(selectedCategory);
+				mediaData = await galleryService.readAll({ category: selectedCategory });
 			}
 			
 			setMedia(mediaData);
@@ -61,7 +76,7 @@ const Gallery = () => {
 				isApproved: false,
 			};
 
-			await galleryService.createMedia(mediaData);
+			await galleryService.create(mediaData);
 			
 			// Reset form and close modal
 			setUploadForm({
@@ -203,16 +218,16 @@ const Gallery = () => {
 											/>
 											<div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
 												<div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-4">
-													<button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:scale-110 transition">
+													<button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:scale-110 transition" title="Like photo" aria-label="Like photo">
 														<FaHeart />
 													</button>
-													<button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:scale-110 transition">
+													<button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:scale-110 transition" title="Share photo" aria-label="Share photo">
 														<FaShare />
 													</button>
-													<button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:scale-110 transition">
+													<button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:scale-110 transition" title="Download photo" aria-label="Download photo">
 														<FaDownload />
 													</button>
-                      </div>
+												</div>
                     </div>
                   </div>
                   <div className="p-4">
@@ -262,6 +277,8 @@ const Gallery = () => {
 										<button
 											onClick={() => setShowUploadModal(false)}
 											className="text-muted-foreground hover:text-foreground"
+											title="Close upload modal"
+											aria-label="Close upload modal"
 										>
 											<FaTimes />
 										</button>
@@ -413,6 +430,8 @@ const Gallery = () => {
 												<button
 													onClick={() => setShowMediaModal(false)}
 													className="text-muted-foreground hover:text-foreground"
+													title="Close media modal"
+													aria-label="Close media modal"
 												>
 													<FaTimes />
 												</button>

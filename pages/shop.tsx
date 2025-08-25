@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { FaSpinner, FaSearch, FaShoppingCart, FaHeart, FaTimes, FaTrash } from "react-icons/fa";
-import { productService, Product, testFirebaseConnection } from "../lib/firebase-services";
+import { productService, testFirebaseConnection } from "../lib/firebase-services";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+
+interface Product {
+	id?: string;
+	name: string;
+	description: string;
+	price: number;
+	category: string;
+	stock: number;
+	imageUrl?: string;
+	tags: string[];
+	isActive: boolean;
+	variants?: any[];
+	createdAt?: Date;
+	updatedAt?: Date;
+}
 
 export default function Shop() {
 	const [products, setProducts] = useState<Product[]>([]);
@@ -42,7 +57,7 @@ export default function Shop() {
 	const loadProducts = async () => {
 		try {
 			console.log("Loading products from Firebase...");
-			const allProducts = await productService.getAllProducts();
+			const allProducts = await productService.readAll();
 			console.log("Products loaded:", allProducts);
 			console.log("Products length:", allProducts.length);
 			console.log("Products data:", JSON.stringify(allProducts, null, 2));
@@ -70,7 +85,7 @@ export default function Shop() {
 			filtered = filtered.filter(product =>
 				product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 				product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+				product.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
 			);
 		}
 		
@@ -185,6 +200,7 @@ export default function Shop() {
 								value={selectedCategory}
 								onChange={(e) => setSelectedCategory(e.target.value)}
 								className="px-4 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+								aria-label="Filter by category"
 							>
 								{categories.map(category => (
 									<option key={category.value} value={category.value}>
@@ -326,6 +342,8 @@ export default function Shop() {
 							<button
 								onClick={() => setShowCart(false)}
 								className="text-muted-foreground hover:text-foreground p-2 rounded-full hover:bg-muted transition-colors"
+								title="Close cart"
+								aria-label="Close cart"
 							>
 								<FaTimes className="w-5 h-5" />
 							</button>
@@ -431,6 +449,8 @@ export default function Shop() {
 							<button
 								onClick={() => setShowMpesaPayment(false)}
 								className="text-muted-foreground hover:text-foreground p-2 rounded-full hover:bg-muted transition-colors"
+								title="Close payment modal"
+								aria-label="Close payment modal"
 							>
 								<FaTimes className="w-5 h-5" />
 							</button>

@@ -4,7 +4,6 @@ import Head from "next/head";
 import { FaHeart, FaHandshake, FaSeedling, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
-import SocialPostsCarousel from "../components/SocialPostsCarousel";
 
 export default function HomePage() {
   // Newsletter signup logic placeholder
@@ -41,19 +40,15 @@ export default function HomePage() {
         <meta name="description" content="Join our vibrant community for transformative yoga, meditation, and wellness experiences in the heart of Nairobi." />
         <link rel="icon" type="image/png" href="/2.png" />
         <link rel="shortcut icon" type="image/png" href="/2.png" />
-        <link rel="apple-touch-icon" href="/2.png" />
       </Head>
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1">
           {/* Hero Section */}
           <section
-            className="relative h-screen flex items-center justify-center overflow-hidden"
+            className="relative h-screen flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
+              backgroundImage: `url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
             }}
           >
             <div className="absolute inset-0 bg-primary/70"></div>
@@ -168,9 +163,6 @@ export default function HomePage() {
               </div>
             </div>
           </section>
-
-          {/* Social Posts Carousel */}
-          <SocialPostsCarousel />
 
           {/* WhatsApp Community Section */}
           <section className="py-20 bg-gradient-to-r from-green-500 to-green-600 text-white">

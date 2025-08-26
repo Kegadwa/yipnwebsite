@@ -131,14 +131,14 @@ const Testimonials = () => {
                 <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-3 flex items-center justify-center">
                   <FaUsers className="text-3xl text-white" />
                 </div>
-                <p className="text-2xl font-bold text-gray-800">300+</p>
+                <p className="text-2xl font-bold text-gray-800">100+</p>
                 <p className="text-sm text-gray-600">Happy Participants</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-3 flex items-center justify-center">
                   <FaStar className="text-3xl text-white" />
                 </div>
-                <p className="text-2xl font-bold text-gray-800">4.9</p>
+                <p className="text-2xl font-bold text-gray-800">4.7</p>
                 <p className="text-sm text-gray-600">Average Rating</p>
               </div>
               <div className="text-center">
@@ -152,7 +152,7 @@ const Testimonials = () => {
                 <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-3 flex items-center justify-center">
                   <FaCalendar className="text-3xl text-white" />
                 </div>
-                <p className="text-2xl font-bold text-gray-800">6</p>
+                <p className="text-2xl font-bold text-gray-800">1</p>
                 <p className="text-sm text-gray-600">Events Hosted</p>
               </div>
             </div>

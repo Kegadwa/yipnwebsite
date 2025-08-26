@@ -1,5 +1,5 @@
 import React from "react";
-import { FaHeart, FaHandshake, FaSeedling, FaGlobeAfrica, FaBullseye, FaLightbulb } from "react-icons/fa";
+import { FaHeart, FaHandshake, FaSeedling, FaGlobeAfrica, } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 
@@ -32,16 +32,17 @@ const values = [
 
 const missions = [
 	{
-		icon: <FaBullseye className="text-3xl text-secondary" />,
+		
 		title: "Our Mission",
 		content:
-			"To create transformative wellness experiences that bring the Nairobi community together through yoga, meditation, and mindful living practices in beautiful natural settings.",
+			"Yoga in the Park will expand from Nairobi to the world. Q1 begins in Dubai, and city by city, continent by continent, we will create spaces where people gather to breathe, flow, and heal together.",
+			"We are building a global movement of wellness, one park, one mat, one soul at a time.",
 	},
 	{
-		icon: <FaLightbulb className="text-3xl text-secondary" />,
+
 		title: "Our Vision",
 		content:
-			"To be Nairobi&apos;s leading wellness community, inspiring thousands to embrace mindful living while fostering deep connections with nature and each other.",
+			"We begin in Nairobi — transforming it into a wellness city, a sanctuary where people can pause, breathe, and zone out from the demands of their busy lives. From here, we extend this movement across the globe.  At any one time, we envision a map of the world lit up with wellness — cities connected through stillness, beauty, and mindful community.",
 	},
 ];
 
@@ -115,7 +116,7 @@ const AboutPage = () => {
 									<p>
 										Every YIPN gathering is an invitation to slow down, breathe deeply, move mindfully, and remember 
 										that wellness is not a destination but a journey we can take together. Welcome to our community - 
-										we&apos;re honored to be part of your wellness story.
+										we're honored to be part of your wellness story.
 									</p>
 								</div>
 							</div>
@@ -126,9 +127,6 @@ const AboutPage = () => {
 							<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 								{missions.map((mission) => (
 									<div key={mission.title} className="bg-white rounded-lg shadow p-8 text-center">
-										<div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-											<span className="text-3xl">{mission.icon}</span>
-										</div>
 										<h3 className="text-2xl font-bold mb-2">{mission.title}</h3>
 										<p className="text-gray-700">{mission.content}</p>
 									</div>

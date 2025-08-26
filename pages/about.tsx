@@ -35,8 +35,7 @@ const missions = [
 		
 		title: "Our Mission",
 		content:
-			"Yoga in the Park will expand from Nairobi to the world. Q1 begins in Dubai, and city by city, continent by continent, we will create spaces where people gather to breathe, flow, and heal together.",
-			"We are building a global movement of wellness, one park, one mat, one soul at a time.",
+			"Yoga in the Park will expand from Nairobi to the world. Q1 begins in Dubai, and city by city, continent by continent, we will create spaces where people gather to breathe, flow, and heal together. We are building a global movement of wellness, one park, one mat, one soul at a time.",
 	},
 	{
 

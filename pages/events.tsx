@@ -17,9 +17,9 @@ const mockEvents = [
 		activities: [
 			{ name: "Registration & Welcome desk", time: "08:00 - 09:00" },
 			{ name: "Opening & Grounding meditation", time: "09:00 - 09:20" },
-			{ name: "Yoga Flow Session (Gentle Power Vinyasa)", time: "09:20 - 10:20" },
+			{ name: "YPilates for Core Strength & Stability", time: "09:20 - 10:20" },
 			{ name: "Tea & Wellness Break", time: "10:20 - 10:50" },
-			{ name: "Pilates for Core Strength & Stability", time: "10:50 - 11:35" },
+			{ name: "Yoga Flow Session (Gentle Power Vinyasa)", time: "10:50 - 11:35" },
 			{ name: "Stretch & Unwind Session", time: "11:35 - 12:00" },
 			{ name: "Sound Healing Journey", time: "12:00 - 12:45" },
 			{ name: "Wellness Lunch Break", time: "12:45 - 13:15" },

@@ -550,7 +550,7 @@ export const blogService = createCRUDService<any>('blog_posts');
 export const productService = createCRUDService<any>('products');
 export const categoryService = createCRUDService<any>('categories');
 export const orderService = createCRUDService<any>('orders');
-export const galleryService = createCRUDService<any>('gallery');
+export const galleryService = createCRUDService<any>('gallery1');
 
 // Test Firebase connection
 export const testFirebaseConnection = async (): Promise<boolean> => {

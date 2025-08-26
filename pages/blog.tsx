@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaSearch, FaSort, FaFilter, FaUser, FaCalendar, FaTag, FaEnvelope, FaSpotify, FaMusic, FaLeaf, FaHeart, FaUsers, FaCalendarAlt, FaLightbulb, FaPrayingHands, FaFire } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
+import { blogService } from "../lib/firebase-services";
 
 interface BlogPost {
 	id: string;
@@ -56,58 +57,27 @@ const Blog = () => {
 	const loadBlogPosts = async () => {
 		try {
 			setLoading(true);
-			// TODO: Replace with actual Firebase fetch
-			// For now, using mock data that matches the admin structure
-			const mockPosts: BlogPost[] = [
-				{
-					id: "1",
-					title: "The Power of Mindful Living: A Journey to Wellness",
-					excerpt: "Discover how incorporating mindfulness practices into your daily routine can transform your physical and mental well-being.",
-					content: "Full content here...",
-					author: "Sarah Kamau",
-					publishDate: new Date("2024-01-15"),
-					tags: ["mindfulness", "wellness", "meditation", "lifestyle"],
-					category: "Mindfulness",
-					imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-					isPublished: true,
-					slug: "power-of-mindful-living",
-					readTime: 5
-				},
-				{
-					id: "2",
-					title: "Building a Morning Wellness Routine",
-					excerpt: "Start your day with intention and energy through these simple morning practices.",
-					content: "Full content here...",
-					author: "Michael Ochieng",
-					publishDate: new Date("2024-01-10"),
-					tags: ["morning-routine", "wellness", "habits", "self-care"],
-					category: "Wellness",
-					imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-					isPublished: true,
-					slug: "building-morning-wellness-routine",
-					readTime: 4
-				},
-				{
-					id: "3",
-					title: "The Healing Power of Community Yoga",
-					excerpt: "Discover how practicing yoga in a group setting can enhance your personal growth.",
-					content: "Full content here...",
-					author: "Grace Wanjiku",
-					publishDate: new Date("2024-01-05"),
-					tags: ["yoga", "community", "healing", "connection"],
-					category: "Community",
-					imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-					isPublished: true,
-					slug: "healing-power-community-yoga",
-					readTime: 6
-				}
-			];
+			// Use real Firebase service to fetch blog posts
+			const posts = await blogService.readAll();
+			console.log('Blog posts loaded from Firebase:', posts);
 			
-			// Filter only published posts
-			const publishedPosts = mockPosts.filter(post => post.isPublished);
+			// Convert Firestore timestamps to Date objects and filter only published posts
+			const publishedPosts = posts
+				.filter(post => post.isPublished)
+				.map(post => ({
+					...post,
+					publishDate: post.publishDate?.toDate() || new Date(),
+					createdAt: post.createdAt?.toDate() || new Date(),
+					updatedAt: post.updatedAt?.toDate() || new Date()
+				}));
+			
+			console.log('Published posts with dates:', publishedPosts);
+			console.log('Post slugs:', publishedPosts.map(p => p.slug));
+			
 			setBlogPosts(publishedPosts);
 		} catch (error) {
 			console.error("Error loading blog posts:", error);
+			alert("Failed to load blog posts. Please try again.");
 		} finally {
 			setLoading(false);
 		}

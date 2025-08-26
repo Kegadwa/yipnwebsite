@@ -12,8 +12,12 @@ import {
   FaCalendarAlt,
   FaUser,
   FaTag,
-  FaEyeSlash
+  FaEyeSlash,
+  FaSeedling
 } from 'react-icons/fa';
+import { blogService, imageService } from '../../lib/firebase-services';
+import { serverTimestamp } from 'firebase/firestore';
+import { seedBlogData, checkBlogDataExists } from '../../lib/seed-blog-data';
 
 interface BlogPost {
   id?: string;
@@ -42,6 +46,7 @@ const AdminBlog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [hasData, setHasData] = useState(false);
 
   const [formData, setFormData] = useState<BlogPost>({
     title: '',
@@ -70,7 +75,34 @@ const AdminBlog = () => {
 
   useEffect(() => {
     loadBlogPosts();
+    checkIfDataExists();
   }, []);
+
+  const checkIfDataExists = async () => {
+    try {
+      const exists = await checkBlogDataExists();
+      setHasData(exists);
+    } catch (error) {
+      console.error('Error checking data existence:', error);
+    }
+  };
+
+  const handleSeedData = async () => {
+    if (window.confirm('This will add sample blog posts to your database. Continue?')) {
+      try {
+        setLoading(true);
+        await seedBlogData();
+        await loadBlogPosts();
+        await checkIfDataExists();
+        alert('Sample blog posts added successfully!');
+      } catch (error) {
+        console.error('Error seeding data:', error);
+        alert('Failed to seed data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const loadBlogPosts = async () => {
     try {
@@ -257,7 +289,19 @@ const AdminBlog = () => {
       // Generate slug if not provided
       if (!formData.slug) {
         formData.slug = generateSlug(formData.title);
+        console.log('Generated slug:', formData.slug, 'from title:', formData.title);
       }
+      
+      // Ensure slug is unique
+      const existingPost = blogPosts.find(post => 
+        post.slug === formData.slug && post.id !== selectedPost?.id
+      );
+      if (existingPost) {
+        formData.slug = generateSlug(formData.title) + '-' + Date.now();
+        console.log('Slug conflict detected, new slug:', formData.slug);
+      }
+      
+      console.log('Final slug being saved:', formData.slug);
       
       if (isEditModalOpen && selectedPost?.id) {
         // TODO: Implement actual Firebase update

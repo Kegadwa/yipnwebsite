@@ -32,6 +32,7 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminInstructors from "../components/admin/AdminInstructors";
 import AdminBlog from "../components/admin/AdminBlog";
 import AdminMerchandise from "../components/admin/AdminMerchandise";
+import AdminGalleryConfig from "../components/admin/AdminGalleryConfig";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -59,6 +60,8 @@ const Admin = () => {
         return <AdminBlog />;
       case 'merchandise':
         return <AdminMerchandise />;
+      case 'gallery':
+        return <AdminGalleryConfig />;
       default:
         return <AdminDashboard />;
     }
@@ -107,6 +110,7 @@ const Admin = () => {
               { id: 'instructors', label: 'Instructors', icon: FaUserTie },
               { id: 'blog', label: 'Blog', icon: FaBlog },
               { id: 'merchandise', label: 'Merchandise', icon: FaShoppingCart },
+              { id: 'gallery', label: 'Gallery', icon: FaImage },
             ].map((tab) => {
               const Icon = tab.icon;
               

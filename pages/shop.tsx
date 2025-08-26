@@ -225,7 +225,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 					</div>
 
 					{/* Right Side - Product Details */}
-					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-120px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-120px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ scrollbarWidth: 'thin', scrollbarColor: '#9CA3AF #F3F4F6' }}>
 						{/* Price */}
 						<div className="text-2xl sm:text-3xl font-bold text-primary">
 							KSh {product.price.toLocaleString()}

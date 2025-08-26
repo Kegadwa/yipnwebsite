@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
+import { FaHeadphones, FaCheck, FaPlay, FaHeart, FaStar, FaSpotify, FaMusic, FaYoutube } from 'react-icons/fa';
 import Navbar from '../components/Navigation';
 import Footer from '../components/Footer';
 
 const Meditations = () => {
-  const [email, setEmail] = useState('');
-  const [hasAccess, setHasAccess] = useState(false);
-
-  const handleAccessSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setHasAccess(true);
-      // Here you would typically verify email and grant access
-      console.log('Meditation access granted to:', email);
-    }
-  };
+  // Removed access gate - Spotify content is now directly accessible
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -44,112 +35,87 @@ const Meditations = () => {
         <section className="py-20 bg-gradient-to-b from-white to-gray-100">
           <div className="container mx-auto px-4">
             
-            {!hasAccess ? (
-              /* Access Gate */
-              <div className="max-w-2xl mx-auto">
-                <div className="bg-white rounded-lg shadow-lg">
-                  <div className="text-center p-8">
-                    <span className="text-6xl mb-4 block">🎧</span>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Unlock Free Meditation Access</h2>
-                    <p className="text-lg text-gray-600 mb-6">
-                      Enter your email to access our collection of guided meditation clips. 
-                      No cost - just a simple way for us to share these peaceful moments with you.
-                    </p>
-                  </div>
-                  <div className="p-8">
-                    <form onSubmit={handleAccessSubmit} className="space-y-4">
-                      <div className="space-y-2">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-                        <input
-                          id="email"
-                          type="email"
-                          placeholder="Enter your email address"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                        />
-                      </div>
-                      <button type="submit" className="w-full px-6 py-3 bg-primary text-white rounded-md hover:bg-blue-700 transition-colors">
-                        Access Meditation Clips
-                      </button>
-                    </form>
-                    
-                    <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-                      <h4 className="font-semibold mb-2">What you&apos;ll get access to:</h4>
-                      <ul className="space-y-1 text-sm text-gray-600">
-                        <li className="flex items-center">
-                          <span className="mr-2 text-green-500">✅</span>
-                          10-minute morning mindfulness meditation
-                        </li>
-                        <li className="flex items-center">
-                          <span className="mr-2 text-green-500">✅</span>
-                          Evening stress relief session
-                        </li>
-                        <li className="flex items-center">
-                          <span className="mr-2 text-green-500">✅</span>
-                          Breathing exercises for anxiety relief
-                        </li>
-                        <li className="flex items-center">
-                          <span className="mr-2 text-green-500">✅</span>
-                          Body scan relaxation practices
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+            {/* Welcome Message */}
+            <div className="max-w-4xl mx-auto text-center mb-12">
+              <div className="w-24 h-24 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <FaCheck className="text-5xl text-white" />
               </div>
-            ) : (
-              <div>
-                {/* Welcome Message */}
-                <div className="max-w-4xl mx-auto text-center mb-12">
-                  <span className="text-6xl mb-4 block">✅</span>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                    Welcome to Your Meditation Library
-                  </h2>
-                  <p className="text-lg text-gray-600">
-                    You now have access to our curated collection of guided meditation clips. 
-                    Find a quiet space, put on your headphones, and let these practices guide you to inner peace.
-                  </p>
-                </div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                Welcome to Your Meditation Library
+              </h2>
+              <p className="text-lg text-gray-600">
+                Access our curated collection of guided meditation clips. 
+                Find a quiet space, put on your headphones, and let these practices guide you to inner peace.
+              </p>
+            </div>
 
-                {/* Meditation Clips */}
-                <div className="max-w-6xl mx-auto mb-16">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {[
-                      { id: '1', title: 'Morning Mindfulness', description: 'Start your day with clarity and intention', duration: '10 min' },
-                      { id: '2', title: 'Evening Relaxation', description: 'Wind down and release daily stress', duration: '15 min' },
-                      { id: '3', title: 'Breathing Exercises', description: 'Simple techniques for anxiety relief', duration: '8 min' },
-                      { id: '4', title: 'Body Scan', description: 'Progressive relaxation through awareness', duration: '12 min' }
-                    ].map((clip, index) => (
-                      <div key={clip.id} className="bg-white rounded-lg shadow-lg hover:scale-105 transition-all duration-300">
-                        <div className="aspect-video bg-gray-100 flex items-center justify-center relative group cursor-pointer">
-                          <div className="text-center">
-                            <span className="text-6xl mb-2 block">▶️</span>
-                            <p className="text-sm text-gray-500">Click to Play</p>
-                          </div>
-                          <div className="absolute bottom-2 right-2 bg-primary/80 text-white px-2 py-1 rounded text-xs flex items-center">
-                            <span className="mr-1">⏱️</span>
-                            {clip.duration}
-                          </div>
-                        </div>
-                        <div className="p-6">
-                          <h3 className="text-xl font-bold text-gray-800 mb-3">{clip.title}</h3>
-                          <p className="mb-4 leading-relaxed text-gray-600">
-                            {clip.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <button className="flex-1 mr-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 transition-colors">
-                              <span className="mr-2">▶️</span>
-                              Play Meditation
-                            </button>
-                            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
-                              <span>💖</span>
-                            </button>
-                          </div>
-                        </div>
+                {/* Spotify Playlist Section */}
+                <div className="max-w-4xl mx-auto mb-16">
+                  <div className="bg-white rounded-lg shadow-lg p-8">
+                    <div className="text-center mb-8">
+                      <div className="w-20 h-20 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <FaSpotify className="text-4xl text-white" />
                       </div>
-                    ))}
+                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Power and Stillness Playlist</h3>
+                      <p className="text-gray-600 mb-6">
+                        Curated by YIPN for your wellness journey. Perfect for meditation, yoga practice, or simply finding peace in your day.
+                      </p>
+                      <a 
+                        href="https://open.spotify.com/playlist/665ZxCr1f2xJxN6tUeTx68?si=8Fnyd-2sQ6-65r8wXMsQTg&pi=ply0Ng4ZSE6YM"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold"
+                      >
+                        <FaSpotify className="mr-2" />
+                        Listen on Spotify
+                      </a>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-gray-50 rounded-lg p-6">
+                        <h4 className="font-semibold text-gray-800 mb-3">Featured Tracks</h4>
+                        <ul className="space-y-2 text-sm text-gray-600">
+                          <li className="flex items-center">
+                            <FaMusic className="mr-2 text-green-500" />
+                            There Will Be No Crying - Cleo Sol
+                          </li>
+                          <li className="flex items-center">
+                            <FaMusic className="mr-2 text-green-500" />
+                            Eternal Sunshine - Jhené Aiko
+                          </li>
+                          <li className="flex items-center">
+                            <FaMusic className="mr-2 text-green-500" />
+                            Unmoved - Ayoni
+                          </li>
+                          <li className="flex items-center">
+                            <FaMusic className="mr-2 text-green-500" />
+                            Home with you - FKA twigs
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-50 rounded-lg p-6">
+                        <h4 className="font-semibold text-gray-800 mb-3">Playlist Details</h4>
+                        <ul className="space-y-2 text-sm text-gray-600">
+                          <li className="flex items-center">
+                            <FaStar className="mr-2 text-yellow-500" />
+                            1 hour 34 minutes
+                          </li>
+                          <li className="flex items-center">
+                            <FaStar className="mr-2 text-yellow-500" />
+                            Curated by YIPN Team
+                          </li>
+                          <li className="flex items-center">
+                            <FaStar className="mr-2 text-yellow-500" />
+                            Perfect for meditation
+                          </li>
+                          <li className="flex items-center">
+                            <FaStar className="mr-2 text-yellow-500" />
+                            Updated regularly
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -168,15 +134,15 @@ const Meditations = () => {
                           <h4 className="font-semibold text-gray-800">Before You Begin</h4>
                           <ul className="space-y-2 text-sm text-gray-600">
                             <li className="flex items-start">
-                              <span className="mr-2 text-yellow-500">⭐</span>
+                              <FaStar className="mr-2 text-yellow-500 mt-1" />
                               Find a quiet, comfortable space where you won&apos;t be disturbed
                             </li>
                             <li className="flex items-start">
-                              <span className="mr-2 text-yellow-500">⭐</span>
+                              <FaStar className="mr-2 text-yellow-500 mt-1" />
                               Use headphones for the best audio experience
                             </li>
                             <li className="flex items-start">
-                              <span className="mr-2 text-yellow-500">⭐</span>
+                              <FaStar className="mr-2 text-yellow-500 mt-1" />
                               Sit comfortably with your spine naturally straight
                             </li>
                           </ul>
@@ -185,15 +151,15 @@ const Meditations = () => {
                           <h4 className="font-semibold text-gray-800">During Practice</h4>
                           <ul className="space-y-2 text-sm text-gray-600">
                             <li className="flex items-start">
-                              <span className="mr-2 text-yellow-500">⭐</span>
+                              <FaStar className="mr-2 text-yellow-500 mt-1" />
                               Allow thoughts to come and go without judgment
                             </li>
                             <li className="flex items-start">
-                              <span className="mr-2 text-yellow-500">⭐</span>
+                              <FaStar className="mr-2 text-yellow-500 mt-1" />
                               Return attention gently to the guidance when mind wanders
                             </li>
                             <li className="flex items-start">
-                              <span className="mr-2 text-yellow-500">⭐</span>
+                              <FaStar className="mr-2 text-yellow-500 mt-1" />
                               Focus on the experience rather than expectations
                             </li>
                           </ul>
@@ -202,34 +168,34 @@ const Meditations = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-              )}
 
-              {/* More Content CTA */}
-              <div className="max-w-4xl mx-auto text-center">
-                <div className="bg-white rounded-lg shadow-lg p-12 bg-gradient-to-r from-blue-50 to-orange-50">
-                  <span className="text-6xl mb-6 block">🎧</span>
-                  <h3 className="text-2xl font-bold mb-4">Join Us for Live Sessions</h3>
-                  <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-                    While these recorded clips offer convenience, nothing compares to the energy of live, 
-                    guided meditation in community. Join us at YIPN events for deeper, shared experiences.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button className="px-6 py-3 bg-primary text-white rounded-md hover:bg-blue-700 transition-colors">
-                      View Upcoming Events
-                    </button>
-                    <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
-                      Learn About Our Instructors
-                    </button>
+                {/* More Content CTA */}
+                <div className="max-w-4xl mx-auto text-center">
+                  <div className="bg-white rounded-lg shadow-lg p-12 bg-gradient-to-r from-blue-50 to-orange-50">
+                    <div className="w-24 h-24 bg-primary rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <FaHeadphones className="text-5xl text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">Join Us for Live Sessions</h3>
+                    <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+                      While these recorded clips offer convenience, nothing compares to the energy of live, 
+                      guided meditation in community. Join us at YIPN events for deeper, shared experiences.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <button className="px-6 py-3 bg-primary text-white rounded-md hover:bg-blue-700 transition-colors">
+                        View Upcoming Events
+                      </button>
+                      <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                        Learn About Our Instructors
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
-        </main>
-        <Footer />
-      </div>
-    );
-  };
+            </section>
+          </main>
+          <Footer />
+        </div>
+      );
+    };
 
-  export default Meditations;
+    export default Meditations;

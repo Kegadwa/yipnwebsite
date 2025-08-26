@@ -148,7 +148,7 @@ const AboutPage = () => {
 								{values.map((value) => (
 									<div key={value.title} className="bg-white rounded-lg shadow p-8 text-center">
 										<div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-											<span className="text-3xl">{value.icon}</span>
+											{value.icon}
 										</div>
 										<h3 className="text-xl font-bold mb-2">{value.title}</h3>
 										<p className="text-gray-700 text-sm">{value.description}</p>

@@ -73,17 +73,48 @@ const BlogPost = () => {
 
   const fetchRelatedPosts = async (currentSlug: string) => {
     try {
-      // Use real Firebase service to fetch related blog posts
+      // Use real Firebase service to fetch all blog posts once
       const posts = await blogService.readAll();
       
-      // Convert Firestore timestamps to Date objects and filter published posts
+      // Find the current post to get its category
+      const currentPost = posts.find(post => post.slug === currentSlug && post.isPublished);
+      
+      if (!currentPost) {
+        setRelatedPosts([]);
+        return;
+      }
+      
+      // Convert Firestore timestamps to Date objects and filter by same category
       const postsWithDates = posts
-        .filter(post => post.isPublished && post.slug !== currentSlug)
+        .filter(post => 
+          post.isPublished && 
+          post.slug !== currentSlug && 
+          post.category === currentPost.category
+        )
         .map(post => ({
           ...post,
           publishDate: post.publishDate?.toDate() || new Date()
         }))
-        .slice(0, 2); // Get only 2 related posts
+        .sort((a, b) => b.publishDate.getTime() - a.publishDate.getTime()) // Sort by most recent first
+        .slice(0, 3); // Get up to 3 related posts from the same category
+      
+      // If we don't have enough posts from the same category, fill with posts from other categories
+      if (postsWithDates.length < 3) {
+        const otherCategoryPosts = posts
+          .filter(post => 
+            post.isPublished && 
+            post.slug !== currentSlug && 
+            post.category !== currentPost.category
+          )
+          .map(post => ({
+            ...post,
+            publishDate: post.publishDate?.toDate() || new Date()
+          }))
+          .sort((a, b) => b.publishDate.getTime() - a.publishDate.getTime()) // Sort by most recent first
+          .slice(0, 3 - postsWithDates.length);
+        
+        postsWithDates.push(...otherCategoryPosts);
+      }
       
       setRelatedPosts(postsWithDates);
     } catch (error) {
@@ -118,7 +149,7 @@ const BlogPost = () => {
               <p className="text-gray-600 mb-8">The article you're looking for doesn't exist or has been removed.</p>
               <Link href="/blog" className="inline-flex items-center space-x-2 text-secondary hover:text-primary transition-colors">
                 <FaArrowLeft />
-                <span>Back to Blog</span>
+                <span>Read others?</span>
               </Link>
             </div>
           </div>
@@ -227,10 +258,23 @@ const BlogPost = () => {
           </article>
 
           {/* Related Posts */}
-          {relatedPosts.length > 0 && (
-            <section className="max-w-4xl mx-auto mt-16">
-              <h2 className="text-2xl font-bold text-gray-800 mb-8">Related Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="max-w-4xl mx-auto mt-16">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">
+              Related Articles
+              {post.category && (
+                <span className="text-lg font-normal text-gray-600 ml-2">
+                  in {post.category}
+                </span>
+              )}
+              {relatedPosts.length > 0 && (
+                <span className="text-sm font-normal text-gray-500 ml-2">
+                  ({relatedPosts.filter(p => p.category === post.category).length} from same category)
+                </span>
+              )}
+            </h2>
+            
+            {relatedPosts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {relatedPosts.map((relatedPost) => (
                   <article key={relatedPost.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                     {relatedPost.imageUrl && (
@@ -243,19 +287,60 @@ const BlogPost = () => {
                       </div>
                     )}
                     <div className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          relatedPost.category === post.category 
+                            ? 'bg-primary/20 text-primary' 
+                            : 'bg-gray-200 text-gray-600'
+                        }`}>
+                          {relatedPost.category}
+                          {relatedPost.category === post.category && (
+                            <span className="ml-1 text-xs">(same)</span>
+                          )}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {relatedPost.readTime} min read
+                        </span>
+                      </div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
                         {relatedPost.title}
                       </h3>
                       <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                         {relatedPost.excerpt}
                       </p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>{relatedPost.author}</span>
-                        <span>{relatedPost.publishDate.toLocaleDateString()}</span>
+                      
+                      {/* Tags */}
+                      {relatedPost.tags && relatedPost.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {relatedPost.tags.slice(0, 3).map((tag, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          {relatedPost.tags.length > 3 && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
+                              +{relatedPost.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span className="flex items-center">
+                          <FaUser className="mr-1 text-xs" />
+                          {relatedPost.author}
+                        </span>
+                        <span className="flex items-center">
+                          <FaCalendar className="mr-1 text-xs" />
+                          {relatedPost.publishDate.toLocaleDateString()}
+                        </span>
                       </div>
                       <Link 
                         href={`/blog/${relatedPost.slug}`}
-                        className="mt-4 inline-block text-secondary hover:text-primary transition-colors"
+                        className="inline-block text-secondary hover:text-primary transition-colors font-medium"
                       >
                         Read More →
                       </Link>
@@ -263,8 +348,21 @@ const BlogPost = () => {
                   </article>
                 ))}
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="text-center py-12 bg-gray-50 rounded-lg">
+                <p className="text-gray-600 mb-4">
+                  No related articles found in the same category.
+                </p>
+                <Link 
+                  href="/blog" 
+                  className="inline-flex items-center space-x-2 text-secondary hover:text-primary transition-colors"
+                >
+                  <span>Browse all articles</span>
+                  <FaArrowLeft className="transform rotate-180" />
+                </Link>
+              </div>
+            )}
+          </section>
         </div>
       </main>
       

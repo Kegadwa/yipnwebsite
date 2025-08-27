@@ -54,7 +54,7 @@ const sampleBlogPosts: BlogPost[] = [
     author: 'YIPN Team',
     publishDate: new Date('2024-08-20'),
     tags: ['yoga', 'beginners', 'wellness', 'fitness'],
-    category: 'Yoga & Wellness',
+    category: 'Yoga',
     imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     isPublished: true,
     slug: 'yoga-for-beginners-complete-guide',

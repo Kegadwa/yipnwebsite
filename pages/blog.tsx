@@ -33,11 +33,12 @@ const Blog = () => {
 	const [isSubscribing, setIsSubscribing] = useState(false);
 
 	// Categories for filtering
+	// Note: Categories have been updated. "Yoga & Wellness" has been split into "Yoga" and "Wellness"
 	const categories = [
 		"Mindfulness",
+		"Yoga",
 		"Wellness",
 		"Community",
-		"Yoga & Wellness",
 		"Meditation",
 		"Fitness",
 		"Nutrition",
@@ -243,63 +244,8 @@ const Blog = () => {
 						</div>
 					</div>
 
-					{/* Featured Post */}
-					{filteredPosts.length > 0 && (
-						<div className="max-w-4xl mx-auto mb-16">
-							<div className="bg-white rounded-lg shadow p-8 flex flex-col lg:flex-row gap-8">
-								<div className="flex-1 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
-									{filteredPosts[0].imageUrl ? (
-										<img 
-											src={filteredPosts[0].imageUrl} 
-											alt={filteredPosts[0].title}
-											className="w-full h-full object-cover"
-										/>
-									) : (
-										<FaTag className="text-6xl text-gray-400" />
-									)}
-								</div>
-								<div className="flex-1 flex flex-col justify-center">
-									<span className="inline-block px-3 py-1 border border-secondary text-secondary rounded mb-4 w-fit">
-										Featured
-									</span>
-									<h2 className="text-2xl mb-4 font-bold">
-										{filteredPosts[0].title}
-									</h2>
-									<p className="mb-6 text-base leading-relaxed text-gray-700">
-										{filteredPosts[0].excerpt}
-									</p>
-									<div className="flex items-center text-sm text-gray-500 mb-6">
-										<span className="mr-4 flex items-center">
-											<FaUser className="mr-1" />
-											{filteredPosts[0].author}
-										</span>
-										<span className="flex items-center">
-											<FaCalendar className="mr-1" />
-											{filteredPosts[0].publishDate.toLocaleDateString()}
-										</span>
-									</div>
-									<a
-										href={`/blog/${filteredPosts[0].slug}`}
-										className="inline-block px-6 py-2 rounded bg-secondary text-white font-semibold shadow hover:scale-105 transition"
-									>
-										Read Full Article →
-									</a>
-								</div>
-							</div>
-						</div>
-					)}
-
 					{/* Blog Posts Grid */}
 					<div className="max-w-6xl mx-auto mb-16">
-						<div className="text-center mb-12">
-							<h2 className="text-3xl font-bold text-primary mb-4">
-								Latest Articles
-							</h2>
-							<p className="text-gray-700">
-								Practical wellness wisdom for your daily journey
-							</p>
-						</div>
-
 						{loading ? (
 							<div className="text-center py-12">
 								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
@@ -311,7 +257,7 @@ const Blog = () => {
 							</div>
 						) : (
 							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-								{filteredPosts.slice(1).map((post, index) => (
+								{filteredPosts.map((post, index) => (
 									<div
 										key={post.id}
 										className="bg-white rounded-lg shadow p-6 hover:scale-105 transition"

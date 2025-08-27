@@ -15,7 +15,7 @@ import {
   FaEyeSlash
 } from 'react-icons/fa';
 import { blogService } from '../../lib/firebase-services';
-import { serverTimestamp } from 'firebase/firestore';
+import { serverTimestamp, Timestamp } from 'firebase/firestore';
 
 interface BlogPost {
   id?: string;
@@ -60,8 +60,11 @@ const AdminBlog = () => {
     readTime: 5
   });
 
+  // Note: Categories have been updated. "Yoga & Wellness" has been split into "Yoga" and "Wellness"
+  // Existing posts with "Yoga & Wellness" category may need to be updated manually
   const categories = [
-    'Yoga & Wellness',
+    'Yoga',
+    'Wellness',
     'Meditation',
     'Fitness',
     'Nutrition',
@@ -80,8 +83,11 @@ const AdminBlog = () => {
   const loadBlogPosts = async () => {
     try {
       setLoading(true);
+      console.log('Loading blog posts from Firebase...');
+      
       // Fetch real blog posts from Firebase
       const posts = await blogService.readAll();
+      console.log('Raw posts from Firebase:', posts);
       
       // Convert Firestore timestamps to Date objects
       const postsWithDates = posts.map(post => ({
@@ -91,10 +97,25 @@ const AdminBlog = () => {
         updatedAt: post.updatedAt?.toDate() || new Date()
       }));
       
+      console.log('Posts with converted dates:', postsWithDates);
+      console.log('Post slugs:', postsWithDates.map(p => p.slug));
+      
       setBlogPosts(postsWithDates);
     } catch (error) {
       console.error('Error loading blog posts:', error);
-      alert('Failed to load blog posts. Please try again.');
+      
+      // Provide more specific error information
+      if (error instanceof Error) {
+        if (error.message.includes('permission-denied')) {
+          alert('Permission denied. Please check your Firebase security rules.');
+        } else if (error.message.includes('unavailable')) {
+          alert('Firebase service unavailable. Please check your internet connection and Firebase configuration.');
+        } else {
+          alert(`Failed to load blog posts: ${error.message}`);
+        }
+      } else {
+        alert('Failed to load blog posts. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -136,10 +157,22 @@ const AdminBlog = () => {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [field]: value
+      };
+      
+      // Auto-generate slug when title changes
+      if (field === 'title' && value && !prev.slug) {
+        const generatedSlug = generateSlug(value);
+        if (generatedSlug) {
+          newData.slug = generatedSlug;
+        }
+      }
+      
+      return newData;
+    });
   };
 
   const handleTagsChange = (tagsString: string) => {
@@ -148,11 +181,14 @@ const AdminBlog = () => {
   };
 
   const generateSlug = (title: string) => {
+    if (!title || typeof title !== 'string') return '';
+    
     return title
       .toLowerCase()
       .replace(/[^a-z0-9 -]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
       .trim();
   };
 
@@ -162,6 +198,13 @@ const AdminBlog = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.title.trim() || !formData.excerpt.trim() || !formData.content.trim() || !formData.author.trim() || !formData.category) {
+      alert('Please fill in all required fields: Title, Excerpt, Content, Author, and Category');
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -169,6 +212,12 @@ const AdminBlog = () => {
       if (!formData.slug) {
         formData.slug = generateSlug(formData.title);
         console.log('Generated slug:', formData.slug, 'from title:', formData.title);
+      }
+      
+      // Ensure slug is not empty
+      if (!formData.slug.trim()) {
+        alert('Could not generate a valid slug from the title. Please provide a title with letters or numbers.');
+        return;
       }
       
       // Ensure slug is unique
@@ -183,20 +232,52 @@ const AdminBlog = () => {
       console.log('Final slug being saved:', formData.slug);
       
       if (isEditModalOpen && selectedPost?.id) {
-        // TODO: Implement actual Firebase update
-        setBlogPosts(prev => prev.map(post => 
-          post.id === selectedPost.id ? { ...formData, id: post.id } : post
-        ));
+        // Update existing post in Firebase
+        const updateData = {
+          ...formData,
+          publishDate: Timestamp.fromDate(formData.publishDate),
+          updatedAt: serverTimestamp()
+        };
+        console.log('Updating post with data:', updateData);
+        await blogService.update(selectedPost.id, updateData);
+        console.log('Blog post updated successfully');
       } else {
-        // TODO: Implement actual Firebase add
-        const newPost = { ...formData, id: Date.now().toString() };
-        setBlogPosts(prev => [...prev, newPost]);
+        // Create new post in Firebase
+        const createData = {
+          ...formData,
+          publishDate: Timestamp.fromDate(formData.publishDate),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+        console.log('Creating post with data:', createData);
+        const newPostId = await blogService.create(createData);
+        console.log('Blog post created successfully with ID:', newPostId);
       }
       
+      // Reload blog posts to get the latest data
+      await loadBlogPosts();
       closeModal();
+      
+      // Show success message
+      const action = isEditModalOpen ? 'updated' : 'created';
+      alert(`Blog post ${action} successfully!`);
     } catch (error) {
       console.error('Error saving blog post:', error);
-      alert('Failed to save blog post');
+      
+      // Provide more specific error information
+      if (error instanceof Error) {
+        if (error.message.includes('permission-denied')) {
+          alert('Permission denied. Please check your Firebase security rules.');
+        } else if (error.message.includes('unavailable')) {
+          alert('Firebase service unavailable. Please check your internet connection and Firebase configuration.');
+        } else if (error.message.includes('invalid-argument')) {
+          alert('Invalid data format. Please check all required fields.');
+        } else {
+          alert(`Failed to save blog post: ${error.message}`);
+        }
+      } else {
+        alert('Failed to save blog post. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -206,27 +287,41 @@ const AdminBlog = () => {
     if (window.confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
       try {
         setLoading(true);
-        // TODO: Implement actual Firebase delete
-        setBlogPosts(prev => prev.filter(post => post.id !== id));
-      } catch (error) {
-        console.error('Error deleting blog post:', error);
-        alert('Failed to delete blog post');
-      } finally {
-        setLoading(false);
-      }
+        // Delete from Firebase
+        await blogService.delete(id);
+        console.log('Blog post deleted successfully');
+              // Reload blog posts to get the latest data
+      await loadBlogPosts();
+      alert('Blog post deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
+      alert('Failed to delete blog post: ' + (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
     }
   };
 
   const togglePublishStatus = async (id: string) => {
     try {
       setLoading(true);
-      // TODO: Implement actual Firebase update
-      setBlogPosts(prev => prev.map(post => 
-        post.id === id ? { ...post, isPublished: !post.isPublished } : post
-      ));
+      // Find the post to get current status
+      const post = blogPosts.find(p => p.id === id);
+      if (!post) return;
+      
+      // Update publish status in Firebase
+      await blogService.update(id, {
+        isPublished: !post.isPublished,
+        updatedAt: serverTimestamp()
+      });
+      console.log('Publish status updated successfully');
+      
+      // Reload blog posts to get the latest data
+      await loadBlogPosts();
+      alert(`Blog post ${!post.isPublished ? 'published' : 'unpublished'} successfully!`);
     } catch (error) {
       console.error('Error updating publish status:', error);
-      alert('Failed to update publish status');
+      alert('Failed to update publish status: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -275,13 +370,29 @@ const AdminBlog = () => {
           <h1 className="text-3xl font-bold text-foreground">Manage Blog</h1>
           <p className="text-muted-foreground mt-2">Create, edit, and manage your blog content</p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="bg-wellness hover:bg-wellness/80 text-wellness-foreground px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <FaPlus />
-          <span>New Blog Post</span>
-        </button>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={async () => {
+              try {
+                const posts = await blogService.readAll();
+                alert(`Firebase connection successful! Found ${posts.length} blog posts.`);
+              } catch (error) {
+                alert(`Firebase connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              }
+            }}
+            className="px-4 py-2 border border-border rounded-lg text-foreground hover:bg-muted transition-colors"
+            title="Test Firebase connection"
+          >
+            Test Connection
+          </button>
+          <button
+            onClick={openAddModal}
+            className="bg-wellness hover:bg-wellness/80 text-wellness-foreground px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
+          >
+            <FaPlus />
+            <span>New Blog Post</span>
+          </button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -515,6 +626,24 @@ const AdminBlog = () => {
                     <option key={category} value={category}>{category}</option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label htmlFor="blog-slug" className="block text-sm font-medium text-foreground mb-2">
+                  Slug *
+                </label>
+                <input
+                  id="blog-slug"
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => handleInputChange('slug', e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
+                  required
+                  placeholder="Auto-generated from title"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  URL-friendly version of the title. Auto-generated but can be edited.
+                </p>
               </div>
             </div>
 

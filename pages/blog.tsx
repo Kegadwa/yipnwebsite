@@ -235,9 +235,11 @@ const Blog = () => {
 									</button>
 								</div>
 							</div>
-							<div className="text-sm text-gray-600">
-								{filteredPosts.length} of {blogPosts.length} posts found
-							</div>
+							{searchTerm && (
+								<div className="text-sm text-gray-600">
+									{filteredPosts.length} of {blogPosts.length} posts found
+								</div>
+							)}
 						</div>
 					</div>
 

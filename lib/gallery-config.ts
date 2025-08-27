@@ -13,7 +13,19 @@ export const GALLERY_FOLDERS: Record<string, GalleryFolder> = {
     id: 'edition-1',
     name: 'Gallery Edition 1',
     description: 'Relive the magic of our first YIPN event through these beautiful captured moments of community and wellness.',
-    imageUrls: []
+    imageUrls: [
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 2.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 17.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 20.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 55.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 63.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 90.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 91.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 142.jpg',
+      '/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 220.jpg'
+    ]
   },
   'edition-2': {
     id: 'edition-2',

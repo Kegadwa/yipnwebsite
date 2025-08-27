@@ -88,9 +88,9 @@ const Admin = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-1 flex bg-muted">
+      <div className="flex-1 flex bg-muted pt-16">
         {/* Sidebar */}
-        <div className="w-64 bg-card shadow-lg">
+        <div className="w-64 bg-card shadow-lg min-h-screen">
                     <div className="p-6 border-b border-border">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -143,8 +143,8 @@ const Admin = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-8">
+        <div className="flex-1 overflow-auto bg-muted">
+          <div className="p-8 mt-4 min-h-screen">
             {renderActiveTab()}
           </div>
         </div>

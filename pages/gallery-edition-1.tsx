@@ -58,20 +58,13 @@ const GalleryEdition1 = () => {
             </p>
           </div>
 
-          {/* Image Count and Debug Info */}
-          <div className="text-center mb-8">
-            {galleryImages.length > 0 ? (
-              <p className="text-gray-600">
-                Showing {galleryImages.length} images from your gallery
-              </p>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
-                <p className="text-yellow-800 text-sm">
-                  No images configured yet. Go to Admin → Gallery to add image URLs.
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Loading State */}
+          {galleryImages.length === 0 && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading gallery images...</p>
+            </div>
+          )}
 
           {/* Pinterest-Style Masonry Layout */}
           {galleryImages.length > 0 ? (
@@ -142,17 +135,18 @@ const GalleryEdition1 = () => {
       {/* Modal for selected media */}
       {selectedMedia && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 overflow-auto"
           onClick={() => setSelectedMedia(null)}
         >
-          <div className="relative max-w-4xl max-h-full">
+          <div className="relative max-w-4xl max-h-full min-h-full flex items-center justify-center">
             <img
               src={selectedMedia}
               alt="Selected media"
               className="max-w-full max-h-full object-contain"
+              style={{ minHeight: '100vh' }}
             />
             <button
-              className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors"
+              className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10"
               onClick={() => setSelectedMedia(null)}
             >
               ×

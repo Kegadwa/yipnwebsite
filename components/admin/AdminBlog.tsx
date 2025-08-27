@@ -12,12 +12,10 @@ import {
   FaCalendarAlt,
   FaUser,
   FaTag,
-  FaEyeSlash,
-  FaSeedling
+  FaEyeSlash
 } from 'react-icons/fa';
-import { blogService, imageService } from '../../lib/firebase-services';
+import { blogService } from '../../lib/firebase-services';
 import { serverTimestamp } from 'firebase/firestore';
-import { seedBlogData, checkBlogDataExists } from '../../lib/seed-blog-data';
 
 interface BlogPost {
   id?: string;
@@ -46,7 +44,7 @@ const AdminBlog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
-  const [hasData, setHasData] = useState(false);
+
 
   const [formData, setFormData] = useState<BlogPost>({
     title: '',
@@ -75,140 +73,28 @@ const AdminBlog = () => {
 
   useEffect(() => {
     loadBlogPosts();
-    checkIfDataExists();
   }, []);
 
-  const checkIfDataExists = async () => {
-    try {
-      const exists = await checkBlogDataExists();
-      setHasData(exists);
-    } catch (error) {
-      console.error('Error checking data existence:', error);
-    }
-  };
 
-  const handleSeedData = async () => {
-    if (window.confirm('This will add sample blog posts to your database. Continue?')) {
-      try {
-        setLoading(true);
-        await seedBlogData();
-        await loadBlogPosts();
-        await checkIfDataExists();
-        alert('Sample blog posts added successfully!');
-      } catch (error) {
-        console.error('Error seeding data:', error);
-        alert('Failed to seed data. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
 
   const loadBlogPosts = async () => {
     try {
       setLoading(true);
-      // TODO: Implement actual Firebase fetch
-      // For now, using mock data
-      const mockPosts: BlogPost[] = [
-        {
-          id: '1',
-          title: 'Yoga for Beginners: A Complete Guide',
-          excerpt: 'Start your yoga journey with this comprehensive guide for beginners. Learn the basics, essential poses, and how to create a sustainable practice.',
-          content: `
-            <h2>Introduction to Yoga</h2>
-            <p>Yoga is an ancient practice that combines physical postures, breathing exercises, and meditation to promote physical and mental well-being. Whether you're looking to improve flexibility, reduce stress, or find inner peace, yoga offers something for everyone.</p>
-            
-            <h2>Getting Started</h2>
-            <p>Before you begin your yoga practice, it's important to create a comfortable space and gather the necessary equipment. You'll need a yoga mat, comfortable clothing, and an open mind.</p>
-            
-            <h2>Essential Poses for Beginners</h2>
-            <h3>1. Mountain Pose (Tadasana)</h3>
-            <p>This foundational pose teaches proper alignment and posture. Stand with your feet together, arms at your sides, and spine straight.</p>
-            
-            <h3>2. Downward-Facing Dog (Adho Mukha Svanasana)</h3>
-            <p>A great pose for stretching the entire body. Start on your hands and knees, then lift your hips to form an inverted V shape.</p>
-            
-            <h3>3. Child's Pose (Balasana)</h3>
-            <p>A restful pose that gently stretches the hips, thighs, and ankles. Kneel on the floor, sit back on your heels, and fold forward.</p>
-            
-            <h2>Building a Practice</h2>
-            <p>Start with just 10-15 minutes a day and gradually increase the duration as you become more comfortable. Consistency is more important than duration.</p>
-            
-            <h2>Benefits of Regular Practice</h2>
-            <ul>
-              <li>Improved flexibility and strength</li>
-              <li>Better posture and balance</li>
-              <li>Reduced stress and anxiety</li>
-              <li>Enhanced mental clarity</li>
-              <li>Better sleep quality</li>
-            </ul>
-            
-            <h2>Conclusion</h2>
-            <p>Remember, yoga is a journey, not a destination. Be patient with yourself and enjoy the process of discovery and growth.</p>
-          `,
-          author: 'YIPN Team',
-          publishDate: new Date('2024-08-20'),
-          tags: ['yoga', 'beginners', 'wellness', 'fitness'],
-          category: 'Yoga & Wellness',
-          imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          isPublished: true,
-          slug: 'yoga-for-beginners-complete-guide',
-          readTime: 8
-        },
-        {
-          id: '2',
-          title: 'The Power of Morning Meditation',
-          excerpt: 'Discover how starting your day with meditation can transform your mindset and improve your overall well-being.',
-          content: `
-            <h2>Why Morning Meditation?</h2>
-            <p>Starting your day with meditation sets a positive tone for the hours ahead. It helps you approach challenges with clarity and calmness.</p>
-            
-            <h2>Simple Morning Meditation Techniques</h2>
-            <h3>1. Breath Awareness</h3>
-            <p>Focus on your natural breath for 5-10 minutes. Notice the rhythm and depth of each inhale and exhale.</p>
-            
-            <h3>2. Body Scan</h3>
-            <p>Slowly scan your body from head to toe, noticing any tension or sensations.</p>
-            
-            <h3>3. Gratitude Practice</h3>
-            <p>Reflect on three things you're grateful for as you begin your day.</p>
-          `,
-          author: 'Sarah Kamau',
-          publishDate: new Date('2024-08-18'),
-          tags: ['meditation', 'morning-routine', 'mindfulness', 'wellness'],
-          category: 'Meditation',
-          imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          isPublished: true,
-          slug: 'power-of-morning-meditation',
-          readTime: 5
-        },
-        {
-          id: '3',
-          title: 'Building a Sustainable Fitness Routine',
-          excerpt: 'Learn how to create a fitness routine that fits your lifestyle and helps you achieve your health goals.',
-          content: `
-            <h2>Setting Realistic Goals</h2>
-            <p>Start with small, achievable goals that you can build upon over time.</p>
-            
-            <h2>Finding What Works for You</h2>
-            <p>Experiment with different types of exercise to discover what you enjoy most.</p>
-            
-            <h2>Creating Consistency</h2>
-            <p>Schedule your workouts like important appointments and stick to them.</p>
-          `,
-          author: 'Mike Johnson',
-          publishDate: new Date('2024-08-15'),
-          tags: ['fitness', 'routine', 'goals', 'health'],
-          category: 'Fitness',
-          imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          isPublished: false,
-          slug: 'building-sustainable-fitness-routine',
-          readTime: 6
-        }
-      ];
-      setBlogPosts(mockPosts);
+      // Fetch real blog posts from Firebase
+      const posts = await blogService.readAll();
+      
+      // Convert Firestore timestamps to Date objects
+      const postsWithDates = posts.map(post => ({
+        ...post,
+        publishDate: post.publishDate?.toDate() || new Date(),
+        createdAt: post.createdAt?.toDate() || new Date(),
+        updatedAt: post.updatedAt?.toDate() || new Date()
+      }));
+      
+      setBlogPosts(postsWithDates);
     } catch (error) {
       console.error('Error loading blog posts:', error);
+      alert('Failed to load blog posts. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -270,15 +156,8 @@ const AdminBlog = () => {
       .trim();
   };
 
-  const handleImageUpload = async (file: File) => {
-    try {
-      // TODO: Implement actual image upload to Firebase Storage
-      const imageUrl = URL.createObjectURL(file);
-      handleInputChange('imageUrl', imageUrl);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert('Failed to upload image');
-    }
+  const handleImageUrlChange = (imageUrl: string) => {
+    handleInputChange('imageUrl', imageUrl);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -686,23 +565,16 @@ const AdminBlog = () => {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Featured Image
+                  Featured Image URL
                 </label>
                 <div className="flex items-center space-x-4">
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-                    className="hidden"
-                    id="blog-image-upload"
+                    type="url"
+                    value={formData.imageUrl}
+                    onChange={(e) => handleImageUrlChange(e.target.value)}
+                    placeholder="Enter image URL from Firebase Storage"
+                    className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-wellness focus:border-transparent bg-input text-foreground"
                   />
-                  <label
-                    htmlFor="blog-image-upload"
-                    className="cursor-pointer bg-muted hover:bg-muted/80 px-4 py-2 rounded-md flex items-center space-x-2 transition-colors text-foreground"
-                  >
-                    <FaImage />
-                    <span>Upload Image</span>
-                  </label>
                   {formData.imageUrl && (
                     <img 
                       src={formData.imageUrl} 
@@ -711,6 +583,9 @@ const AdminBlog = () => {
                     />
                   )}
                 </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Enter the URL of an image stored in Firebase Storage
+                </p>
               </div>
 
               <div>

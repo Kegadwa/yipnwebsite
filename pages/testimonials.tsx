@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUsers, FaStar, FaHeart, FaCalendar, FaComment, FaPlus, FaEdit, FaTrash, FaUser, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaUsers, FaStar, FaHeart, FaCalendar, FaComment, FaPlus, FaEdit, FaTrash, FaUser, FaEnvelope, FaPhone, FaTimes } from 'react-icons/fa';
 import Navbar from '../components/Navigation';
 import Footer from '../components/Footer';
 

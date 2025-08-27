@@ -120,14 +120,16 @@ const Gallery = () => {
 
 						{/* Edition 2 Section - Coming Soon */}
 						<div className="mb-16">
-							<h2 className="text-3xl font-bold text-primary mb-8">Edition Two</h2>
-							<Link
-									href="/gallery-edition-1"
+							<div className="flex justify-between items-center mb-8">
+								<h2 className="text-3xl font-bold text-primary">Edition Two</h2>
+								<Link
+									href="/gallery-edition-2"
 									className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:scale-105 transition shadow-button hover:shadow-button-hover"
 								>
 									<span>View More</span>
 									<FaArrowRight />
-							</Link>
+								</Link>
+							</div>
 							<div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-12 text-center">
 								<div className="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-6 flex items-center justify-center">
 									<FaCamera className="text-4xl text-blue-600" />

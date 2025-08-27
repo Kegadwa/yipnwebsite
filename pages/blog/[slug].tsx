@@ -235,17 +235,24 @@ const BlogPost = () => {
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center justify-between gap-4 mt-8 pt-8 border-t border-gray-200">
                 <div className="flex items-center space-x-4">
-                  <button className="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition-colors">
-                    <FaHeart />
-                    <span>Like</span>
-                  </button>
-                  <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-500 transition-colors">
+                  <button 
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: post.title,
+                          text: post.excerpt,
+                          url: window.location.href,
+                        });
+                      } else {
+                        // Fallback: copy URL to clipboard
+                        navigator.clipboard.writeText(window.location.href);
+                        alert('Link copied to clipboard!');
+                      }
+                    }}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-500 transition-colors"
+                  >
                     <FaShare />
                     <span>Share</span>
-                  </button>
-                  <button className="flex items-center space-x-2 text-gray-600 hover:text-green-500 transition-colors">
-                    <FaEnvelope />
-                    <span>Email</span>
                   </button>
                 </div>
                 

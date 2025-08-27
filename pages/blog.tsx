@@ -27,8 +27,8 @@ const Blog = () => {
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("all");
-	const [sortBy, setSortBy] = useState("date");
-	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+	const [sortBy, setSortBy] = useState("title");
+	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 	const [email, setEmail] = useState("");
 	const [isSubscribing, setIsSubscribing] = useState(false);
 
@@ -111,8 +111,8 @@ const Blog = () => {
 					bValue = b.title.toLowerCase();
 					break;
 				default:
-					aValue = a.publishDate;
-					bValue = b.publishDate;
+					aValue = a.title.toLowerCase();
+					bValue = b.title.toLowerCase();
 			}
 
 			if (sortOrder === "asc") {
@@ -154,7 +154,6 @@ const Blog = () => {
 			<section
 				className="relative py-32 flex items-center justify-center overflow-hidden"
 				style={{
-					backgroundImage: `url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
 					backgroundSize: 'cover',
 					backgroundPosition: 'center',
 				}}
@@ -262,17 +261,15 @@ const Blog = () => {
 										key={post.id}
 										className="bg-white rounded-lg shadow p-6 hover:scale-105 transition"
 									>
-										<div className="flex items-center justify-center mb-4 h-32 bg-gray-100 rounded-lg overflow-hidden">
-											{post.imageUrl ? (
+										{post.imageUrl && (
+											<div className="flex items-center justify-center mb-4 h-32 bg-gray-100 rounded-lg overflow-hidden">
 												<img 
 													src={post.imageUrl} 
 													alt={post.title}
 													className="w-full h-full object-cover"
 												/>
-											) : (
-												<FaTag className="text-4xl text-gray-400" />
-											)}
-										</div>
+											</div>
+										)}
 										<h3 className="text-xl mb-3 font-bold">{post.title}</h3>
 										<p className="mb-4 text-sm leading-relaxed text-gray-700">
 											{post.excerpt}

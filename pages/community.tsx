@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaEnvelope, FaPhone, FaInstagram, FaFacebook, FaTwitter, FaWhatsapp, FaCheck, FaShare } from "react-icons/fa";
+import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaEnvelope, FaPhone, FaInstagram, FaFacebook, FaTwitter, FaWhatsapp, FaCheck, FaShare, FaCheckCircle, FaComments, FaCamera, FaHandshake, FaCalendar, FaEnvelopeOpen, FaMapMarkedAlt } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 
@@ -85,23 +85,23 @@ export default function Community() {
                   <h3 className="text-xl font-semibold mb-4">What You&apos;ll Get:</h3>
                   <ul className="space-y-3 text-left">
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">✅</span>
+                      <FaCheckCircle className="text-2xl text-green-500" />
                       <span>Event announcements and early bird tickets</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">✅</span>
+                      <FaCheckCircle className="text-2xl text-green-500" />
                       <span>Weekly wellness tips and mindfulness practices</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">✅</span>
+                      <FaCheckCircle className="text-2xl text-green-500" />
                       <span>Community highlights and member stories</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">✅</span>
+                      <FaCheckCircle className="text-2xl text-green-500" />
                       <span>Exclusive content and guided meditations</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">✅</span>
+                      <FaCheckCircle className="text-2xl text-green-500" />
                       <span>Direct access to instructors and organizers</span>
                     </li>
                   </ul>
@@ -110,23 +110,23 @@ export default function Community() {
                   <h3 className="text-xl font-semibold mb-4">Community Features:</h3>
                   <ul className="space-y-3 text-left">
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">💬</span>
+                      <FaComments className="text-2xl text-blue-500" />
                       <span>Real-time chat with community members</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">📸</span>
+                      <FaCamera className="text-2xl text-purple-500" />
                       <span>Share photos and videos from sessions</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">🤝</span>
+                      <FaHandshake className="text-2xl text-orange-500" />
                       <span>Find yoga buddies and practice partners</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">📅</span>
+                      <FaCalendar className="text-2xl text-red-500" />
                       <span>Coordinate meetups and practice sessions</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <span className="text-2xl">🎯</span>
+                      <FaCheckCircle className="text-2xl text-indigo-500" />
                       <span>Get personalized recommendations</span>
                     </li>
                   </ul>
@@ -156,7 +156,7 @@ export default function Community() {
                 </p>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <span className="text-2xl">📧</span>
+                    <FaEnvelopeOpen className="text-2xl text-blue-500 mt-1" />
                     <div>
                       <p className="font-semibold">Email Us</p>
                       <p className="text-gray-600">info@yogaintheparknairobi.com</p>
@@ -165,7 +165,7 @@ export default function Community() {
                   </div>
                   
                   <div className="flex items-start space-x-4">
-                    <span className="text-2xl">📞</span>
+                    <FaPhone className="text-2xl text-green-500 mt-1" />
                     <div>
                       <p className="font-semibold">Call Us</p>
                       <p className="text-gray-600">+254 700 000 000</p>
@@ -174,7 +174,7 @@ export default function Community() {
                   </div>
                   
                   <div className="flex items-start space-x-4">
-                    <span className="text-2xl">📍</span>
+                    <FaMapMarkedAlt className="text-2xl text-red-500 mt-1" />
                     <div>
                       <p className="font-semibold">Find Us</p>
                       <p className="text-gray-600">TuWork Nairobi</p>
@@ -182,68 +182,6 @@ export default function Community() {
                       <p className="text-sm text-gray-500">Our main event location</p>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Social Media Links */}
-              <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Follow Our Journey</h3>
-                <p className="text-gray-600 mb-6">
-                  Stay connected through our social media channels for daily inspiration and community updates
-                </p>
-                <div className="space-y-4">
-                  {socialLinks.map((social, index) => (
-                    <div key={social.name} className="flex items-center justify-between p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-2xl">
-                          {social.name === 'Instagram' ? '📸' : social.name === 'Facebook' ? '📘' : '🐦'}
-                        </span>
-                        <div>
-                          <p className="font-semibold">{social.name}</p>
-                          <p className="text-sm text-gray-600">{social.handle}</p>
-                        </div>
-                      </div>
-                      <a
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                      >
-                        Follow
-                      </a>
-                    </div>
-                  ))}
-                  
-                  <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-orange-50 rounded-lg">
-                    <p className="text-sm text-gray-600 text-center">
-                      Tag us in your wellness posts with <span className="font-semibold text-secondary">#YIPNairobi</span> 
-                      and <span className="font-semibold text-secondary">#FindYourFlow</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Location Map Placeholder */}
-            <div className="max-w-4xl mx-auto mb-16">
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Visit Us</h3>
-                  <p className="text-gray-600 mb-6">
-                    Our events are held at beautiful TuWork Nairobi, providing the perfect setting for wellness gatherings
-                  </p>
-                </div>
-                <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <span className="text-6xl mb-4 block">📍</span>
-                    <p className="text-lg font-semibold">Interactive Map Coming Soon</p>
-                    <p className="text-gray-500">TuWork Nairobi Location</p>
-                  </div>
-                </div>
-                <div className="mt-6 text-center">
-                  <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
-                    Get Directions
-                  </button>
                 </div>
               </div>
             </div>

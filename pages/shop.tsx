@@ -15,9 +15,18 @@ interface Product {
 	additionalUrls?: string[];
 	tags: string[];
 	isActive: boolean;
-	variants?: any[];
+	variants?: ProductVariant[];
 	createdAt?: Date;
 	updatedAt?: Date;
+}
+
+interface ProductVariant {
+	id: string;
+	name: string;
+	type: 'color' | 'size' | 'text' | 'custom';
+	options: (string | { hex: string; name: string })[];
+	priceModifier?: number;
+	imageUrl?: string;
 }
 
 interface Category {
@@ -35,8 +44,13 @@ interface ProductModalProps {
 	onAddToCart: (product: Product, quantity: number, selectedVariants: { [key: string]: string }) => void;
 }
 
-// Color detection function
-const getColorFromName = (colorName: string) => {
+// Enhanced color detection function that handles both string and color objects
+const getColorFromName = (colorValue: string | { hex: string; name: string }) => {
+	if (typeof colorValue === 'object' && 'hex' in colorValue) {
+		return colorValue.hex;
+	}
+	
+	const colorName = String(colorValue);
 	const colorMap: { [key: string]: string } = {
 		'black': '#000000',
 		'white': '#FFFFFF',
@@ -116,6 +130,30 @@ const getColorFromName = (colorName: string) => {
 	return colorMap[normalizedName] || '#CCCCCC'; // Default gray if color not found
 };
 
+// Function to get display text for variant options
+const getVariantDisplayText = (option: string | { hex: string; name: string }) => {
+	if (typeof option === 'object' && 'hex' in option) {
+		return option.name;
+	}
+	return String(option);
+};
+
+// Function to get variant type styling
+const getVariantTypeStyling = (type: string) => {
+	switch (type) {
+		case 'color':
+			return 'bg-gradient-to-r from-pink-100 to-purple-100 border-pink-200 text-pink-800';
+		case 'size':
+			return 'bg-gradient-to-r from-blue-100 to-indigo-100 border-blue-200 text-blue-800';
+		case 'text':
+			return 'bg-gradient-to-r from-green-100 to-emerald-100 border-green-200 text-green-800';
+		case 'custom':
+			return 'bg-gradient-to-r from-orange-100 to-amber-100 border-orange-200 text-orange-800';
+		default:
+			return 'bg-gradient-to-r from-gray-100 to-slate-100 border-gray-200 text-gray-800';
+	}
+};
+
 const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, onAddToCart }) => {
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 	const [selectedVariants, setSelectedVariants] = useState<{ [key: string]: string }>({});
@@ -130,8 +168,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 	];
 	
 	// Check if all required variants are selected
-	const requiredVariants = product.variants?.filter((v: any) => v.type === 'color' || v.type === 'size') || [];
-	const allVariantsSelected = requiredVariants.every((variant: any) => selectedVariants[variant.name]);
+	const requiredVariants = product.variants?.filter((v: ProductVariant) => v.type === 'color' || v.type === 'size') || [];
+	const allVariantsSelected = requiredVariants.every((variant: ProductVariant) => selectedVariants[variant.name]);
 
 	const handleAddToCart = () => {
 		if (requiredVariants.length > 0 && !allVariantsSelected) {
@@ -242,18 +280,20 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 							<div className="space-y-2 sm:space-y-3">
 								<h3 className="text-base sm:text-lg font-semibold text-foreground">Variants</h3>
 								<div className="space-y-2 sm:space-y-3">
-									{product.variants.map((variant: any, index: number) => (
+									{product.variants.map((variant: ProductVariant, index: number) => (
 										<div key={index} className="space-y-2">
-											<label className="text-sm font-medium text-muted-foreground">
-												{variant.name} {requiredVariants.some(v => v.name === variant.name) && <span className="text-red-500">*</span>}
-											</label>
+											<div className="flex items-center gap-2">
+												<label className="text-sm font-medium text-muted-foreground">
+													{variant.name} {requiredVariants.some(v => v.name === variant.name) && <span className="text-red-500">*</span>}
+												</label>
+											</div>
 											<div className="flex flex-wrap gap-2">
-												{variant.options.map((option: string, optIndex: number) => (
+												{variant.options.map((option: string | { hex: string; name: string }, optIndex: number) => (
 													<button
 														key={optIndex}
-														onClick={() => setSelectedVariants(prev => ({ ...prev, [variant.name]: option }))}
+														onClick={() => setSelectedVariants(prev => ({ ...prev, [variant.name]: getVariantDisplayText(option) }))}
 														className={`px-2 py-1 sm:px-3 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-															selectedVariants[variant.name] === option
+															selectedVariants[variant.name] === getVariantDisplayText(option)
 																? 'bg-primary text-primary-foreground border-2 border-primary'
 																: 'bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-2 border-transparent'
 														}`}
@@ -262,10 +302,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 															<div 
 																className="w-3 h-3 rounded-full border border-gray-300" 
 																style={{ backgroundColor: getColorFromName(option) }}
-																title={option}
+																title={getVariantDisplayText(option)}
 															/>
 														)}
-														{option}
+														{getVariantDisplayText(option)}
 													</button>
 												))}
 											</div>
@@ -594,7 +634,7 @@ export default function Shop() {
 			<section
 				className="relative py-32 flex items-center justify-center overflow-hidden"
 				style={{
-					backgroundImage: `url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
+					backgroundImage: `url('/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg')`,
 					backgroundSize: 'cover',
 					backgroundPosition: 'center',
 				}}
@@ -799,24 +839,32 @@ export default function Shop() {
 																						{/* Variants Preview */}
 											{product.variants && product.variants.length > 0 && (
 												<div className="flex flex-wrap gap-2">
-													{product.variants.slice(0, 2).map((variant: any, vIndex: number) => (
+													{product.variants.slice(0, 2).map((variant: ProductVariant, vIndex: number) => (
 														<div key={vIndex} className="flex items-center gap-2">
 															<span className="text-xs text-muted-foreground">{variant.name}:</span>
-															<div className="flex gap-1">
-																{variant.options.slice(0, 3).map((option: string, oIndex: number) => (
-																	<span
-																		key={oIndex}
-																		className="w-3 h-3 rounded-full border-2 border-background shadow-sm"
-																		style={{ 
-																			backgroundColor: variant.type === 'color' ? getColorFromName(option) : '#CCCCCC'
-																		}}
-																		title={option}
-																	/>
-																))}
-																{variant.options.length > 3 && (
-																	<span className="text-xs text-muted-foreground">+{variant.options.length - 3}</span>
-																)}
-															</div>
+															{variant.type === 'color' ? (
+																<div className="flex gap-1">
+																	{variant.options.slice(0, 3).map((option: string | { hex: string; name: string }, oIndex: number) => (
+																		<span
+																			key={oIndex}
+																			className="w-3 h-3 rounded-full border-2 border-background shadow-sm"
+																			style={{ 
+																				backgroundColor: getColorFromName(option)
+																			}}
+																			title={getVariantDisplayText(option)}
+																		/>
+																	))}
+																	{variant.options.length > 3 && (
+																		<span className="text-xs text-muted-foreground">+{variant.options.length - 3}</span>
+																	)}
+																</div>
+															) : (
+																<span className="text-xs text-muted-foreground">
+																	{getVariantDisplayText(variant.options[0])}
+																	{variant.options.length > 1 && ` +${variant.options.length - 1}`}
+																</span>
+															)}
+
 														</div>
 													))}
 												</div>
@@ -842,7 +890,7 @@ export default function Shop() {
 												<button 
 													onClick={() => {
 														// Check if product has required variants
-														const hasRequiredVariants = product.variants?.some((v: any) => v.type === 'color' || v.type === 'size');
+														const hasRequiredVariants = product.variants?.some((v: ProductVariant) => v.type === 'color' || v.type === 'size');
 														if (hasRequiredVariants) {
 															// Open modal for variant selection
 															openProductModal(product);
@@ -852,7 +900,7 @@ export default function Shop() {
 														}
 													}}
 													className="w-12 h-12 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md hover:scale-105"
-													title={product.variants?.some((v: any) => v.type === 'color' || v.type === 'size') ? "Select Variants" : "Add to Cart"}
+													title={product.variants?.some((v: ProductVariant) => v.type === 'color' || v.type === 'size') ? "Select Variants" : "Add to Cart"}
 												>
 													<FaShoppingCart className="w-4 h-4" />
 												</button>
@@ -934,7 +982,7 @@ export default function Shop() {
 													<div className="flex flex-wrap gap-1 mb-2">
 														{Object.entries(item.selectedVariants).map(([variantName, variantValue]) => (
 															<span key={variantName} className="inline-block px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
-																{variantName}: {variantValue}
+																{variantName}: {typeof variantValue === 'object' && variantValue !== null && 'name' in variantValue ? (variantValue as any).name : String(variantValue)}
 															</span>
 														))}
 													</div>
@@ -1175,7 +1223,7 @@ export default function Shop() {
 												{item.product.name} x {item.quantity}
 												{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
 													<span className="text-xs block text-muted-foreground">
-														({Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join(', ')})
+														({Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${typeof v === 'object' && v !== null && 'name' in v ? (v as any).name : String(v)}`).join(', ')})
 													</span>
 												)}
 											</span>

@@ -16,6 +16,7 @@ import {
   FaLayerGroup
 } from 'react-icons/fa';
 import { productService, categoryService, orderService, imageService, corsBypassService } from '../../lib/firebase-services';
+import ColorPicker from './ColorPicker';
 
 interface Product {
   id?: string;
@@ -37,7 +38,7 @@ interface ProductVariant {
   id: string;
   name: string;
   type: 'color' | 'size' | 'text' | 'custom';
-  options: string[];
+  options: (string | { hex: string; name: string })[];
   priceModifier?: number;
   imageUrl?: string;
 }
@@ -113,6 +114,9 @@ const AdminMerchandise = () => {
 
   const [newImageUrl, setNewImageUrl] = useState('');
   const [newAdditionalUrl, setNewAdditionalUrl] = useState('');
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [selectedColorPickerVariant, setSelectedColorPickerVariant] = useState<{variantIndex: number, optionIndex: number, mode: 'add' | 'edit'} | null>(null);
+  const [selectedColor, setSelectedColor] = useState<{hex: string; name: string}>({ hex: '#000000', name: 'Black' });
 
   useEffect(() => {
     loadData();
@@ -446,7 +450,7 @@ const AdminMerchandise = () => {
     }));
   };
 
-  const updateVariantOption = (variantIndex: number, optionIndex: number, value: string) => {
+  const updateVariantOption = (variantIndex: number, optionIndex: number, value: string | { hex: string; name: string }) => {
     setProductForm(prev => ({
       ...prev,
       variants: prev.variants?.map((variant, i) => 
@@ -646,8 +650,68 @@ const AdminMerchandise = () => {
     return colorMap[normalizedName] || '#CCCCCC'; // Default gray if color not found
   };
 
-  const renderColorPreview = (colorName: string) => {
-    const colorHex = getColorFromName(colorName);
+  // Function to open color picker for a specific variant option
+  const openColorPicker = (variantIndex: number, optionIndex: number, mode: 'add' | 'edit') => {
+    setSelectedColorPickerVariant({ variantIndex, optionIndex, mode });
+    let currentColor = { hex: '#000000', name: 'Black' };
+    
+    if (mode === 'add') {
+      const option = productForm.variants?.[variantIndex]?.options[optionIndex];
+      if (typeof option === 'object' && 'hex' in option) {
+        currentColor = option as { hex: string; name: string };
+      } else if (typeof option === 'string') {
+        currentColor = { hex: option, name: option };
+      }
+    } else {
+      const option = editProductForm.variants?.[variantIndex]?.options[optionIndex];
+      if (typeof option === 'object' && 'hex' in option) {
+        currentColor = option as { hex: string; name: string };
+      } else if (typeof option === 'string') {
+        currentColor = { hex: option, name: option };
+      }
+    }
+    
+    setSelectedColor(currentColor);
+    setShowColorPicker(true);
+  };
+
+  // Function to handle color selection from picker
+  const handleColorSelect = (color: { hex: string; name: string }) => {
+    if (selectedColorPickerVariant) {
+      const { variantIndex, optionIndex, mode } = selectedColorPickerVariant;
+      
+      if (mode === 'add') {
+        updateVariantOption(variantIndex, optionIndex, color);
+      } else {
+        // Update edit form
+        setEditProductForm(prev => ({
+          ...prev,
+          variants: prev.variants?.map((v, i) => 
+            i === variantIndex ? { 
+              ...v, 
+              options: v.options.map((opt, j) => j === optionIndex ? color : opt)
+            } : v
+          ) || []
+        }));
+      }
+      
+      setSelectedColorPickerVariant(null);
+    }
+  };
+
+  // Enhanced color preview that shows both color and name with edit button
+  const renderColorPreview = (colorValue: string | { hex: string; name: string }, variantIndex: number, optionIndex: number, mode: 'add' | 'edit') => {
+    let colorHex = '#000000';
+    let colorName = 'Unknown';
+    
+    if (typeof colorValue === 'object' && 'hex' in colorValue) {
+      colorHex = colorValue.hex;
+      colorName = colorValue.name;
+    } else if (typeof colorValue === 'string') {
+      colorHex = colorValue.startsWith('#') ? colorValue : getColorFromName(colorValue);
+      colorName = colorValue;
+    }
+    
     return (
       <div className="flex items-center space-x-2">
         <div 
@@ -656,6 +720,14 @@ const AdminMerchandise = () => {
           title={colorName}
         />
         <span className="text-sm">{colorName}</span>
+        <button
+          type="button"
+          onClick={() => openColorPicker(variantIndex, optionIndex, mode)}
+          className="text-xs text-primary hover:text-primary/80 p-1 rounded hover:bg-primary/10 transition-colors"
+          title="Change color"
+        >
+          <FaEdit />
+        </button>
       </div>
     );
   };
@@ -1338,13 +1410,13 @@ const AdminMerchandise = () => {
                             <div key={optionIndex} className="flex items-center space-x-2">
                               <input
                                 type="text"
-                                value={option}
+                                value={typeof option === 'object' && 'hex' in option ? option.name : String(option)}
                                 onChange={(e) => updateVariantOption(index, optionIndex, e.target.value)}
                                 placeholder="Option value"
                                 className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
                               />
                               {variant.type === 'color' && option && (
-                                renderColorPreview(option)
+                                renderColorPreview(option, index, optionIndex, 'add')
                               )}
                               <button
                                 type="button"
@@ -1822,25 +1894,25 @@ const AdminMerchandise = () => {
                         <div className="space-y-2">
                           {variant.options.map((option, optionIndex) => (
                             <div key={optionIndex} className="flex items-center space-x-2">
-                              <input
-                                type="text"
-                                value={option}
-                                onChange={(e) => {
-                                  setEditProductForm(prev => ({
-                                    ...prev,
-                                    variants: prev.variants?.map((v, i) => 
-                                      i === index ? { 
-                                        ...v, 
-                                        options: v.options.map((opt, j) => j === optionIndex ? e.target.value : opt)
-                                      } : v
-                                    ) || []
-                                  }));
-                                }}
-                                placeholder="Option value"
-                                className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
-                              />
+                                                              <input
+                                  type="text"
+                                  value={typeof option === 'object' && 'hex' in option ? option.name : String(option)}
+                                  onChange={(e) => {
+                                    setEditProductForm(prev => ({
+                                      ...prev,
+                                      variants: prev.variants?.map((v, i) => 
+                                        i === index ? { 
+                                          ...v, 
+                                          options: v.options.map((opt, j) => j === optionIndex ? e.target.value : opt)
+                                        } : v
+                                      ) || []
+                                    }));
+                                  }}
+                                  placeholder="Option value"
+                                  className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                                />
                               {variant.type === 'color' && option && (
-                                renderColorPreview(option)
+                                renderColorPreview(option, index, optionIndex, 'edit')
                               )}
                               <button
                                 type="button"
@@ -1894,6 +1966,17 @@ const AdminMerchandise = () => {
           </div>
         </div>
       )}
+
+      {/* Color Picker Modal */}
+      <ColorPicker
+        isOpen={showColorPicker}
+        onClose={() => {
+          setShowColorPicker(false);
+          setSelectedColorPickerVariant(null);
+        }}
+        onColorSelect={handleColorSelect}
+        currentColor={selectedColor}
+      />
     </div>
   );
 };

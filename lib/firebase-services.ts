@@ -615,3 +615,110 @@ export interface Event {
   category: string;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 }
+
+// Review Service
+export const reviewService = {
+  async create(reviewData: {
+    name: string;
+    role: string;
+    text: string;
+    rating: number;
+    isActive?: boolean;
+    createdAt?: Date;
+  }): Promise<string> {
+    try {
+      const reviewRef = await addDoc(collection(db, 'reviews'), {
+        ...reviewData,
+        isActive: reviewData.isActive !== undefined ? reviewData.isActive : true,
+        createdAt: reviewData.createdAt || new Date(),
+        updatedAt: new Date()
+      });
+      return reviewRef.id;
+    } catch (error) {
+      console.error('Error creating review:', error);
+      throw new Error('Failed to create review');
+    }
+  },
+
+  async readAll(): Promise<any[]> {
+    try {
+      const reviewsRef = collection(db, 'reviews');
+      
+      // First try with the optimized query (requires index)
+      try {
+        const q = query(reviewsRef, where('isActive', '==', true), orderBy('createdAt', 'desc'));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+      } catch (indexError: any) {
+        // If index doesn't exist, fall back to simpler query and sort in memory
+        if (indexError.message?.includes('index') || indexError.code === 'failed-precondition') {
+          console.log('Index not found, using fallback query for reviews');
+          console.log('To improve performance, create a composite index in Firebase Console:');
+          console.log('Collection: reviews');
+          console.log('Fields: isActive (Ascending), createdAt (Descending)');
+          console.log('Or click this link to create it automatically:');
+          console.log('https://console.firebase.google.com/v1/r/project/thewebsite-3cd60/firestore/indexes?create_composite=ClBwcm9qZWN0cy90aGV3ZWJzaXRlLTNjZDYwL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9yZXZpZXdzL2luZGV4ZXMvXxABGgwKCGlzQWN0aXZlEAEaDQoJY3JlYXRlZEF0EAIaDAoIX19uYW1lX18QAg');
+          const q = query(reviewsRef, where('isActive', '==', true));
+          const querySnapshot = await getDocs(q);
+          const reviews = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          
+          // Sort by createdAt in memory (descending order)
+          return reviews.sort((a, b) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date(0);
+            const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date(0);
+            return dateB.getTime() - dateA.getTime();
+          });
+        } else {
+          throw indexError;
+        }
+      }
+    } catch (error) {
+      console.error('Error reading reviews:', error);
+      throw new Error('Failed to read reviews');
+    }
+  },
+
+  async read(id: string): Promise<any> {
+    try {
+      const reviewRef = doc(db, 'reviews', id);
+      const reviewSnap = await getDoc(reviewRef);
+      if (reviewSnap.exists()) {
+        return { id: reviewSnap.id, ...reviewSnap.data() };
+      } else {
+        throw new Error('Review not found');
+      }
+    } catch (error) {
+      console.error('Error reading review:', error);
+      throw new Error('Failed to read review');
+    }
+  },
+
+  async update(id: string, reviewData: any): Promise<void> {
+    try {
+      const reviewRef = doc(db, 'reviews', id);
+      await updateDoc(reviewRef, {
+        ...reviewData,
+        updatedAt: new Date()
+      });
+    } catch (error) {
+      console.error('Error updating review:', error);
+      throw new Error('Failed to update review');
+    }
+  },
+
+  async delete(id: string): Promise<void> {
+    try {
+      const reviewRef = doc(db, 'reviews', id);
+      await deleteDoc(reviewRef);
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      throw new Error('Failed to delete review');
+    }
+  }
+};

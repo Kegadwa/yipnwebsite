@@ -324,7 +324,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 
 	return (
 		<div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-			<div className={`bg-card rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+			<div className={`bg-card rounded-2xl shadow-2xl w-full max-w-6xl h-[95vh] sm:h-auto sm:max-h-[95vh] overflow-hidden transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
 				{/* Header */}
 				<div className="flex justify-between items-center p-4 sm:p-6 border-b border-border">
 					<h2 className="text-lg sm:text-2xl font-bold text-foreground truncate pr-4">{product.name}</h2>
@@ -336,9 +336,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 					</button>
 				</div>
 
-				<div className="flex flex-col lg:flex-row">
+				<div className="flex flex-col lg:flex-row h-full">
 					{/* Left Side - Image Carousel */}
-					<div className="lg:w-1/2 p-4 sm:p-6">
+					<div className="lg:w-1/2 p-4 sm:p-6 flex-shrink-0">
 						<div className="relative aspect-square bg-muted rounded-xl overflow-hidden">
 							{images.length > 0 ? (
 								<>
@@ -396,7 +396,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 					</div>
 
 					{/* Right Side - Product Details */}
-					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-120px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ scrollbarWidth: 'thin', scrollbarColor: '#9CA3AF #F3F4F6' }}>
+					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1 min-h-0 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ scrollbarWidth: 'thin', scrollbarColor: '#9CA3AF #F3F4F6' }}>
 						{/* Price */}
 						<div className="space-y-2">
 							<div className="text-2xl sm:text-3xl font-bold text-primary">
@@ -1124,132 +1124,222 @@ export default function Shop() {
 
 			{/* Shopping Cart Modal */}
 			{showCart && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-					<div className="bg-card rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-						<div className="flex justify-between items-center mb-6 border-b border-border pb-4">
-							<h3 className="text-2xl font-bold text-primary">Shopping Cart</h3>
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+					<div className="bg-card rounded-2xl shadow-2xl p-4 sm:p-6 w-full max-w-2xl h-[90vh] sm:h-auto sm:max-h-[90vh] overflow-hidden flex flex-col">
+						{/* Header */}
+						<div className="flex justify-between items-center mb-4 sm:mb-6 border-b border-border pb-4 flex-shrink-0">
+							<h3 className="text-xl sm:text-2xl font-bold text-primary">Shopping Cart</h3>
 							<button
 								onClick={() => setShowCart(false)}
-								className="w-10 h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
+								className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted hover:bg-secondary transition-colors flex items-center justify-center text-muted-foreground hover:text-foreground"
 								title="Close cart"
 								aria-label="Close cart"
 							>
-								<FaTimes className="w-5 h-5" />
+								<FaTimes className="w-4 h-4 sm:w-5 sm:h-5" />
 							</button>
 						</div>
 						
-						{cart.length === 0 ? (
-							<div className="text-center py-12">
-								<FaShoppingCart className="text-6xl mx-auto mb-4 text-muted" />
-								<p className="text-xl text-muted-foreground mb-2">Your cart is empty</p>
-								<p className="text-muted-foreground mb-6">Add some products to get started!</p>
-								<button
-									onClick={() => setShowCart(false)}
-									className="px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
-								>
-									Continue Shopping
-								</button>
-							</div>
-						) : (
-							<>
-								<div className="space-y-4 mb-6">
-									{cart.map((item) => (
-										<div key={`${item.product.id}-${JSON.stringify(item.selectedVariants || {})}`} className="flex items-center space-x-4 p-4 border border-border rounded-xl bg-muted bg-opacity-30">
-											<div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
-												{item.product.imageUrl ? (
-													<img
-														src={imageService.convertGsUrlToStorageUrl(item.product.imageUrl)}
-														alt={item.product.name}
-														className="w-full h-full object-cover"
-														onError={(e) => {
-															const target = e.currentTarget as HTMLImageElement;
-															target.style.display = 'none';
-														}}
-													/>
-												) : (
-													<FaHeart className="text-3xl text-muted" />
-												)}
-											</div>
-											<div className="flex-1 min-w-0">
-												<h4 className="font-semibold text-foreground text-base mb-1 truncate">{item.product.name}</h4>
-												<p className="text-muted-foreground text-sm mb-2">{item.product.description}</p>
-												
-												{/* Display selected variants */}
-												{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
-													<div className="flex flex-wrap gap-1 mb-2">
-														{Object.entries(item.selectedVariants).map(([variantName, variantValue]) => (
-															<span key={variantName} className="inline-block px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
-																{variantName}: {typeof variantValue === 'object' && variantValue && 'name' in variantValue ? (variantValue as any).name : String(variantValue)}
-															</span>
-														))}
+						{/* Cart Content - Scrollable */}
+						<div className="flex-1 overflow-y-auto min-h-0">
+							{cart.length === 0 ? (
+								<div className="text-center py-8 sm:py-12">
+									<FaShoppingCart className="text-4xl sm:text-6xl mx-auto mb-4 text-muted" />
+									<p className="text-lg sm:text-xl text-muted-foreground mb-2">Your cart is empty</p>
+									<p className="text-muted-foreground mb-6">Add some products to get started!</p>
+									<button
+										onClick={() => setShowCart(false)}
+										className="px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
+									>
+										Continue Shopping
+									</button>
+								</div>
+							) : (
+								<>
+									<div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+										{cart.map((item) => (
+											<div key={`${item.product.id}-${JSON.stringify(item.selectedVariants || {})}`} className="border border-border rounded-xl bg-muted bg-opacity-30 overflow-hidden">
+												{/* Mobile Layout */}
+												<div className="block sm:hidden">
+													{/* Product Image */}
+													<div className="w-full h-32 bg-muted flex items-center justify-center overflow-hidden">
+														{item.product.imageUrl ? (
+															<img
+																src={imageService.convertGsUrlToStorageUrl(item.product.imageUrl)}
+																alt={item.product.name}
+																className="w-full h-full object-cover"
+																onError={(e) => {
+																	const target = e.currentTarget as HTMLImageElement;
+																	target.style.display = 'none';
+																}}
+															/>
+														) : (
+															<FaHeart className="text-3xl text-muted" />
+														)}
 													</div>
-												)}
+													
+													{/* Product Details */}
+													<div className="p-3 space-y-3">
+														<div>
+															<h4 className="font-semibold text-foreground text-base mb-1">{item.product.name}</h4>
+															<p className="text-muted-foreground text-sm line-clamp-2">{item.product.description}</p>
+														</div>
+														
+														{/* Variants */}
+														{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+															<div className="flex flex-wrap gap-1">
+																{Object.entries(item.selectedVariants).map(([variantName, variantValue]) => (
+																	<span key={variantName} className="inline-block px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
+																		{variantName}: {typeof variantValue === 'object' && variantValue && 'name' in variantValue ? (variantValue as any).name : String(variantValue)}
+																	</span>
+																))}
+															</div>
+														)}
+														
+														{/* Price and Actions Row */}
+														<div className="flex items-center justify-between">
+															<div className="space-y-1">
+																<p className="text-lg font-bold text-primary">
+																	KSh {(item.totalPrice || item.product.price).toLocaleString()}
+																</p>
+																{(item.totalPrice || item.product.price) !== item.product.price && (
+																	<p className="text-xs text-muted-foreground">
+																		Variant pricing applied
+																	</p>
+																)}
+															</div>
+															
+															{/* Quantity Controls */}
+															<div className="flex items-center space-x-2 bg-background rounded-lg p-1">
+																<button
+																	onClick={() => updateCartQuantity(item, item.quantity - 1)}
+																	className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
+																>
+																	-
+																</button>
+																<span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
+																<button
+																	onClick={() => updateCartQuantity(item, item.quantity + 1)}
+																	className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
+																>
+																	+
+																</button>
+															</div>
+														</div>
+														
+														{/* Remove Button */}
+														<div className="flex justify-end">
+															<button
+																onClick={() => removeFromCart(item)}
+																className="text-destructive hover:text-destructive/80 px-3 py-2 rounded-lg hover:bg-destructive hover:bg-opacity-10 transition-colors text-sm font-medium"
+																title="Remove item"
+															>
+																<FaTrash className="w-4 h-4 inline mr-2" />
+																Remove
+															</button>
+														</div>
+													</div>
+												</div>
 												
-												<div className="space-y-1">
-													<p className="text-lg font-bold text-primary">
-														KSh {(item.totalPrice || item.product.price).toLocaleString()}
-													</p>
-									{(item.totalPrice || item.product.price) !== item.product.price && (
-														<p className="text-xs text-muted-foreground">
-															Variant pricing applied
-														</p>
-													)}
+												{/* Desktop Layout */}
+												<div className="hidden sm:flex items-center space-x-4 p-4">
+													<div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+														{item.product.imageUrl ? (
+															<img
+																src={imageService.convertGsUrlToStorageUrl(item.product.imageUrl)}
+																alt={item.product.name}
+																className="w-full h-full object-cover"
+																onError={(e) => {
+																	const target = e.currentTarget as HTMLImageElement;
+																	target.style.display = 'none';
+																}}
+															/>
+														) : (
+															<FaHeart className="text-3xl text-muted" />
+														)}
+													</div>
+													<div className="flex-1 min-w-0">
+														<h4 className="font-semibold text-foreground text-base mb-1 truncate">{item.product.name}</h4>
+														<p className="text-muted-foreground text-sm mb-2 line-clamp-2">{item.product.description}</p>
+														
+														{/* Display selected variants */}
+														{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+															<div className="flex flex-wrap gap-1 mb-2">
+																{Object.entries(item.selectedVariants).map(([variantName, variantValue]) => (
+																	<span key={variantName} className="inline-block px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
+																		{variantName}: {typeof variantValue === 'object' && variantValue && 'name' in variantValue ? (variantValue as any).name : String(variantValue)}
+																	</span>
+																))}
+															</div>
+														)}
+														
+														<div className="space-y-1">
+															<p className="text-lg font-bold text-primary">
+																KSh {(item.totalPrice || item.product.price).toLocaleString()}
+															</p>
+															{(item.totalPrice || item.product.price) !== item.product.price && (
+																<p className="text-xs text-muted-foreground">
+																	Variant pricing applied
+																</p>
+															)}
+														</div>
+													</div>
+													<div className="flex items-center space-x-3">
+														<div className="flex items-center space-x-2 bg-background rounded-lg p-1">
+															<button
+																onClick={() => updateCartQuantity(item, item.quantity - 1)}
+																className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
+															>
+																-
+															</button>
+															<span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
+															<button
+																onClick={() => updateCartQuantity(item, item.quantity + 1)}
+																className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
+															>
+																+
+															</button>
+														</div>
+														<button
+															onClick={() => removeFromCart(item)}
+															className="text-destructive hover:text-destructive/80 p-2 rounded-full hover:bg-destructive hover:bg-opacity-10 transition-colors"
+															title="Remove item"
+														>
+															<FaTrash className="w-4 h-4" />
+														</button>
+													</div>
 												</div>
 											</div>
-											<div className="flex items-center space-x-3">
-												<div className="flex items-center space-x-2 bg-background rounded-lg p-1">
-													<button
-														onClick={() => updateCartQuantity(item, item.quantity - 1)}
-														className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
-													>
-														-
-													</button>
-													<span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
-													<button
-														onClick={() => updateCartQuantity(item, item.quantity + 1)}
-														className="w-8 h-8 rounded-full bg-muted text-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors flex items-center justify-center text-sm font-bold"
-													>
-														+
-													</button>
-												</div>
-												<button
-													onClick={() => removeFromCart(item)}
-													className="text-destructive hover:text-destructive/80 p-2 rounded-full hover:bg-destructive hover:bg-opacity-10 transition-colors"
-													title="Remove item"
-												>
-													<FaTrash className="w-4 h-4" />
-												</button>
-											</div>
-										</div>
-									))}
-								</div>
+										))}
+									</div>
 
-								<div className="border-t border-border pt-6 space-y-4">
-									<div className="flex justify-between items-center text-lg">
-										<span className="font-semibold text-foreground">Subtotal:</span>
-										<span className="font-bold text-primary">KSh {getCartTotal().toLocaleString()}</span>
+									{/* Cart Summary and Actions */}
+									<div className="border-t border-border pt-4 sm:pt-6 space-y-3 sm:space-y-4 flex-shrink-0">
+										<div className="flex justify-between items-center text-base sm:text-lg">
+											<span className="font-semibold text-foreground">Subtotal:</span>
+											<span className="font-bold text-primary">KSh {getCartTotal().toLocaleString()}</span>
+										</div>
+										<div className="flex justify-between items-center">
+											<span className="font-semibold text-foreground">Total Items:</span>
+											<span className="font-bold text-primary">{getCartItemCount()}</span>
+										</div>
+										<div className="pt-3 sm:pt-4 space-y-3">
+											<button 
+												onClick={handleCheckout}
+												className="w-full bg-primary text-primary-foreground py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
+											>
+												Proceed to Checkout
+											</button>
+											<button 
+												onClick={() => setShowCart(false)}
+												className="w-full bg-muted text-muted-foreground py-2 sm:py-3 rounded-xl font-medium hover:bg-muted/80 transition-colors"
+											>
+												Continue Shopping
+											</button>
+										</div>
 									</div>
-									<div className="flex justify-between items-center">
-										<span className="font-semibold text-foreground">Total Items:</span>
-										<span className="font-bold text-primary">{getCartItemCount()}</span>
-									</div>
-									<div className="pt-4 space-y-3">
-										<button 
-											onClick={handleCheckout}
-											className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
-										>
-											Proceed to Checkout
-										</button>
-										<button 
-											onClick={() => setShowCart(false)}
-											className="w-full bg-muted text-muted-foreground py-3 rounded-xl font-medium hover:bg-muted/80 transition-colors"
-										>
-											Continue Shopping
-										</button>
-									</div>
-								</div>
-							</>
-						)}
+								</>
+							)}
+						</div>
 					</div>
 				</div>
 			)}

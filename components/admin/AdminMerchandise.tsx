@@ -38,7 +38,7 @@ interface ProductVariant {
   id: string;
   name: string;
   type: 'color' | 'size' | 'text' | 'custom';
-  options: (string | { hex: string; name: string })[];
+  options: (string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number })[];
   priceModifier?: number;
   imageUrl?: string;
 }
@@ -117,6 +117,7 @@ const AdminMerchandise = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [selectedColorPickerVariant, setSelectedColorPickerVariant] = useState<{variantIndex: number, optionIndex: number, mode: 'add' | 'edit'} | null>(null);
   const [selectedColor, setSelectedColor] = useState<{hex: string; name: string}>({ hex: '#000000', name: 'Black' });
+  const [selectedVariantOption, setSelectedVariantOption] = useState<{variantIndex: number, optionIndex: number, price: number, mode: 'add' | 'edit'} | null>(null);
 
   useEffect(() => {
     loadData();
@@ -433,7 +434,7 @@ const AdminMerchandise = () => {
       ...prev,
       variants: prev.variants?.map((variant, index) => 
         index === variantIndex 
-          ? { ...variant, options: [...variant.options, ''] }
+          ? { ...variant, options: [...variant.options, { name: '', price: 0 }] }
           : variant
       ) || []
     }));
@@ -450,13 +451,50 @@ const AdminMerchandise = () => {
     }));
   };
 
-  const updateVariantOption = (variantIndex: number, optionIndex: number, value: string | { hex: string; name: string }) => {
+  const updateVariantOption = (variantIndex: number, optionIndex: number, value: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }) => {
     setProductForm(prev => ({
       ...prev,
       variants: prev.variants?.map((variant, i) => 
         i === variantIndex ? { 
           ...variant, 
-          options: variant.options.map((option, j) => j === optionIndex ? value : option)
+          options: variant.options.map((option, j) => {
+            if (j === optionIndex) {
+              if (typeof value === 'string') {
+                // If it's a string, preserve existing price or set to 0
+                const existingPrice = typeof option === 'object' && 'price' in option ? option.price : 0;
+                return { name: value, price: existingPrice };
+              } else if (typeof value === 'object' && 'hex' in value) {
+                // If it's a color object, preserve hex and name, set price to 0 or existing
+                const existingPrice = typeof option === 'object' && 'price' in option ? option.price : 0;
+                return { ...value, price: existingPrice };
+              } else {
+                // If it's already an object with name and price, use it as is
+                return value;
+              }
+            }
+            return option;
+          })
+        } : variant
+      ) || []
+    }));
+  };
+
+  const updateVariantOptionPrice = (variantIndex: number, optionIndex: number, price: number) => {
+    setProductForm(prev => ({
+      ...prev,
+      variants: prev.variants?.map((variant, i) => 
+        i === variantIndex ? { 
+          ...variant, 
+          options: variant.options.map((option, j) => {
+            if (j === optionIndex) {
+              if (typeof option === 'object' && 'name' in option) {
+                return { ...option, price };
+              } else if (typeof option === 'string') {
+                return { name: option, price };
+              }
+            }
+            return option;
+          })
         } : variant
       ) || []
     }));
@@ -675,6 +713,45 @@ const AdminMerchandise = () => {
     setShowColorPicker(true);
   };
 
+  // Function to handle variant option selection and show price
+  const handleVariantOptionSelect = (variantIndex: number, optionIndex: number) => {
+    const variant = productForm.variants?.[variantIndex];
+    if (variant && variant.options[optionIndex]) {
+      const option = variant.options[optionIndex];
+      let price = 0;
+      
+      if (typeof option === 'object' && 'price' in option) {
+        price = option.price || 0;
+      } else if (typeof option === 'string') {
+        price = 0; // String options don't have individual pricing
+      }
+      
+      setSelectedVariantOption({ variantIndex, optionIndex, price, mode: 'add' });
+    }
+  };
+
+  // Function to handle variant option selection in edit form
+  const handleEditVariantOptionSelect = (variantIndex: number, optionIndex: number) => {
+    const variant = editProductForm.variants?.[variantIndex];
+    if (variant && variant.options[optionIndex]) {
+      const option = variant.options[optionIndex];
+      let price = 0;
+      
+      if (typeof option === 'object' && 'price' in option) {
+        price = option.price || 0;
+      } else if (typeof option === 'string') {
+        price = 0; // String options don't have individual pricing
+      }
+      
+      setSelectedVariantOption({ variantIndex, optionIndex, price, mode: 'edit' });
+    }
+  };
+
+  // Function to clear selected variant option
+  const clearSelectedVariantOption = () => {
+    setSelectedVariantOption(null);
+  };
+
   // Function to handle color selection from picker
   const handleColorSelect = (color: { hex: string; name: string }) => {
     if (selectedColorPickerVariant) {
@@ -700,12 +777,16 @@ const AdminMerchandise = () => {
   };
 
   // Enhanced color preview that shows both color and name with edit button
-  const renderColorPreview = (colorValue: string | { hex: string; name: string }, variantIndex: number, optionIndex: number, mode: 'add' | 'edit') => {
+  const renderColorPreview = (colorValue: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }, variantIndex: number, optionIndex: number, mode: 'add' | 'edit') => {
     let colorHex = '#000000';
     let colorName = 'Unknown';
     
     if (typeof colorValue === 'object' && 'hex' in colorValue) {
       colorHex = colorValue.hex;
+      colorName = colorValue.name;
+    } else if (typeof colorValue === 'object' && 'name' in colorValue) {
+      // Handle case where object has name but no hex (e.g., { name: string; price: number })
+      colorHex = getColorFromName(colorValue.name);
       colorName = colorValue.name;
     } else if (typeof colorValue === 'string') {
       colorHex = colorValue.startsWith('#') ? colorValue : getColorFromName(colorValue);
@@ -1405,31 +1486,48 @@ const AdminMerchandise = () => {
                             Add Option
                           </button>
                         </div>
-                        <div className="space-y-2">
-                          {variant.options.map((option, optionIndex) => (
-                            <div key={optionIndex} className="flex items-center space-x-2">
-                              <input
-                                type="text"
-                                value={typeof option === 'object' && 'hex' in option ? option.name : String(option)}
-                                onChange={(e) => updateVariantOption(index, optionIndex, e.target.value)}
-                                placeholder="Option value"
-                                className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
-                              />
-                              {variant.type === 'color' && option && (
-                                renderColorPreview(option, index, optionIndex, 'add')
-                              )}
-                              <button
-                                type="button"
-                                onClick={() => removeVariantOption(index, optionIndex)}
-                                className="text-destructive hover:text-destructive/80 transition-colors"
-                                title="Remove option"
-                                aria-label="Remove option"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                                                 <div className="space-y-2">
+                           {variant.options.map((option, optionIndex) => (
+                             <div key={optionIndex} className="flex items-center space-x-2">
+                               <input
+                                 type="text"
+                                 value={typeof option === 'object' && 'name' in option ? option.name : String(option)}
+                                 onChange={(e) => updateVariantOption(index, optionIndex, e.target.value)}
+                                 placeholder="Option value"
+                                 className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                               />
+                               <input
+                                 type="number"
+                                 step="0.01"
+                                 value={typeof option === 'object' && 'price' in option ? option.price || 0 : 0}
+                                 onChange={(e) => updateVariantOptionPrice(index, optionIndex, parseFloat(e.target.value) || 0)}
+                                 placeholder="Price"
+                                 className="w-24 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                               />
+                               {variant.type === 'color' && option && (
+                                 renderColorPreview(option, index, optionIndex, 'add')
+                               )}
+                               <button
+                                 type="button"
+                                 onClick={() => handleVariantOptionSelect(index, optionIndex)}
+                                 className="text-primary hover:text-primary/80 p-2 rounded hover:bg-primary/10 transition-colors"
+                                 title="View option details"
+                                 aria-label="View option details"
+                               >
+                                 <FaEye />
+                               </button>
+                               <button
+                                 type="button"
+                                 onClick={() => removeVariantOption(index, optionIndex)}
+                                 className="text-destructive hover:text-destructive/80 transition-colors"
+                                 title="Remove option"
+                                 aria-label="Remove option"
+                               >
+                                 <FaTrash />
+                               </button>
+                             </div>
+                           ))}
+                         </div>
                       </div>
                     </div>
                   ))}
@@ -1881,7 +1979,7 @@ const AdminMerchandise = () => {
                               setEditProductForm(prev => ({
                                 ...prev,
                                 variants: prev.variants?.map((v, i) => 
-                                  i === index ? { ...v, options: [...v.options, ''] } : v
+                                  i === index ? { ...v, options: [...v.options, { name: '', price: 0 }] } : v
                                 ) || []
                               }));
                             }}
@@ -1891,51 +1989,98 @@ const AdminMerchandise = () => {
                             Add Option
                           </button>
                         </div>
-                        <div className="space-y-2">
-                          {variant.options.map((option, optionIndex) => (
-                            <div key={optionIndex} className="flex items-center space-x-2">
-                                                              <input
-                                  type="text"
-                                  value={typeof option === 'object' && 'hex' in option ? option.name : String(option)}
-                                  onChange={(e) => {
-                                    setEditProductForm(prev => ({
-                                      ...prev,
-                                      variants: prev.variants?.map((v, i) => 
-                                        i === index ? { 
-                                          ...v, 
-                                          options: v.options.map((opt, j) => j === optionIndex ? e.target.value : opt)
-                                        } : v
-                                      ) || []
-                                    }));
-                                  }}
-                                  placeholder="Option value"
-                                  className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
-                                />
-                              {variant.type === 'color' && option && (
-                                renderColorPreview(option, index, optionIndex, 'edit')
-                              )}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setEditProductForm(prev => ({
-                                    ...prev,
-                                    variants: prev.variants?.map((v, i) => 
-                                      i === index ? { 
-                                        ...v, 
-                                        options: v.options.filter((_, j) => j !== optionIndex) 
-                                      } : v
-                                    ) || []
-                                  }));
-                                }}
-                                className="text-destructive hover:text-destructive/80"
-                                title="Remove option"
-                                aria-label="Remove option"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                                                 <div className="space-y-2">
+                           {variant.options.map((option, optionIndex) => (
+                             <div key={optionIndex} className="flex items-center space-x-2">
+                               <input
+                                 type="text"
+                                 value={typeof option === 'object' && 'name' in option ? option.name : String(option)}
+                                 onChange={(e) => {
+                                   setEditProductForm(prev => ({
+                                     ...prev,
+                                     variants: prev.variants?.map((v, i) => 
+                                       i === index ? { 
+                                         ...v, 
+                                         options: v.options.map((opt, j) => {
+                                           if (j === optionIndex) {
+                                             if (typeof opt === 'string') {
+                                               // If it's a string, preserve existing price or set to 0
+                                               return { name: e.target.value, price: 0 };
+                                             } else if (typeof opt === 'object' && 'name' in opt) {
+                                               // If it's already an object, preserve price
+                                               return { ...opt, name: e.target.value };
+                                             }
+                                           }
+                                           return opt;
+                                         })
+                                       } : v
+                                     ) || []
+                                   }));
+                                 }}
+                                 placeholder="Option value"
+                                 className="flex-1 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                               />
+                               <input
+                                 type="number"
+                                 step="0.01"
+                                 value={typeof option === 'object' && 'price' in option ? option.price || 0 : 0}
+                                 onChange={(e) => {
+                                   setEditProductForm(prev => ({
+                                     ...prev,
+                                     variants: prev.variants?.map((v, i) => 
+                                       i === index ? { 
+                                         ...v, 
+                                         options: v.options.map((opt, j) => {
+                                           if (j === optionIndex) {
+                                             if (typeof opt === 'object' && 'name' in opt) {
+                                               return { ...opt, price: parseFloat(e.target.value) || 0 };
+                                             } else if (typeof opt === 'string') {
+                                               return { name: opt, price: parseFloat(e.target.value) || 0 };
+                                             }
+                                           }
+                                           return opt;
+                                         })
+                                       } : v
+                                     ) || []
+                                   }));
+                                 }}
+                                 placeholder="Price"
+                                 className="w-24 px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
+                               />
+                               {variant.type === 'color' && option && (
+                                 renderColorPreview(option, index, optionIndex, 'edit')
+                               )}
+                               <button
+                                 type="button"
+                                 onClick={() => handleEditVariantOptionSelect(index, optionIndex)}
+                                 className="text-primary hover:text-primary/80 p-2 rounded hover:bg-primary/10 transition-colors"
+                                 title="View option details"
+                                 aria-label="View option details"
+                               >
+                                 <FaEye />
+                               </button>
+                               <button
+                                 type="button"
+                                 onClick={() => {
+                                   setEditProductForm(prev => ({
+                                     ...prev,
+                                     variants: prev.variants?.map((v, i) => 
+                                       i === index ? { 
+                                         ...v, 
+                                         options: v.options.filter((_, j) => j !== optionIndex) 
+                                       } : v
+                                     ) || []
+                                   }));
+                                 }}
+                                 className="text-destructive hover:text-destructive/80"
+                                 title="Remove option"
+                                 aria-label="Remove option"
+                               >
+                                 <FaTrash />
+                               </button>
+                             </div>
+                           ))}
+                         </div>
                       </div>
                     </div>
                   ))}
@@ -1967,18 +2112,82 @@ const AdminMerchandise = () => {
         </div>
       )}
 
-      {/* Color Picker Modal */}
-      <ColorPicker
-        isOpen={showColorPicker}
-        onClose={() => {
-          setShowColorPicker(false);
-          setSelectedColorPickerVariant(null);
-        }}
-        onColorSelect={handleColorSelect}
-        currentColor={selectedColor}
-      />
-    </div>
-  );
-};
+             {/* Color Picker Modal */}
+       <ColorPicker
+         isOpen={showColorPicker}
+         onClose={() => {
+           setShowColorPicker(false);
+           setSelectedColorPickerVariant(null);
+         }}
+         onColorSelect={handleColorSelect}
+         currentColor={selectedColor}
+       />
+
+       {/* Variant Option Price Modal */}
+       {selectedVariantOption && (
+         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+           <div className="bg-card rounded-lg max-w-md w-full border border-border">
+             <div className="flex items-center justify-between p-6 border-b border-border">
+               <h2 className="text-xl font-bold text-foreground">Variant Option Details</h2>
+               <button
+                 onClick={clearSelectedVariantOption}
+                 className="text-muted-foreground hover:text-foreground transition-colors"
+                 title="Close modal"
+                 aria-label="Close modal"
+               >
+                 <FaTimes className="text-xl" />
+               </button>
+             </div>
+             <div className="p-6">
+               <div className="space-y-4">
+                 <div>
+                   <label className="block text-sm font-medium text-foreground mb-2">Option Name</label>
+                   <div className="px-3 py-2 bg-muted rounded-md text-foreground">
+                     {(() => {
+                       const variant = selectedVariantOption.mode === 'add' 
+                         ? productForm.variants?.[selectedVariantOption.variantIndex]
+                         : editProductForm.variants?.[selectedVariantOption.variantIndex];
+                       if (variant && variant.options[selectedVariantOption.optionIndex]) {
+                         const option = variant.options[selectedVariantOption.optionIndex];
+                         return typeof option === 'object' && 'name' in option ? option.name : String(option);
+                       }
+                       return 'Unknown';
+                     })()}
+                   </div>
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-foreground mb-2">Individual Price</label>
+                   <div className="px-3 py-2 bg-muted rounded-md text-foreground">
+                     KSh {selectedVariantOption.price.toLocaleString()}
+                   </div>
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-foreground mb-2">Variant Type</label>
+                   <div className="px-3 py-2 bg-muted rounded-md text-foreground">
+                     {(() => {
+                       const variant = selectedVariantOption.mode === 'add' 
+                         ? productForm.variants?.[selectedVariantOption.variantIndex]
+                         : editProductForm.variants?.[selectedVariantOption.variantIndex];
+                       return variant ? variant.name : 'Unknown';
+                     })()}
+                   </div>
+                 </div>
+               </div>
+               <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border">
+                 <button
+                   type="button"
+                   onClick={clearSelectedVariantOption}
+                   className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                 >
+                   Close
+                 </button>
+               </div>
+             </div>
+           </div>
+         </div>
+       )}
+     </div>
+   );
+ };
 
 export default AdminMerchandise;

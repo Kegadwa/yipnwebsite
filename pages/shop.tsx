@@ -24,7 +24,7 @@ interface ProductVariant {
 	id: string;
 	name: string;
 	type: 'color' | 'size' | 'text' | 'custom';
-	options: (string | { hex: string; name: string })[];
+	options: (string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number })[];
 	priceModifier?: number;
 	imageUrl?: string;
 }
@@ -41,15 +41,98 @@ interface ProductModalProps {
 	product: Product | null;
 	isOpen: boolean;
 	onClose: () => void;
-	onAddToCart: (product: Product, quantity: number, selectedVariants: { [key: string]: string }) => void;
+	onAddToCart: (product: Product, quantity: number, selectedVariants: { [key: string]: string }, variantPrice?: number) => void;
 }
 
-// Enhanced color detection function that handles both string and color objects
-const getColorFromName = (colorValue: string | { hex: string; name: string }) => {
+// Enhanced color detection function that handles all variant option types
+const getColorFromName = (colorValue: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }) => {
 	if (typeof colorValue === 'object' && 'hex' in colorValue) {
 		return colorValue.hex;
 	}
 	
+	if (typeof colorValue === 'object' && 'name' in colorValue) {
+		// Handle case where object has name but no hex (e.g., { name: string; price: number })
+		const colorName = String(colorValue.name);
+		const colorMap: { [key: string]: string } = {
+		'black': '#000000',
+		'white': '#FFFFFF',
+		'red': '#FF0000',
+		'blue': '#0000FF',
+		'green': '#008000',
+		'yellow': '#FFFF00',
+		'purple': '#800080',
+		'orange': '#FFA500',
+		'pink': '#FFC0CB',
+		'brown': '#A52A2A',
+		'gray': '#808080',
+		'grey': '#808080',
+		'navy': '#000080',
+		'maroon': '#800000',
+		'olive': '#808000',
+		'teal': '#008080',
+		'lime': '#00FF00',
+		'aqua': '#00FFFF',
+		'fuchsia': '#FF00FF',
+		'silver': '#C0C0C0',
+		'gold': '#FFD700',
+		'indigo': '#4B0082',
+		'violet': '#EE82EE',
+		'coral': '#FF7F50',
+		'salmon': '#FA8072',
+		'khaki': '#F0E68C',
+		'plum': '#DDA0DD',
+		'turquoise': '#40E0D0',
+		'azure': '#F0FFFF',
+		'ivory': '#FFFFF0',
+		'snow': '#FFFAFA',
+		'mistyrose': '#FFE4E1',
+		'lavender': '#E6E6FA',
+		'honeydew': '#F0FFF0',
+		'mintcream': '#F5FFFA',
+		'aliceblue': '#F0F8FF',
+		'ghostwhite': '#F8F8FF',
+		'whitesmoke': '#F5F5F5',
+		'seashell': '#FFF5EE',
+		'beige': '#F5F5DC',
+		'oldlace': '#FDF5E6',
+		'floralwhite': '#FFFAF0',
+		'cornsilk': '#FFF8DC',
+		'lemonchiffon': '#FFFACD',
+		'lightyellow': '#FFFFE0',
+		'lightcyan': '#E0FFFF',
+		'lightblue': '#ADD8E6',
+		'lightgreen': '#90EE90',
+		'lightpink': '#FFB6C1',
+		'lightsalmon': '#FFA07A',
+		'lightcoral': '#F08080',
+		'lightsteelblue': '#B0C4DE',
+		'lightgray': '#D3D3D3',
+		'lightgrey': '#D3D3D3',
+		'palegreen': '#98FB98',
+		'paleturquoise': '#AFEEEE',
+		'palevioletred': '#DB7093',
+		'papayawhip': '#FFEFD5',
+		'peachpuff': '#FFDAB9',
+		'powderblue': '#B0E0E6',
+		'rosybrown': '#BC8F8F',
+		'sandybrown': '#F4A460',
+		'skyblue': '#87CEEB',
+		'slategray': '#708090',
+		'slategrey': '#708090',
+		'springgreen': '#00FF7F',
+		'steelblue': '#4682B4',
+		'tan': '#D2B48C',
+		'thistle': '#D8BFD8',
+		'tomato': '#FF6347',
+		'wheat': '#F5DEB3',
+		'yellowgreen': '#9ACD32'
+	};
+	
+	const normalizedName = colorName.toLowerCase().trim();
+	return colorMap[normalizedName] || '#CCCCCC'; // Default gray if color not found
+	}
+	
+	// Handle string values
 	const colorName = String(colorValue);
 	const colorMap: { [key: string]: string } = {
 		'black': '#000000',
@@ -131,8 +214,8 @@ const getColorFromName = (colorValue: string | { hex: string; name: string }) =>
 };
 
 // Function to get display text for variant options
-const getVariantDisplayText = (option: string | { hex: string; name: string }) => {
-	if (typeof option === 'object' && 'hex' in option) {
+const getVariantDisplayText = (option: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }) => {
+	if (typeof option === 'object' && 'name' in option) {
 		return option.name;
 	}
 	return String(option);
@@ -158,6 +241,29 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 	const [selectedVariants, setSelectedVariants] = useState<{ [key: string]: string }>({});
 	const [quantity, setQuantity] = useState(1);
+	const [selectedVariantOption, setSelectedVariantOption] = useState<{variantName: string, optionName: string, price: number} | null>(null);
+	const [currentVariantPrice, setCurrentVariantPrice] = useState<number>(0);
+
+	// Set initial variant price when modal opens
+	useEffect(() => {
+		if (product && product.variants && product.variants.length > 0) {
+			// Find the first variant with pricing
+			for (const variant of product.variants) {
+				for (const option of variant.options) {
+					if (typeof option === 'object' && 'price' in option && option.price > 0) {
+						setCurrentVariantPrice(option.price);
+						setSelectedVariantOption({
+							variantName: variant.name,
+							optionName: option.name,
+							price: option.price
+						});
+						setSelectedVariants(prev => ({ ...prev, [variant.name]: option.name }));
+						return;
+					}
+				}
+			}
+		}
+	}, [product]);
 
 	if (!product) return null;
 
@@ -171,13 +277,40 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 	const requiredVariants = product.variants?.filter((v: ProductVariant) => v.type === 'color' || v.type === 'size') || [];
 	const allVariantsSelected = requiredVariants.every((variant: ProductVariant) => selectedVariants[variant.name]);
 
+	const handleVariantOptionSelect = (variantName: string, option: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }) => {
+		let optionName = '';
+		let price = 0;
+		
+		if (typeof option === 'object' && 'name' in option) {
+			optionName = option.name;
+			// Check if the option has a price property
+			if ('price' in option) {
+				price = option.price || 0;
+			} else {
+				price = 0; // Options without price property
+			}
+		} else if (typeof option === 'string') {
+			optionName = option;
+			price = 0; // String options don't have individual pricing
+		}
+		
+		setSelectedVariantOption({ variantName, optionName, price });
+		setCurrentVariantPrice(price);
+		
+		// Also update the selected variants for cart
+		setSelectedVariants(prev => ({ ...prev, [variantName]: optionName }));
+	};
+
 	const handleAddToCart = () => {
 		if (requiredVariants.length > 0 && !allVariantsSelected) {
 			alert('Please select all required variants before adding to cart');
 			return;
 		}
 		
-		onAddToCart(product, quantity, selectedVariants);
+		// Use the current variant price if available, otherwise use base price
+		const finalPrice = currentVariantPrice > 0 ? currentVariantPrice : product.price;
+		
+		onAddToCart(product, quantity, selectedVariants, finalPrice);
 		onClose();
 	};
 
@@ -265,8 +398,19 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 					{/* Right Side - Product Details */}
 					<div className="lg:w-1/2 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-120px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ scrollbarWidth: 'thin', scrollbarColor: '#9CA3AF #F3F4F6' }}>
 						{/* Price */}
-						<div className="text-2xl sm:text-3xl font-bold text-primary">
-							KSh {product.price.toLocaleString()}
+						<div className="space-y-2">
+							<div className="text-2xl sm:text-3xl font-bold text-primary">
+								{currentVariantPrice > 0 ? (
+									`KSh ${currentVariantPrice.toLocaleString()}`
+								) : (
+									`KSh ${product.price.toLocaleString()}`
+								)}
+							</div>
+							{currentVariantPrice > 0 && (
+								<div className="text-sm text-muted-foreground">
+									{selectedVariantOption?.variantName}: {selectedVariantOption?.optionName}
+								</div>
+							)}
 						</div>
 
 						{/* Description */}
@@ -288,25 +432,25 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 												</label>
 											</div>
 											<div className="flex flex-wrap gap-2">
-												{variant.options.map((option: string | { hex: string; name: string }, optIndex: number) => (
-													<button
-														key={optIndex}
-														onClick={() => setSelectedVariants(prev => ({ ...prev, [variant.name]: getVariantDisplayText(option) }))}
-														className={`px-2 py-1 sm:px-3 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-															selectedVariants[variant.name] === getVariantDisplayText(option)
-																? 'bg-primary text-primary-foreground border-2 border-primary'
-																: 'bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-2 border-transparent'
-														}`}
-													>
-														{variant.type === 'color' && (
-															<div 
-																className="w-3 h-3 rounded-full border border-gray-300" 
-																style={{ backgroundColor: getColorFromName(option) }}
-																title={getVariantDisplayText(option)}
-															/>
-														)}
-														{getVariantDisplayText(option)}
-													</button>
+												{variant.options.map((option: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }, optIndex: number) => (
+																									<button
+													key={optIndex}
+													onClick={() => handleVariantOptionSelect(variant.name, option)}
+													className={`px-2 py-1 sm:px-3 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+														selectedVariants[variant.name] === getVariantDisplayText(option)
+															? 'bg-primary text-primary-foreground border-2 border-primary'
+															: 'bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-2 border-transparent'
+													}`}
+												>
+													{variant.type === 'color' && (
+														<div 
+															className="w-3 h-3 rounded-full border border-gray-300" 
+															style={{ backgroundColor: getColorFromName(option) }}
+															title={getVariantDisplayText(option)}
+														/>
+													)}
+													{getVariantDisplayText(option)}
+												</button>
 												))}
 											</div>
 										</div>
@@ -314,6 +458,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
 								</div>
 							</div>
 						)}
+
+
 
 						{/* Quantity */}
 						<div className="space-y-2 sm:space-y-3">
@@ -361,6 +507,7 @@ interface CartItem {
 	product: Product;
 	quantity: number;
 	selectedVariants?: { [key: string]: string };
+	totalPrice?: number;
 }
 
 export default function Shop() {
@@ -491,7 +638,7 @@ export default function Shop() {
 		setFilteredProducts(filtered);
 	}, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
-	const addToCart = (product: Product, quantity: number = 1, selectedVariants?: { [key: string]: string }) => {
+	const addToCart = (product: Product, quantity: number = 1, selectedVariants?: { [key: string]: string }, variantPrice?: number) => {
 		setCart(prevCart => {
 			// Create a unique key for the cart item based on product and variants
 			const variantKey = selectedVariants ? JSON.stringify(selectedVariants) : 'default';
@@ -506,11 +653,13 @@ export default function Shop() {
 				updatedCart[existingItemIndex].quantity += quantity;
 				return updatedCart;
 			} else {
-				// Add new item
+				// Add new item with variant price if available
+				const finalPrice = variantPrice || product.price;
 				return [...prevCart, { 
 					product, 
 					quantity, 
-					selectedVariants: selectedVariants || {} 
+					selectedVariants: selectedVariants || {},
+					totalPrice: finalPrice
 				}];
 			}
 		});
@@ -541,7 +690,7 @@ export default function Shop() {
 	};
 
 	const getCartTotal = () => {
-		return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+		return cart.reduce((total, item) => total + ((item.totalPrice || item.product.price) * item.quantity), 0);
 	};
 
 	const getCartItemCount = () => {
@@ -844,7 +993,7 @@ export default function Shop() {
 															<span className="text-xs text-muted-foreground">{variant.name}:</span>
 															{variant.type === 'color' ? (
 																<div className="flex gap-1">
-																	{variant.options.slice(0, 3).map((option: string | { hex: string; name: string }, oIndex: number) => (
+																	{variant.options.slice(0, 3).map((option: string | { hex: string; name: string } | { hex: string; name: string; price: number } | { name: string; price: number }, oIndex: number) => (
 																		<span
 																			key={oIndex}
 																			className="w-3 h-3 rounded-full border-2 border-background shadow-sm"
@@ -876,9 +1025,57 @@ export default function Shop() {
 										
 										{/* Price and Action Buttons */}
 										<div className="flex items-center justify-between">
-											<span className="text-2xl font-bold text-primary">
-												KSh {product.price.toLocaleString()}
-											</span>
+											{/* Show price based on variant type */}
+											{(() => {
+												// Check if product has variants with individual pricing
+												const hasIndividualPricing = product.variants?.some(variant => 
+													variant.options.some(opt => {
+														if (typeof opt === 'object' && 'price' in opt && opt.price !== null && opt.price !== undefined) {
+															return (opt.price as number) > 0;
+														}
+														return false;
+													})
+												);
+												
+												if (hasIndividualPricing) {
+													// Find the first variant option with a price
+													let firstVariantPrice = 0;
+													let firstVariantName = '';
+													let firstOptionName = '';
+													
+													for (const variant of product.variants || []) {
+														for (const option of variant.options) {
+															if (typeof option === 'object' && 'price' in option && option.price > 0) {
+																firstVariantPrice = option.price;
+																firstVariantName = variant.name;
+																firstOptionName = option.name;
+																break;
+															}
+														}
+														if (firstVariantPrice > 0) break;
+													}
+													
+													if (firstVariantPrice > 0) {
+														return (
+															<div className="space-y-1">
+																<span className="text-2xl font-bold text-primary">
+																	KSh {firstVariantPrice.toLocaleString()}
+																</span>
+																<p className="text-xs text-muted-foreground">
+																	{firstVariantName}: {firstOptionName}
+																</p>
+															</div>
+														);
+													}
+												}
+												
+												// Default price display for products without individual variant pricing
+												return (
+													<span className="text-2xl font-bold text-primary">
+														KSh {product.price.toLocaleString()}
+													</span>
+												);
+											})()}
 											<div className="flex gap-2">
 												<button 
 													onClick={() => openProductModal(product)}
@@ -982,13 +1179,22 @@ export default function Shop() {
 													<div className="flex flex-wrap gap-1 mb-2">
 														{Object.entries(item.selectedVariants).map(([variantName, variantValue]) => (
 															<span key={variantName} className="inline-block px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
-																{variantName}: {typeof variantValue === 'object' && variantValue !== null && 'name' in variantValue ? (variantValue as any).name : String(variantValue)}
+																{variantName}: {typeof variantValue === 'object' && variantValue && 'name' in variantValue ? (variantValue as any).name : String(variantValue)}
 															</span>
 														))}
 													</div>
 												)}
 												
-												<p className="text-lg font-bold text-primary">KSh {item.product.price.toLocaleString()}</p>
+												<div className="space-y-1">
+													<p className="text-lg font-bold text-primary">
+														KSh {(item.totalPrice || item.product.price).toLocaleString()}
+													</p>
+									{(item.totalPrice || item.product.price) !== item.product.price && (
+														<p className="text-xs text-muted-foreground">
+															Variant pricing applied
+														</p>
+													)}
+												</div>
 											</div>
 											<div className="flex items-center space-x-3">
 												<div className="flex items-center space-x-2 bg-background rounded-lg p-1">
@@ -1223,11 +1429,11 @@ export default function Shop() {
 												{item.product.name} x {item.quantity}
 												{item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
 													<span className="text-xs block text-muted-foreground">
-														({Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${typeof v === 'object' && v !== null && 'name' in v ? (v as any).name : String(v)}`).join(', ')})
+														({Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${typeof v === 'object' && v && 'name' in v ? (v as any).name : String(v)}`).join(', ')})
 													</span>
 												)}
 											</span>
-											<span className="font-medium">KSh {(item.product.price * item.quantity).toLocaleString()}</span>
+											            <span className="font-medium">KSh {((item.totalPrice || item.product.price) * item.quantity).toLocaleString()}</span>
 										</div>
 									))}
 									<div className="border-t border-border pt-2 mt-2">

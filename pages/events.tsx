@@ -231,23 +231,35 @@ export default function Events() {
 								<div className="text-center">
 									<h4 className="text-lg font-semibold text-foreground mb-3 flex items-center justify-center space-x-2">
 										<FaBook className="w-5 h-5 text-secondary" />
-										<span>Download Your Gratitude Reflection Journal</span>
+										<span>Your Gratitude Reflection Journal</span>
 									</h4>
-									<p className="text-muted-foreground mb-4">
-										Prepare for the Guided Reflection & Journaling session by downloading our specially crafted gratitude reflection journal. 
-										This interactive PowerPoint journal will help you document your wellness journey and reflections during the event.
+									<p className="text-muted-foreground mb-6">
+										Prepare for the Guided Reflection & Journaling session with our specially crafted gratitude reflection journal. 
+										Choose to download the PowerPoint version or fill out our interactive online journal.
 									</p>
-									<a 
-										href="/YITP-Gratitude-Reflection-Journal.pptx"
-										download="YITP-Gratitude-Reflection-Journal.pptx"
-										className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-									>
-										<FaDownload className="w-5 h-5" />
-										<span>Download Journal (PowerPoint)</span>
-									</a>
-									<p className="text-xs text-muted-foreground mt-3 flex items-center justify-center space-x-2">
+									
+									<div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+										<a 
+											href="/YITP-Gratitude-Reflection-Journal.pptx"
+											download="YITP-Gratitude-Reflection-Journal.pptx"
+											className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+										>
+											<FaDownload className="w-5 h-5" />
+											<span>Download Journal (PowerPoint)</span>
+										</a>
+										
+										<Link
+											href="/journal"
+											className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+										>
+											<FaBook className="w-5 h-5" />
+											<span>Fill My Journal Online</span>
+										</Link>
+									</div>
+									
+									<p className="text-xs text-muted-foreground flex items-center justify-center space-x-2">
 										<FaMobile className="w-4 h-4 text-secondary" />
-										<span>Compatible with PowerPoint, Google Slides, and other presentation software</span>
+										<span>PowerPoint compatible with PowerPoint, Google Slides, and other presentation software</span>
 									</p>
 								</div>
 							</div>

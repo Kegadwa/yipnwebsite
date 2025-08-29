@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { FaSpinner, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaCheck, FaPrint } from "react-icons/fa";
+import { FaSpinner, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaCheck, FaPrint, FaBook, FaDownload, FaMobile } from "react-icons/fa";
 import { ticketService, emailService, Event } from "../lib/firebase-services";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
@@ -223,32 +223,32 @@ export default function Events() {
 											</div>
 										))}
 									</div>
-									
-									{/* Journal Download Section */}
-									<div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200">
-										<div className="text-center">
-											<h4 className="text-lg font-semibold text-foreground mb-3">
-												📖 Download Your Gratitude Reflection Journal
-											</h4>
-											<p className="text-muted-foreground mb-4">
-												Prepare for the Guided Reflection & Journaling session by downloading our specially crafted gratitude reflection journal. 
-												This interactive PowerPoint journal will help you document your wellness journey and reflections during the event.
-											</p>
-											<a 
-												href="/YITP-Gratitude-Reflection-Journal.pptx"
-												download="YITP-Gratitude-Reflection-Journal.pptx"
-												className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-											>
-												<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-												</svg>
-												<span>Download Journal (PowerPoint)</span>
-											</a>
-											<p className="text-xs text-muted-foreground mt-3">
-												📱 Compatible with PowerPoint, Google Slides, and other presentation software
-											</p>
-										</div>
-									</div>
+								</div>
+							</div>
+
+							{/* Journal Download Section */}
+							<div className="bg-card rounded-2xl shadow-card p-8 mb-8">
+								<div className="text-center">
+									<h4 className="text-lg font-semibold text-foreground mb-3 flex items-center justify-center space-x-2">
+										<FaBook className="w-5 h-5 text-secondary" />
+										<span>Download Your Gratitude Reflection Journal</span>
+									</h4>
+									<p className="text-muted-foreground mb-4">
+										Prepare for the Guided Reflection & Journaling session by downloading our specially crafted gratitude reflection journal. 
+										This interactive PowerPoint journal will help you document your wellness journey and reflections during the event.
+									</p>
+									<a 
+										href="/YITP-Gratitude-Reflection-Journal.pptx"
+										download="YITP-Gratitude-Reflection-Journal.pptx"
+										className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+									>
+										<FaDownload className="w-5 h-5" />
+										<span>Download Journal (PowerPoint)</span>
+									</a>
+									<p className="text-xs text-muted-foreground mt-3 flex items-center justify-center space-x-2">
+										<FaMobile className="w-4 h-4 text-secondary" />
+										<span>Compatible with PowerPoint, Google Slides, and other presentation software</span>
+									</p>
 								</div>
 							</div>
 

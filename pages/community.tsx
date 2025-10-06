@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaEnvelope, FaPhone, FaInstagram, FaFacebook, FaTwitter, FaWhatsapp, FaCheck, FaShare, FaCheckCircle, FaComments, FaCamera, FaHandshake, FaCalendar, FaEnvelopeOpen, FaMapMarkedAlt } from "react-icons/fa";
+import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaPhone, FaWhatsapp, FaCheckCircle, FaEnvelopeOpen } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 
@@ -56,8 +56,8 @@ export default function Community() {
                 <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
                   <FaCalendarAlt className="text-2xl text-secondary-foreground" />
                 </div>
-                <p className="text-2xl font-bold text-gray-800">1</p>
-                <p className="text-sm text-gray-600">Event Hosted</p>
+                <p className="text-2xl font-bold text-gray-800">2</p>
+                <p className="text-sm text-gray-600">Events0 Done</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-wellness rounded-full flex items-center justify-center mx-auto mb-4">
@@ -85,23 +85,23 @@ export default function Community() {
                   <h3 className="text-xl font-semibold mb-4">What You&apos;ll Get:</h3>
                   <ul className="space-y-3 text-left">
                     <li className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-2xl text-green-500" />
+                      <FaCheckCircle className="text-2xl text-white-500" />
                       <span>Event announcements and early bird tickets</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-2xl text-green-500" />
+                      <FaCheckCircle className="text-2xl text-white-500" />
                       <span>Weekly wellness tips and mindfulness practices</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-2xl text-green-500" />
+                      <FaCheckCircle className="text-2xl text-white-500" />
                       <span>Community highlights and member stories</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-2xl text-green-500" />
+                      <FaCheckCircle className="text-2xl text-white-500" />
                       <span>Exclusive content and guided meditations</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-2xl text-green-500" />
+                      <FaCheckCircle className="text-2xl text-white-500" />
                       <span>Direct access to instructors and organizers</span>
                     </li>
                   </ul>
@@ -110,23 +110,23 @@ export default function Community() {
                   <h3 className="text-xl font-semibold mb-4">Community Features:</h3>
                   <ul className="space-y-3 text-left">
                     <li className="flex items-center space-x-3">
-                      <FaComments className="text-2xl text-blue-500" />
+                      <FaCheckCircle className="text-2xl text-white-500"/>
                       <span>Real-time chat with community members</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCamera className="text-2xl text-purple-500" />
+                      <FaCheckCircle className="text-2xl text-white-500"/>
                       <span>Share photos and videos from sessions</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaHandshake className="text-2xl text-orange-500" />
+                      <FaCheckCircle className="text-2xl text-white-500"/>
                       <span>Find yoga buddies and practice partners</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCalendar className="text-2xl text-red-500" />
+                      <FaCheckCircle className="text-2xl text-white-500"/>
                       <span>Coordinate meetups and practice sessions</span>
                     </li>
                     <li className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-2xl text-indigo-500" />
+                      <FaCheckCircle className="text-2xl text-white-500"/>
                       <span>Get personalized recommendations</span>
                     </li>
                   </ul>
@@ -156,32 +156,23 @@ export default function Community() {
                 </p>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <FaEnvelopeOpen className="text-2xl text-blue-500 mt-1" />
+                    <FaEnvelopeOpen className="text-2xl text-500 mt-1" />
                     <div>
                       <p className="font-semibold">Email Us</p>
-                      <p className="text-gray-600">info@yogaintheparknairobi.com</p>
+                      <p className="text-gray-600">yogaintheparknairobi@gmail.com</p>
                       <p className="text-sm text-gray-500">We&apos;ll get back to you within 24 hours</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-4">
-                    <FaPhone className="text-2xl text-green-500 mt-1" />
+                    <FaPhone className="text-2xl text-500 mt-1" />
                     <div>
                       <p className="font-semibold">Call Us</p>
-                      <p className="text-gray-600">+254 700 000 000</p>
+                      <p className="text-gray-600">+254 733 334 041</p>
                       <p className="text-sm text-gray-500">Monday to Friday, 9 AM - 6 PM</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-start space-x-4">
-                    <FaMapMarkedAlt className="text-2xl text-red-500 mt-1" />
-                    <div>
-                      <p className="font-semibold">Find Us</p>
-                      <p className="text-gray-600">TuWork Nairobi</p>
-                      <p className="text-gray-600">Nairobi, Kenya</p>
-                      <p className="text-sm text-gray-500">Our main event location</p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

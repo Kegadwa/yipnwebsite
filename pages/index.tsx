@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Head from "next/head";
-import { FaHeart, FaHandshake, FaSeedling, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaStar, FaWhatsapp, FaUsers, FaLeaf, FaSun, FaMountain, FaQuoteLeft, FaQuoteRight, FaArrowRight, FaArrowLeft, FaPlay, FaPause, FaPlus } from "react-icons/fa";
+import { FaHeart, FaHandshake, FaSeedling, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaStar, FaWhatsapp, FaUsers, FaLeaf, FaSun, FaMountain, FaQuoteLeft, FaQuoteRight, FaArrowRight, FaArrowLeft, FaPlay, FaPause, FaPlus, FaExternalLinkAlt, FaEnvelope, FaComments } from "react-icons/fa";
 import Navbar from "../components/Navigation";
 import Footer from "../components/Footer";
 import ReviewForm from "../components/ReviewForm";
+import Edition2Slideshow from "../components/Edition2Slideshow";
 import { reviewService } from "../lib/firebase-services";
 
 export default function HomePage() {
@@ -24,18 +25,32 @@ export default function HomePage() {
     }
   };
 
-  // Example event data (replace with actual mockEvents import if available)
-  const nextEvent = {
-    eventName: "YIPN Edition Two",
-    date: "Saturday, August 30th",
-    time: "9:00 AM onwards",
-    location: "TuWork Nairobi",
-    prices: [
-      { label: "Individual", price: "KSh 2,000" },
-      { label: "Couple", price: "KSh 3,800" },
-      { label: "Group of 4", price: "KSh 7,600" }
-    ]
-  };
+  // Edition 2 photos for slideshow
+  const edition2Photos = [
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 2.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 17.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 20.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 55.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 63.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 90.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 91.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 142.jpg",
+    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 220.jpg"
+  ];
+
+  // Partners data
+  const partners = [
+    { name: "TuWork Nairobi", url: "https://tuwork.co.ke", logo: "🏢" },
+    { name: "KenyaBuzz", url: "https://kenyabuzz.com", logo: "🎫" },
+    { name: "Wellness Kenya", url: "https://wellnesskenya.com", logo: "🧘" },
+    { name: "Nairobi Yoga", url: "https://nairobiyoga.com", logo: "🌿" },
+    { name: "Green Spaces Nairobi", url: "https://greenspacesnairobi.org", logo: "🌳" },
+    { name: "Mindful Kenya", url: "https://mindfulkenya.co.ke", logo: "✨" }
+  ];
 
   // Reviews state
   const [reviews, setReviews] = useState<any[]>([]);
@@ -246,70 +261,60 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Upcoming Events Highlights Section */}
+          {/* Next Event Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-background">
             <div className="container mx-auto px-4">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-12 md:mb-16">
                   <span className="inline-block px-3 py-1 bg-secondary text-secondary-foreground rounded-full mb-4 animate-scale-in text-sm md:text-base">
-                    Next Event
+                    Coming Soon
                   </span>
                   <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 animate-slide-up slide-up-delay-200 text-foreground">
-                    {nextEvent.eventName}
+                    Edition 3 Coming Soon
                   </h2>
                   <p className="text-base md:text-lg lg:text-xl text-muted-foreground animate-slide-up slide-up-delay-400 max-w-3xl mx-auto">
-                    Join us for another transformative experience of <span className="underline decoration-secondary decoration-2">fresh-air yoga</span> and <span className="underline decoration-secondary decoration-2">community energy</span>.
+                    Get ready for our next transformative experience of <span className="underline decoration-secondary decoration-2">fresh-air yoga</span> and <span className="underline decoration-secondary decoration-2">community energy</span>.
                   </p>
                 </div>
                 
-                <div className="bg-card rounded-2xl shadow-card p-6 md:p-8 lg:p-12">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                    {/* Event Details */}
-                    <div className="space-y-6 animate-slide-up slide-up-delay-300">
-                      <div className="space-y-4">
-                        <div className="flex items-center space-x-3">
-                          <FaCalendarAlt className="text-xl text-secondary flex-shrink-0" />
-                          <span className="text-base md:text-lg">{nextEvent.date}</span>
+                <div className="bg-gradient-to-br from-secondary/10 to-primary/10 rounded-2xl shadow-card p-8 md:p-12 text-center animate-slide-up slide-up-delay-300">
+                  <div className="mb-8">
+                    <div className="w-24 h-24 bg-secondary rounded-full mx-auto mb-6 flex items-center justify-center animate-pulse">
+                      <span className="text-4xl">✨</span>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          <FaClock className="text-xl text-secondary flex-shrink-0" />
-                          <span className="text-base md:text-lg">{nextEvent.time}</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <FaMapMarkerAlt className="text-xl text-secondary flex-shrink-0" />
-                          <span className="text-base md:text-lg">{nextEvent.location}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {nextEvent.prices.map((price, index) => (
-                          <div key={index} className="text-center p-4 bg-muted rounded-xl">
-                            <p className="font-semibold text-base md:text-lg text-foreground">{price.label}</p>
-                            <p className="text-xl md:text-2xl font-bold text-secondary">{price.price}</p>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="pt-4">
+                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Edition 3</h3>
+                    <p className="text-lg text-muted-foreground mb-6">
+                      Stay tuned for announcements about our next amazing wellness gathering!
+                    </p>
                         <Link href="/events">
-                          <button className="w-full md:w-auto px-6 py-3 md:py-4 rounded-xl bg-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 text-base md:text-lg">
-                            Get Your Tickets Now
+                      <button className="px-8 py-4 rounded-xl bg-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 text-lg">
+                        Learn More
                           </button>
                         </Link>
                       </div>
                     </div>
                     
-                    {/* Event Image */}
-                    <div className="animate-slide-up slide-up-delay-400">
-                      <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                                                 <img 
-                           src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg" 
-                           alt="YIPN Edition Two Event" 
-                           className="w-full h-64 md:h-80 lg:h-96 object-cover hover:scale-105 transition-transform duration-500"
-                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                      </div>
-                    </div>
+                {/* Edition 2 Preview */}
+                <div className="mt-16">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Preview Edition Two</h3>
+                    <p className="text-lg text-muted-foreground">Relive the magic of our second edition</p>
+                  </div>
+                  
+                  <Edition2Slideshow 
+                    images={edition2Photos}
+                    title="Edition Two Highlights"
+                    autoPlay={true}
+                    interval={4000}
+                  />
+                  
+                  <div className="text-center mt-8">
+                    <Link href="/gallery-edition-2">
+                      <button className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+                        <span>View More Photos</span>
+                        <FaExternalLinkAlt className="w-4 h-4" />
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -338,6 +343,13 @@ export default function HomePage() {
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       Practice in nature's embrace with fresh air, natural sounds, and the healing energy of Nairobi's green spaces.
                     </p>
+                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
+                        alt="Outdoor yoga experience" 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
                   
                   <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-400 animate-on-hover group">
@@ -348,6 +360,13 @@ export default function HomePage() {
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       Learn from experienced, certified yoga teachers who are passionate about your wellness journey and safety.
                     </p>
+                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
+                        alt="Certified instructors" 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
                   
                   <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-500 animate-on-hover group md:col-span-2 lg:col-span-1">
@@ -358,6 +377,13 @@ export default function HomePage() {
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       Connect with like-minded individuals who share your passion for wellness, mindfulness, and personal growth.
                     </p>
+                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg" 
+                        alt="Community vibe" 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
                   
                   <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-600 animate-on-hover group">
@@ -368,6 +394,13 @@ export default function HomePage() {
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       Whether you're a beginner or advanced practitioner, our sessions are designed to accommodate everyone.
                     </p>
+                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 63.jpg" 
+                        alt="All levels welcome" 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
                   
                   <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-700 animate-on-hover group">
@@ -378,14 +411,58 @@ export default function HomePage() {
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       Experience a complete wellness approach including yoga, meditation, breathing techniques, and mindfulness practices.
                     </p>
+                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 142.jpg" 
+                        alt="Holistic wellness" 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* Visual Enrichment Section */}
+          {/* Partners Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-background to-muted">
+            <div className="container mx-auto px-4">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-12 md:mb-16">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 animate-slide-up text-foreground">
+                    Partners We've Worked With
+                  </h2>
+                  <p className="text-base md:text-lg lg:text-xl text-muted-foreground animate-slide-up slide-up-delay-200 max-w-3xl mx-auto">
+                    We're proud to collaborate with amazing organizations that share our vision of wellness and community
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
+                  {partners.map((partner, index) => (
+                    <a
+                      key={index}
+                      href={partner.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex flex-col items-center justify-center p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up animate-on-hover"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors duration-300">
+                        <span className="text-2xl md:text-3xl">{partner.logo}</span>
+                      </div>
+                      <h3 className="text-sm md:text-base font-semibold text-foreground text-center group-hover:text-secondary transition-colors duration-300">
+                        {partner.name}
+                      </h3>
+                      <FaExternalLinkAlt className="w-3 h-3 text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Visual Enrichment Section */}
+          <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">
             <div className="container mx-auto px-4">
               <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-12 md:mb-16">
@@ -715,3 +792,4 @@ export default function HomePage() {
     </>
   );
 }
+

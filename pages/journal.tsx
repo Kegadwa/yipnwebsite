@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaPen, FaSave, FaDownload, FaPrint, FaHeart, FaLeaf, FaSun, FaMoon, FaStar, FaQuoteLeft, FaQuoteRight, FaUser, FaEnvelope, FaPhone, FaCloud, FaCloudRain, FaWind, FaRegSun, FaRegMoon } from "react-icons/fa";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -329,6 +330,7 @@ export default function Journal() {
             >
               Past Entries
             </button>
+
           </div>
         </div>
 

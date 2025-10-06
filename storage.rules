@@ -6,8 +6,34 @@ service firebase.storage {
       allow read: if true;
     }
     
-    // Allow write access for authenticated users and local development
-    match /{allPaths=**} {
+    // Allow write access for specific folders with validation
+    match /gallery/{edition}/{fileName} {
+      allow write: if request.resource.contentType.matches('image/.*')
+                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
+    }
+    
+    match /blog-images/{fileName} {
+      allow write: if request.resource.contentType.matches('image/.*')
+                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
+    }
+    
+    match /profile-images/{fileName} {
+      allow write: if request.resource.contentType.matches('image/.*')
+                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
+    }
+    
+    match /event-images/{fileName} {
+      allow write: if request.resource.contentType.matches('image/.*')
+                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
+    }
+    
+    // Allow write access for temp images (base64 fallback)
+    match /temp_images/{document} {
+      allow write: if true;
+    }
+    
+    // Allow write access for test files (development only)
+    match /test-{fileName} {
       allow write: if true;
     }
   }

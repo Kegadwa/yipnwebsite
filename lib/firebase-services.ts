@@ -202,6 +202,12 @@ export const corsBypassService = {
   }
 };
 
+// Import the improved FirebaseStorageService
+import { FirebaseStorageService } from './firebase-storage';
+
+// Create a single instance for all image operations
+const firebaseStorageService = new FirebaseStorageService();
+
 // Image Upload Service
 export const imageService = {
   // Convert gs:// URLs to proper Firebase Storage URLs
@@ -218,47 +224,21 @@ export const imageService = {
     return gsUrl;
   },
 
-  // Upload image to Firebase Storage
+  // Upload image to Firebase Storage using the improved service
   uploadImage: async (file: File, path: string): Promise<string> => {
     try {
-      // First check CORS status
-      const corsStatus = await corsBypassService.getCORSStatus();
-      console.log('CORS status:', corsStatus);
+      console.log(`Starting image upload: ${file.name} to ${path}`);
       
-      if (corsStatus === 'blocked') {
-        console.log('CORS is blocked, using base64 fallback');
-        return await imageService.uploadImageAsBase64(file, path);
-      }
+      // Use the improved FirebaseStorageService
+      const downloadURL = await firebaseStorageService.uploadImage(file, path);
       
-      const storageRef = ref(storage, path);
-      
-      // Add metadata to help with CORS
-      const metadata = {
-        contentType: file.type,
-        cacheControl: 'public, max-age=31536000',
-      };
-      
-      // Try the standard upload first
-      try {
-        const snapshot = await uploadBytes(storageRef, file, metadata);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        return downloadURL;
-      } catch (uploadError: any) {
-        console.log('Standard upload failed, trying alternative method:', uploadError);
-        
-        // Alternative: Convert to base64 and store in Firestore temporarily
-        if (uploadError.code === 'storage/unauthorized' || uploadError.message?.includes('CORS')) {
-          console.log('CORS error detected, using base64 fallback');
-          return await imageService.uploadImageAsBase64(file, path);
-        }
-        
-        throw uploadError;
-      }
+      console.log(`Image upload successful: ${downloadURL}`);
+      return downloadURL;
     } catch (error: any) {
       console.error('Error uploading image:', error);
       
-      // If any error occurs, fall back to base64
-      console.log('Falling back to base64 due to error:', error);
+      // If Firebase Storage fails, try base64 fallback
+      console.log('Firebase Storage upload failed, trying base64 fallback');
       return await imageService.uploadImageAsBase64(file, path);
     }
   },

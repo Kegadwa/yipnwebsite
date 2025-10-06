@@ -160,158 +160,131 @@ export default function Events() {
 			<div className="container mx-auto px-4 py-20">
 				<div className="max-w-4xl mx-auto">
 
-					{isPurchased ? (
-						<div className="bg-card rounded-2xl shadow-card p-12 mb-8 text-center">
-							<div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-								<FaCheck className="text-4xl text-green-600" />
-							</div>
-							<h2 className="text-2xl font-bold text-foreground mb-4">
-								Payment Successful!
-							</h2>
-							<p className="text-muted-foreground mb-6">
-								Thank you {buyerName}! Your tickets have been confirmed and a confirmation email has been sent to {buyerEmail}.
+					{/* Edition 2 Highlights Section */}
+					<div className="bg-card rounded-2xl shadow-card mb-8 p-8">
+						<div className="text-center mb-6">
+							<h2 className="text-2xl font-bold text-foreground mb-2">Edition 2 Highlights</h2>
+							<p className="text-lg text-muted-foreground">
+								Relive the magic of our second transformative wellness gathering
 							</p>
-							<div className="bg-muted rounded-xl p-6 mb-6">
-								<h3 className="text-lg font-semibold mb-4">Your Ticket Numbers:</h3>
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-									{ticketNumbers.map((ticketNumber, index) => (
-										<div key={index} className="flex items-center justify-center space-x-2 bg-background rounded-lg p-3 border">
-											<FaTicketAlt className="w-4 h-4 text-secondary" />
-											<span className="font-mono text-sm">{ticketNumber}</span>
-										</div>
-									))}
-								</div>
-							</div>
-							<button onClick={() => window.print()} className="px-6 py-3 border border-border rounded-xl text-foreground hover:bg-muted transition-colors">
-								<FaPrint className="inline mr-2" />
-								Print Confirmation
-							</button>
 						</div>
-					) : (
-						<>
-							{/* Current Event Details */}
-							<div className="bg-card rounded-2xl shadow-card mb-8 p-8">
-								<div className="text-center mb-6">
-									<h2 className="text-2xl font-bold text-foreground mb-2">{currentEvent.eventName}</h2>
-									<p className="text-lg text-muted-foreground">
-										A transformative day of yoga, meditation, and wellness in beautiful Nairobi
-									</p>
+						
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+							<div className="space-y-6">
+								<h3 className="text-xl font-semibold text-foreground">A Day of Transformation</h3>
+								<p className="text-muted-foreground leading-relaxed">
+									Edition 2 brought together over 200 wellness enthusiasts for a day filled with yoga flows, 
+									meditation sessions, pilates workshops, and sound healing experiences.
+								</p>
+								<p className="text-muted-foreground leading-relaxed">
+									The event featured multiple sessions including YPilates for core strength, 
+									gentle power vinyasa yoga, guided reflection journaling, and a transformative sound healing journey.
+								</p>
+								
+								<div className="grid grid-cols-2 gap-4">
+									<div className="text-center p-4 bg-muted rounded-lg">
+										<p className="text-2xl font-bold text-secondary">200+</p>
+										<p className="text-sm text-muted-foreground">Participants</p>
 								</div>
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-									<div className="flex items-center justify-center md:justify-start space-x-3">
-										<FaCalendarAlt className="w-5 h-5 text-secondary" />
-										<span className="text-foreground">Saturday, August 30th, 2024</span>
+									<div className="text-center p-4 bg-muted rounded-lg">
+										<p className="text-2xl font-bold text-secondary">11</p>
+										<p className="text-sm text-muted-foreground">Sessions</p>
 									</div>
-									<div className="flex items-center justify-center md:justify-start space-x-3">
-										<FaClock className="w-5 h-5 text-secondary" />
-										<span className="text-foreground">9:00 AM onwards</span>
+									<div className="text-center p-4 bg-muted rounded-lg">
+										<p className="text-2xl font-bold text-secondary">7</p>
+										<p className="text-sm text-muted-foreground">Hours</p>
 									</div>
-									<div className="flex items-center justify-center md:justify-start space-x-3">
-										<FaMapMarkerAlt className="w-5 h-5 text-secondary" />
-										<span className="text-foreground">TuWork Nairobi</span>
+									<div className="text-center p-4 bg-muted rounded-lg">
+										<p className="text-2xl font-bold text-secondary">100%</p>
+										<p className="text-sm text-muted-foreground">Satisfaction</p>
 									</div>
 								</div>
 
-								{/* Schedule */}
-								<div className="mb-8">
-									<h3 className="text-xl font-semibold mb-4 text-center text-foreground">Event Schedule</h3>
-									<div className="space-y-3">
-										{currentEvent.activities.map((activity, index) => (
-											<div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
-												<span className="font-medium text-foreground">{activity.name}</span>
-												<span className="text-secondary text-sm">{activity.time}</span>
-											</div>
-										))}
-									</div>
+								<div className="flex flex-col sm:flex-row gap-4">
+									<Link 
+										href="/gallery-edition-2" 
+										className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+									>
+										<span>View Gallery</span>
+									</Link>
+									<Link 
+										href="/events" 
+										className="inline-flex items-center justify-center space-x-2 px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
+									>
+										<span>Stay Updated</span>
+									</Link>
 								</div>
 							</div>
 
-							{/* Journal Download Section */}
-							<div className="bg-card rounded-2xl shadow-card p-8 mb-8">
-								<div className="text-center">
-									<h4 className="text-lg font-semibold text-foreground mb-3 flex items-center justify-center space-x-2">
-										<FaBook className="w-5 h-5 text-secondary" />
-										<span>Your Gratitude Reflection Journal</span>
-									</h4>
-									<p className="text-muted-foreground mb-6">
-										Prepare for the Guided Reflection & Journaling session with our specially crafted gratitude reflection journal. 
-										Choose to download the PowerPoint version or fill out our interactive online journal.
-									</p>
-									
-									<div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
-										<a 
-											href="/YITP-Gratitude-Reflection-Journal.pptx"
-											download="YITP-Gratitude-Reflection-Journal.pptx"
-											className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-										>
-											<FaDownload className="w-5 h-5" />
-											<span>Download Journal (PowerPoint)</span>
-										</a>
-										
-										<Link
-											href="/journal"
-											className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-										>
-											<FaBook className="w-5 h-5" />
-											<span>Fill My Journal Online</span>
-										</Link>
-									</div>
-									
-									<p className="text-xs text-muted-foreground flex items-center justify-center space-x-2">
-										<FaMobile className="w-4 h-4 text-secondary" />
-										<span>PowerPoint compatible with PowerPoint, Google Slides, and other presentation software</span>
-									</p>
-								</div>
-							</div>
-
-							{/* Ticket Purchase */}
-							<div className="bg-card rounded-2xl shadow-card p-8">
-								<div className="text-center mb-6">
-									<h2 className="text-2xl font-bold text-foreground mb-2">Book Your Tickets</h2>
-									<p className="text-muted-foreground mb-6">
-										Secure your spot for this amazing wellness experience
-									</p>
-									
-									{/* KenyaBuzz Poster */}
-									<div className="mb-6">
+							<div className="grid grid-cols-2 gap-4">
+								<div className="space-y-4">
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="https://static.kenyabuzz.com/posters/events/1756018213231.webp" 
-											alt="Yoga in the Park Event Poster" 
-											className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg" 
+											alt="Edition 2 yoga session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>
-									
-									<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-										<div className="text-center p-4 border rounded-lg transition-all duration-300 hover:border-secondary hover:shadow-md">
-											<p className="font-semibold text-lg text-foreground">Individual</p>
-											<p className="text-2xl font-bold text-secondary">KSh 2,000</p>
-											<p className="text-sm text-muted-foreground">1 ticket</p>
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
+											alt="Edition 2 meditation session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+								</div>
+								<div className="space-y-4 pt-8">
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
+											alt="Edition 2 community" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+							</div>
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg" 
+											alt="Edition 2 wellness" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
 										</div>
-										<div className="text-center p-4 border rounded-lg transition-all duration-300 hover:border-secondary hover:shadow-md">
-											<p className="font-semibold text-lg text-foreground">Couple</p>
-											<p className="text-2xl font-bold text-secondary">KSh 3,800</p>
-											<p className="text-sm text-muted-foreground">2 tickets</p>
 										</div>
-										<div className="text-center p-4 border rounded-lg transition-all duration-300 hover:border-secondary hover:shadow-md">
-											<p className="font-semibold text-lg text-foreground">Group of 4</p>
-											<p className="text-2xl font-bold text-secondary">KSh 7,600</p>
-											<p className="text-sm text-muted-foreground">4 tickets</p>
 										</div>
 									</div>
 									
-									<a 
-										href="https://kenyabuzz.com/events/event/yoga-in-the-park-1" 
+					{/* Coming Soon Section */}
+					<div className="bg-gradient-to-br from-secondary/10 to-primary/10 rounded-2xl shadow-card p-8 text-center">
+						<div className="mb-6">
+							<div className="w-20 h-20 bg-secondary rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
+								<span className="text-3xl">✨</span>
+							</div>
+							<h2 className="text-2xl font-bold text-foreground mb-4">Edition 3 Coming Soon</h2>
+							<p className="text-lg text-muted-foreground mb-6">
+								Stay tuned for announcements about our next amazing wellness gathering!
+							</p>
+						</div>
+						
+						<div className="flex flex-col sm:flex-row gap-4 justify-center">
+							<button 
+								onClick={() => {
+									// Add newsletter signup logic here
+									alert('Newsletter signup coming soon!');
+								}}
+								className="px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+							>
+								Get Notified
+							</button>
+							<a 
+								href="https://chat.whatsapp.com/BOpAhahjb834DLsnirdxax?mode=ems_copy_c&fbclid=PAZXh0bgNhZW0CMTEAAadXQg7u2t3CdxMK9aPyr_Yx_l-q5mo4C6u2clEj1lkdcfy_P_D25PAnzFJ8Ag_aem_ZX4GMlmRM5prmci1JSYmSQ"
 										target="_blank" 
 										rel="noopener noreferrer"
-										className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:from-primary/90 hover:to-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+								className="px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
 									>
-										<FaTicketAlt className="w-6 h-6" />
-										<span>Buy Tickets on KenyaBuzz</span>
+								Join WhatsApp Community
 									</a>
 								</div>
 							</div>
-						</>
-					)}
 				</div>
 			</div>
 			
@@ -381,15 +354,132 @@ export default function Events() {
 								<div className="space-y-4">
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg" 
 											alt="Edition 1 yoga session" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 2.jpg" 
 											alt="Edition 1 meditation session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+								</div>
+								<div className="space-y-4 pt-8">
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 17.jpg" 
+											alt="Edition 1 community" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 20.jpg" 
+											alt="Edition 1 wellness" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			
+			{/* Edition 2 Highlights Section */}
+			<section className="py-20 bg-gradient-to-br from-secondary/5 to-primary/5">
+				<div className="container mx-auto px-4">
+					<div className="max-w-6xl mx-auto">
+						<div className="text-center mb-16">
+							<h2 className="text-3xl md:text-4xl font-bold mb-6 animate-slide-up text-foreground">
+								Edition 2 Highlights
+							</h2>
+							<p className="text-lg text-muted-foreground max-w-3xl mx-auto animate-slide-up slide-up-delay-200">
+								Experience the evolution of our wellness community through our second transformative event.
+							</p>
+						</div>
+						
+						<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+							<div className="space-y-6 animate-slide-up slide-up-delay-300">
+								<h3 className="text-2xl font-bold text-foreground">
+									Building on Success
+								</h3>
+								<p className="text-muted-foreground leading-relaxed">
+									Edition 2 brought together over 200 wellness enthusiasts for an expanded day of yoga flows, 
+									meditation sessions, pilates workshops, and transformative sound healing experiences.
+								</p>
+								<p className="text-muted-foreground leading-relaxed">
+									The event featured multiple sessions including YPilates for core strength, 
+									gentle power vinyasa yoga, guided reflection journaling, and a transformative sound healing journey.
+								</p>
+								
+								<div className="grid grid-cols-2 gap-4">
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">200+</p>
+										<p className="text-sm text-muted-foreground">Participants</p>
+									</div>
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">11</p>
+										<p className="text-sm text-muted-foreground">Sessions</p>
+									</div>
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">7</p>
+										<p className="text-sm text-muted-foreground">Hours</p>
+									</div>
+									<div className="text-center p-4 bg-white rounded-lg shadow-md">
+										<p className="text-2xl font-bold text-secondary">100%</p>
+										<p className="text-sm text-muted-foreground">Satisfaction</p>
+									</div>
+								</div>
+								
+								<div className="flex flex-col sm:flex-row gap-4">
+									<Link 
+										href="/gallery-edition-2" 
+										className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+									>
+										<span>View Gallery</span>
+									</Link>
+									<Link 
+										href="/events" 
+										className="inline-flex items-center justify-center space-x-2 px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
+									>
+										<span>Stay Updated</span>
+									</Link>
+								</div>
+							</div>
+							
+							<div className="grid grid-cols-2 gap-4 animate-slide-up slide-up-delay-400">
+								<div className="space-y-4">
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
+											alt="Edition 2 yoga session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 55.jpg" 
+											alt="Edition 2 meditation session" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+								</div>
+								<div className="space-y-4 pt-8">
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
+											alt="Edition 2 community" 
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
+									</div>
+									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+										<img 
+											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 90.jpg" 
+											alt="Edition 2 wellness" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>

@@ -251,19 +251,7 @@ const AdminGalleryConfig = () => {
               </button>
             )}
 
-            {/* Gallery Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <h4 className="font-semibold text-blue-800 mb-2">How This Works:</h4>
-              <p className="text-sm text-blue-700 mb-2">
-                Add individual image URLs above. The gallery page will:
-              </p>
-              <ul className="text-sm text-blue-700 space-y-1 list-disc list-inside">
-                <li>Display images in a Pinterest-style masonry layout</li>
-                <li>Show images without names, cards, or descriptions</li>
-                <li>Use rounded corners for a clean look</li>
-                <li>Automatically arrange images to fit anywhere</li>
-              </ul>
-            </div>
+        
           </div>
         ))}
 

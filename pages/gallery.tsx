@@ -20,6 +20,7 @@ const Gallery = () => {
 	const [selectedMedia, setSelectedMedia] = useState<GalleryMedia | null>(null);
 	const [showMediaModal, setShowMediaModal] = useState(false);
 	const [edition1Images, setEdition1Images] = useState<GalleryMedia[]>([]);
+	const [edition2Images, setEdition2Images] = useState<GalleryMedia[]>([]);
 
 	// Load images from gallery config
 	useEffect(() => {
@@ -37,6 +38,22 @@ const Gallery = () => {
 				tags: ["yoga", "wellness", "community"]
 			}));
 			setEdition1Images(images);
+		}
+
+		const edition2Folder = GALLERY_FOLDERS['edition-2'];
+		if (edition2Folder && edition2Folder.imageUrls.length > 0) {
+			// Take only first 15 images and convert to GalleryMedia format
+			const images = edition2Folder.imageUrls.slice(0, 15).map((imageUrl, index) => ({
+				id: `ed2-${index + 1}`,
+				title: `Edition 2 Image ${index + 1}`,
+				description: "Beautiful moment from our wellness community",
+				imageUrl: imageUrl,
+				category: "edition-2" as const,
+				photographer: "YIPN Team",
+				location: "Nairobi Park",
+				tags: ["yoga", "wellness", "community"]
+			}));
+			setEdition2Images(images);
 		}
 	}, []);
 
@@ -93,32 +110,28 @@ const Gallery = () => {
 								</Link>
 							</div>
 							
-							{/* Gallery Carousel - Images Only */}
-							<div className="relative">
-								<div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
-									{edition1Images.map((item) => (
-										<div
-											key={item.id}
-											className="flex-shrink-0 w-64 h-48 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-											onClick={() => openMediaModal(item)}
-										>
-											<img
-												src={item.imageUrl}
-												alt={item.title}
-												className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-												loading="lazy"
-											/>
-										</div>
-									))}
+					{/* Gallery Carousel - Auto-scrolling marquee */}
+					<div className="relative gallery-marquee">
+						<div className="gallery-track pb-4">
+							{[...edition1Images, ...edition1Images].map((item, idx) => (
+								<div
+									key={`${item.id}-${idx}`}
+									className="flex-shrink-0 w-64 h-48 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+									onClick={() => openMediaModal(item)}
+								>
+									<img
+										src={item.imageUrl}
+										alt={item.title}
+										className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+										loading="lazy"
+									/>
 								</div>
-								{/* Scroll indicator */}
-								<div className="text-center text-sm text-muted-foreground mt-2">
-									← Scroll to see more images →
-								</div>
-							</div>
+							))}
+						</div>
+					</div>
 						</div>
 
-						{/* Edition 2 Section - Coming Soon */}
+						{/* Edition 2 Section */}
 						<div className="mb-16">
 							<div className="flex justify-between items-center mb-8">
 								<h2 className="text-3xl font-bold text-primary">Edition Two</h2>
@@ -130,18 +143,24 @@ const Gallery = () => {
 									<FaArrowRight />
 								</Link>
 							</div>
-							<div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-12 text-center">
-								<div className="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-									<FaCamera className="text-4xl text-blue-600" />
-								</div>
-								<h3 className="text-2xl font-bold text-blue-900 mb-4">Coming Soon</h3>
-								<p className="text-blue-700 text-lg max-w-2xl mx-auto mb-6">
-									We're preparing something amazing for Edition Two! Stay tuned for more wellness moments, 
-									community connections, and beautiful memories to be captured and shared.
-								</p>
-								<div className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold">
-									<FaPlus />
-									<span>Stay Updated</span>
+							
+							{/* Gallery Carousel - Auto-scrolling marquee */}
+							<div className="relative gallery-marquee">
+								<div className="gallery-track pb-4">
+									{[...edition2Images, ...edition2Images].map((item, idx) => (
+										<div
+											key={`${item.id}-${idx}`}
+											className="flex-shrink-0 w-64 h-48 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+											onClick={() => openMediaModal(item)}
+										>
+											<img
+												src={item.imageUrl}
+												alt={item.title}
+												className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+												loading="lazy"
+											/>
+										</div>
+									))}
 								</div>
 							</div>
 						</div>

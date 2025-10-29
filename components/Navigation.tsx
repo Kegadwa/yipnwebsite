@@ -27,6 +27,7 @@ const Navigation = () => {
   ];
 
   const galleryDropdown = [
+    { href: '/gallery', label: 'Our Gallery' },
     { href: '/gallery-edition-1', label: 'Edition 1' },
     { href: '/gallery-edition-2', label: 'Edition 2' }
   ];
@@ -35,9 +36,18 @@ const Navigation = () => {
     ...mainNavLinks,
     ...aboutDropdown,
     ...resourcesDropdown,
-    { href: '/gallery', label: 'Gallery' },
+    ...galleryDropdown,
     { href: '/community', label: 'Community' },
     { href: '/admin', label: 'Admin' }
+  ];
+
+  // Mobile navigation links (without admin for smaller screens)
+  const mobileNavLinks = [
+    ...mainNavLinks,
+    ...aboutDropdown,
+    ...resourcesDropdown,
+    ...galleryDropdown,
+    { href: '/community', label: 'Community' }
   ];
 
   const isActiveLink = (href: string) => pathname === href;
@@ -163,7 +173,7 @@ const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur-sm">
             <div className="py-4 space-y-2">
-              {allNavLinks.map((link) => (
+              {mobileNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -175,6 +185,19 @@ const Navigation = () => {
                   {link.label}
                 </Link>
               ))}
+              
+              {/* Admin Link - Only show on medium screens and up (md:) */}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-4 py-2 text-sm font-medium transition-smooth hover:text-secondary hover:bg-muted md:hidden ${
+                    isActiveLink('/admin') ? 'text-secondary bg-muted' : 'text-foreground'
+                  }`}
+                >
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
         )}

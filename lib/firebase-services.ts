@@ -229,6 +229,18 @@ export const imageService = {
     try {
       console.log(`Starting image upload: ${file.name} to ${path}`);
       
+      // Validate file before upload
+      if (!file || file.size === 0) {
+        throw new Error('Invalid file provided');
+      }
+
+      // Note: No file size limit - let Firebase Storage handle size limits
+
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('Invalid file type. Only images (JPEG, PNG, GIF, WebP) are allowed.');
+      }
+      
       // Use the improved FirebaseStorageService
       const downloadURL = await firebaseStorageService.uploadImage(file, path);
       
@@ -237,9 +249,21 @@ export const imageService = {
     } catch (error: any) {
       console.error('Error uploading image:', error);
       
+      // Check if it's a permission error
+      if (error.message?.includes('Permission denied') || 
+          error.message?.includes('unauthorized') ||
+          error.code === 'storage/unauthorized') {
+        throw new Error('Permission denied. Please check your Firebase configuration.');
+      }
+      
       // If Firebase Storage fails, try base64 fallback
       console.log('Firebase Storage upload failed, trying base64 fallback');
-      return await imageService.uploadImageAsBase64(file, path);
+      try {
+        return await imageService.uploadImageAsBase64(file, path);
+      } catch (fallbackError) {
+        console.error('Base64 fallback also failed:', fallbackError);
+        throw new Error(`Upload failed completely: ${error.message}. Please try again or contact support.`);
+      }
     }
   },
 

@@ -2,34 +2,33 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navigation';
 import Footer from '../components/Footer';
-import { galleryService, imageService } from '../lib/firebase-services';
+import { GALLERY_FOLDERS } from '../lib/gallery-config';
 
 const GalleryEdition2 = () => {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
-
-  // Convert gs:// URLs to proper HTTP URLs
-  const convertImageUrl = (url: string): string => {
-    if (url.startsWith('gs://')) {
-      return imageService.convertGsUrlToStorageUrl(url);
-    }
-    return url;
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load images from Firestore collection 'gallery2'
-    const loadGalleryImages = async () => {
+    // Load images from gallery config
+    const loadGalleryImages = () => {
       try {
-        const galleryData = await galleryService.readAll();
-        const edition2Folder = galleryData.find((item: any) => item.folderId === 'edition-2');
+        setLoading(true);
+        setError(null);
         
-        if (edition2Folder?.imageUrls && edition2Folder.imageUrls.length > 0) {
-          // Convert all image URLs to proper HTTP format
-          const convertedUrls = edition2Folder.imageUrls.map(convertImageUrl);
-          setGalleryImages(convertedUrls);
+        const edition2Folder = GALLERY_FOLDERS['edition-2'];
+        if (edition2Folder && edition2Folder.imageUrls.length > 0) {
+          setGalleryImages(edition2Folder.imageUrls);
+          console.log(`Loaded ${edition2Folder.imageUrls.length} images for Edition 2`);
+        } else {
+          setGalleryImages([]);
         }
-    } catch (error) {
+      } catch (error) {
         console.error('Error loading gallery images:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load images');
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -37,7 +36,7 @@ const GalleryEdition2 = () => {
   }, []);
 
   const displayItems = galleryImages.map((imageUrl, index) => ({
-    id: index + 1,
+    id: `ed2-${index + 1}`,
     src: imageUrl,
     alt: `Gallery Image ${index + 1} - Edition 2`
   }));
@@ -59,15 +58,36 @@ const GalleryEdition2 = () => {
           </div>
 
           {/* Loading State */}
-          {galleryImages.length === 0 && (
+          {loading && (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-gray-600">Loading gallery images...</p>
-                  </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="text-center py-12">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
+                <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Images</h3>
+                <p className="text-red-600 mb-4">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Pinterest-Style Masonry Layout */}
-          {galleryImages.length > 0 ? (
+          {!loading && !error && galleryImages.length > 0 && (
             <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
               {displayItems.map((item) => (
                 <div
@@ -95,7 +115,10 @@ const GalleryEdition2 = () => {
                 </div>
                                   ))}
                                 </div>
-          ) : (
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && galleryImages.length === 0 && (
             <div className="text-center py-12">
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 max-w-md mx-auto">
                 <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -105,17 +128,11 @@ const GalleryEdition2 = () => {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">No Images Yet</h3>
                 <p className="text-gray-600 mb-4">
-                  No images have been configured for this gallery yet.
+                  Gallery Edition 2 images will appear here once they're added to the public folder.
                 </p>
-                <Link
-                  href="/admin"
-                  className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Go to Admin Panel
-                </Link>
               </div>
-                    </div>
-                  )}
+            </div>
+          )}
 
           {/* Navigation */}
           <div className="text-center mt-12">

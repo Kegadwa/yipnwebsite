@@ -7,6 +7,8 @@ import Footer from "../components/Footer";
 import ReviewForm from "../components/ReviewForm";
 import Edition2Slideshow from "../components/Edition2Slideshow";
 import { reviewService } from "../lib/firebase-services";
+import SponsorCarousel from "../components/SponsorCarousel";
+import EventCountdown from "../components/EventCountdown";
 
 export default function HomePage() {
   // Newsletter signup logic placeholder
@@ -25,31 +27,24 @@ export default function HomePage() {
     }
   };
 
-  // Edition 2 photos for slideshow
+  // Edition images (migrated to optimized .webp in /Ed1webp)
   const edition2Photos = [
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 2.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 17.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 20.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 55.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 63.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 90.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 91.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 142.jpg",
-    "/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 220.jpg"
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 56.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 114.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 122.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 139.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 141.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 151.webp",
+    "/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 157.webp"
   ];
 
-  // Partners data
-  const partners = [
-    { name: "TuWork Nairobi", url: "https://tuwork.co.ke", logo: "🏢" },
-    { name: "KenyaBuzz", url: "https://kenyabuzz.com", logo: "🎫" },
-    { name: "Wellness Kenya", url: "https://wellnesskenya.com", logo: "🧘" },
-    { name: "Nairobi Yoga", url: "https://nairobiyoga.com", logo: "🌿" },
-    { name: "Green Spaces Nairobi", url: "https://greenspacesnairobi.org", logo: "🌳" },
-    { name: "Mindful Kenya", url: "https://mindfulkenya.co.ke", logo: "✨" }
+  // Sponsor logos (assets found in public/sponsors)
+  const sponsorLogos = [
+    { name: "Muva", src: "/sponsors/Muva.png" },
+    { name: "KenyaBuzz", src: "/sponsors/kenyabuzz.svg", href: "https://kenyabuzz.com" },
+    { name: "Bio", src: "/sponsors/bio.png", href: "https://www.instagram.com/biofoodproducts/" },
+    { name: "Crimson", src: "/sponsors/crimson.png" }
   ];
 
   // Reviews state
@@ -201,7 +196,7 @@ export default function HomePage() {
           <section
             className="relative h-screen flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+              backgroundImage: `url('/Ed2webp/IMG_8838.webp')`
             }}
           >
             <div className="absolute inset-0 bg-primary/70"></div>
@@ -212,6 +207,9 @@ export default function HomePage() {
               <p className="text-xl md:text-2xl mb-4 text-white/90 animate-fade-in fade-in-delay-200">
                 Find Your Flow
               </p>
+              <div className="mb-6 flex justify-center">
+                <EventCountdown />
+              </div>
               <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/80 animate-fade-in fade-in-delay-400">
                 Join our vibrant community for transformative yoga, meditation, and wellness experiences in the heart of Nairobi.
               </p>
@@ -229,6 +227,9 @@ export default function HomePage() {
               </div>
             </div>
           </section>
+
+          {/* Sponsor Logos Carousel */}
+          <SponsorCarousel title="Our Sponsors" sponsors={sponsorLogos} backgroundClassName="bg-gradient-to-b from-background to-muted" />
 
           {/* Welcome & Vision Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-background to-muted">
@@ -261,62 +262,56 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Next Event Section */}
+          {/* Edition 3 Event Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-background">
             <div className="container mx-auto px-4">
               <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-12 md:mb-16">
-                  <span className="inline-block px-3 py-1 bg-secondary text-secondary-foreground rounded-full mb-4 animate-scale-in text-sm md:text-base">
-                    Coming Soon
-                  </span>
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 animate-slide-up slide-up-delay-200 text-foreground">
-                    Edition 3 Coming Soon
-                  </h2>
-                  <p className="text-base md:text-lg lg:text-xl text-muted-foreground animate-slide-up slide-up-delay-400 max-w-3xl mx-auto">
-                    Get ready for our next transformative experience of <span className="underline decoration-secondary decoration-2">fresh-air yoga</span> and <span className="underline decoration-secondary decoration-2">community energy</span>.
-                  </p>
-                </div>
-                
-                <div className="bg-gradient-to-br from-secondary/10 to-primary/10 rounded-2xl shadow-card p-8 md:p-12 text-center animate-slide-up slide-up-delay-300">
-                  <div className="mb-8">
-                    <div className="w-24 h-24 bg-secondary rounded-full mx-auto mb-6 flex items-center justify-center animate-pulse">
-                      <span className="text-4xl">✨</span>
-                        </div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Edition 3</h3>
-                    <p className="text-lg text-muted-foreground mb-6">
-                      Stay tuned for announcements about our next amazing wellness gathering!
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center animate-slide-up slide-up-delay-200">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 text-foreground">
+                      Edition 3: A Yoga in the Park Nairobi Sundowner
+                    </h2>
+                    <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-4">
+                      Get ready to experience Edition 3: A Yoga in the Park Nairobi Sundowner, where wellness meets the magic of the golden hour! Join us on Saturday, November 8, 2025, from 3:00 PM to 9:00 PM at Amboseli lane, Lavington for an evening designed to restore your mind and body.
                     </p>
-                        <Link href="/events">
+                    <p className="text-base md:text-lg text-muted-foreground mb-4">
+                      This special outdoor session invites you to slow down with a calming Golden Hour Yoga flow, followed by a deeply restorative Sunset Flow and Meditation with Breathwork under the stars.
+                    </p>
+                    <p className="text-base md:text-lg text-muted-foreground mb-4">
+                      Your ticket (KES 3,800) covers this entire rejuvenating experience, complete with warm infused teas and healthy gourmet snacks, all wrapped in soft music, fresh air, and the beautiful, supportive energy of the YIPN community.
+                    </p>
+                    <p className="text-base md:text-lg text-muted-foreground mb-6">
+                      It’s the perfect pause button for your busy life—a quiet, connected pause for your mind and spirit.
+                    </p>
+                    <a
+                      href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <button className="px-8 py-4 rounded-xl bg-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 text-lg">
-                        Learn More
-                          </button>
-                        </Link>
-                      </div>
-                    </div>
-                    
-                {/* Edition 2 Preview */}
-                <div className="mt-16">
-                  <div className="text-center mb-8">
-                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Preview Edition Two</h3>
-                    <p className="text-lg text-muted-foreground">Relive the magic of our second edition</p>
-                  </div>
-                  
-                  <Edition2Slideshow 
-                    images={edition2Photos}
-                    title="Edition Two Highlights"
-                    autoPlay={true}
-                    interval={4000}
-                  />
-                  
-                  <div className="text-center mt-8">
-                    <Link href="/gallery-edition-2">
-                      <button className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-                        <span>View More Photos</span>
-                        <FaExternalLinkAlt className="w-4 h-4" />
+                        Buy Tickets
                       </button>
-                    </Link>
+                    </a>
+                  </div>
+
+                  <div className="w-full">
+                    <a
+                      href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition"
+                    >
+                      <img
+                        src="https://static.kenyabuzz.com/posters/events/1759941621523.webp"
+                        alt="Edition 3: A Yoga in the Park Nairobi Sundowner Poster"
+                        className="w-full h-auto object-contain"
+                        loading="lazy"
+                      />
+                    </a>
                   </div>
                 </div>
+                    
+                {/* Edition 2 Preview removed */}
               </div>
             </div>
           </section>
@@ -345,7 +340,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
                       <img 
-                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
+                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 56.webp" 
                         alt="Outdoor yoga experience" 
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
@@ -362,7 +357,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
                       <img 
-                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
+                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.webp" 
                         alt="Certified instructors" 
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
@@ -379,7 +374,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
                       <img 
-                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg" 
+                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 141.webp" 
                         alt="Community vibe" 
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
@@ -396,7 +391,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
                       <img 
-                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 63.jpg" 
+                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 139.webp" 
                         alt="All levels welcome" 
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
@@ -413,7 +408,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
                       <img 
-                        src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 142.jpg" 
+                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 151.webp" 
                         alt="Holistic wellness" 
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
@@ -424,42 +419,7 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Partners Section */}
-          <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-background to-muted">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-12 md:mb-16">
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 animate-slide-up text-foreground">
-                    Partners We've Worked With
-                  </h2>
-                  <p className="text-base md:text-lg lg:text-xl text-muted-foreground animate-slide-up slide-up-delay-200 max-w-3xl mx-auto">
-                    We're proud to collaborate with amazing organizations that share our vision of wellness and community
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
-                  {partners.map((partner, index) => (
-                    <a
-                      key={index}
-                      href={partner.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex flex-col items-center justify-center p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up animate-on-hover"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors duration-300">
-                        <span className="text-2xl md:text-3xl">{partner.logo}</span>
-                      </div>
-                      <h3 className="text-sm md:text-base font-semibold text-foreground text-center group-hover:text-secondary transition-colors duration-300">
-                        {partner.name}
-                      </h3>
-                      <FaExternalLinkAlt className="w-3 h-3 text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
+          {/* Partners Section removed and replaced by SponsorCarousel */}
 
           {/* Visual Enrichment Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">
@@ -508,14 +468,14 @@ export default function HomePage() {
                     <div className="space-y-3 md:space-y-4">
                                              <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                          <img 
-                           src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
+                           src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 56.webp" 
                            alt="Yoga in nature setting" 
                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                          />
                        </div>
                                              <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                          <img 
-                           src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
+                           src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.webp" 
                            alt="Meditation in peaceful environment" 
                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                          />
@@ -524,14 +484,14 @@ export default function HomePage() {
                     <div className="space-y-3 md:space-y-4 pt-8 md:pt-12">
                                              <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                          <img 
-                           src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg" 
+                           src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 141.webp" 
                            alt="Community yoga session" 
                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                          />
                        </div>
                                              <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                          <img 
-                           src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 63.jpg" 
+                           src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 139.webp" 
                            alt="Peaceful meditation practice" 
                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                          />

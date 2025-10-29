@@ -783,7 +783,7 @@ export default function Shop() {
 			<section
 				className="relative py-32 flex items-center justify-center overflow-hidden"
 				style={{
-					backgroundImage: `url('/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg')`,
+					backgroundImage: `url('/Ed2webp/IMG_8550.webp')`,
 					backgroundSize: 'cover',
 					backgroundPosition: 'center',
 				}}

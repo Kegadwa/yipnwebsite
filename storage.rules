@@ -6,35 +6,62 @@ service firebase.storage {
       allow read: if true;
     }
     
-    // Allow write access for specific folders with validation
+    // Allow write access for authenticated users only
+    match /{allPaths=**} {
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*');
+    }
+    
+    // Specific folder rules for better organization
     match /gallery/{edition}/{fileName} {
-      allow write: if request.resource.contentType.matches('image/.*')
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*')
+                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
+    }
+    
+    match /products/{fileName} {
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*')
+                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
+    }
+    
+    match /instructors/{fileName} {
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*')
                    && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
     }
     
     match /blog-images/{fileName} {
-      allow write: if request.resource.contentType.matches('image/.*')
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*')
                    && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
     }
     
     match /profile-images/{fileName} {
-      allow write: if request.resource.contentType.matches('image/.*')
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*')
                    && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
     }
     
     match /event-images/{fileName} {
-      allow write: if request.resource.contentType.matches('image/.*')
+      allow write: if request.auth != null 
+                   && request.resource.contentType.matches('image/.*')
                    && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$');
     }
     
     // Allow write access for temp images (base64 fallback)
     match /temp_images/{document} {
-      allow write: if true;
+      allow write: if request.auth != null;
     }
     
     // Allow write access for test files (development only)
     match /test-{fileName} {
-      allow write: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow test connection files
+    match /test-connection/{fileName} {
+      allow write: if request.auth != null;
     }
   }
 }

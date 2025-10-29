@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { FaSpinner, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaCheck, FaPrint, FaBook, FaDownload, FaMobile } from "react-icons/fa";
 import { ticketService, emailService, Event } from "../lib/firebase-services";
+import EventCountdown from "../components/EventCountdown";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 
@@ -140,7 +141,7 @@ export default function Events() {
 			<section
 				className="relative py-32 flex items-center justify-center overflow-hidden"
 				style={{
-					backgroundImage: `url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
+					backgroundImage: `url('/Ed2webp/IMG_8553.webp')`,
 					backgroundSize: 'cover',
 					backgroundPosition: 'center',
 				}}
@@ -160,135 +161,39 @@ export default function Events() {
 			<div className="container mx-auto px-4 py-20">
 				<div className="max-w-4xl mx-auto">
 
-					{/* Edition 2 Highlights Section */}
+					{/* Edition 3 Event Section */}
 					<div className="bg-card rounded-2xl shadow-card mb-8 p-8">
-						<div className="text-center mb-6">
-							<h2 className="text-2xl font-bold text-foreground mb-2">Edition 2 Highlights</h2>
-							<p className="text-lg text-muted-foreground">
-								Relive the magic of our second transformative wellness gathering
-							</p>
-						</div>
-						
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-							<div className="space-y-6">
-								<h3 className="text-xl font-semibold text-foreground">A Day of Transformation</h3>
-								<p className="text-muted-foreground leading-relaxed">
-									Edition 2 brought together over 200 wellness enthusiasts for a day filled with yoga flows, 
-									meditation sessions, pilates workshops, and sound healing experiences.
-								</p>
-								<p className="text-muted-foreground leading-relaxed">
-									The event featured multiple sessions including YPilates for core strength, 
-									gentle power vinyasa yoga, guided reflection journaling, and a transformative sound healing journey.
-								</p>
-								
-								<div className="grid grid-cols-2 gap-4">
-									<div className="text-center p-4 bg-muted rounded-lg">
-										<p className="text-2xl font-bold text-secondary">200+</p>
-										<p className="text-sm text-muted-foreground">Participants</p>
+							<div>
+								<h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Edition 3: A Yoga in the Park Nairobi Sundowner</h2>
+								<div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-4">
+									<div className="inline-flex items-center gap-2"><FaCalendarAlt /> <span>Sat, 8 Nov 2025</span></div>
+									<div className="inline-flex items-center gap-2"><FaClock /> <span>3:00 PM - 9:00 PM</span></div>
+									<div className="inline-flex items-center gap-2"><FaMapMarkerAlt /> <span>Amboseli lane, Lavington</span></div>
+									<div className="inline-flex items-center gap-2"><FaTicketAlt /> <span>KES 3,800</span></div>
 								</div>
-									<div className="text-center p-4 bg-muted rounded-lg">
-										<p className="text-2xl font-bold text-secondary">11</p>
-										<p className="text-sm text-muted-foreground">Sessions</p>
-									</div>
-									<div className="text-center p-4 bg-muted rounded-lg">
-										<p className="text-2xl font-bold text-secondary">7</p>
-										<p className="text-sm text-muted-foreground">Hours</p>
-									</div>
-									<div className="text-center p-4 bg-muted rounded-lg">
-										<p className="text-2xl font-bold text-secondary">100%</p>
-										<p className="text-sm text-muted-foreground">Satisfaction</p>
-									</div>
-								</div>
-
-								<div className="flex flex-col sm:flex-row gap-4">
-									<Link 
-										href="/gallery-edition-2" 
-										className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
-									>
-										<span>View Gallery</span>
-									</Link>
-									<Link 
-										href="/events" 
-										className="inline-flex items-center justify-center space-x-2 px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
-									>
-										<span>Stay Updated</span>
-									</Link>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-2 gap-4">
-								<div className="space-y-4">
-									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg" 
-											alt="Edition 2 yoga session" 
-											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-										/>
-									</div>
-									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
-											alt="Edition 2 meditation session" 
-											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-										/>
-									</div>
-								</div>
-								<div className="space-y-4 pt-8">
-									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
-											alt="Edition 2 community" 
-											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-										/>
-							</div>
-									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 92.jpg" 
-											alt="Edition 2 wellness" 
-											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-										/>
-									</div>
-										</div>
-										</div>
-										</div>
-									</div>
-									
-					{/* Coming Soon Section */}
-					<div className="bg-gradient-to-br from-secondary/10 to-primary/10 rounded-2xl shadow-card p-8 text-center">
-						<div className="mb-6">
-							<div className="w-20 h-20 bg-secondary rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
-								<span className="text-3xl">✨</span>
-							</div>
-							<h2 className="text-2xl font-bold text-foreground mb-4">Edition 3 Coming Soon</h2>
-							<p className="text-lg text-muted-foreground mb-6">
-								Stay tuned for announcements about our next amazing wellness gathering!
-							</p>
-						</div>
-						
-						<div className="flex flex-col sm:flex-row gap-4 justify-center">
-							<button 
-								onClick={() => {
-									// Add newsletter signup logic here
-									alert('Newsletter signup coming soon!');
-								}}
-								className="px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
-							>
-								Get Notified
-							</button>
-							<a 
-								href="https://chat.whatsapp.com/BOpAhahjb834DLsnirdxax?mode=ems_copy_c&fbclid=PAZXh0bgNhZW0CMTEAAadXQg7u2t3CdxMK9aPyr_Yx_l-q5mo4C6u2clEj1lkdcfy_P_D25PAnzFJ8Ag_aem_ZX4GMlmRM5prmci1JSYmSQ"
-										target="_blank" 
-										rel="noopener noreferrer"
-								className="px-6 py-3 border border-secondary text-secondary font-semibold rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-colors"
-									>
-								Join WhatsApp Community
+								<p className="text-muted-foreground mb-3">Get ready to experience Edition 3 where wellness meets the magic of the golden hour. Slow down with a calming Golden Hour Yoga flow followed by a deeply restorative Sunset Flow and Meditation with Breathwork under the stars.</p>
+								<p className="text-muted-foreground mb-6">Your ticket covers the entire rejuvenating experience, with warm infused teas and healthy gourmet snacks — wrapped in soft music, fresh air, and the beautiful energy of the YIPN community.</p>
+								<div className="flex items-center gap-4 mb-6">
+									<EventCountdown />
+									<a href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-secondary text-secondary-foreground font-semibold shadow-button hover:scale-105 transition">
+										Buy Tickets
 									</a>
 								</div>
 							</div>
+							<div>
+								<a href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg" target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden shadow-card hover:shadow-xl transition">
+									<img src="https://static.kenyabuzz.com/posters/events/1759941621523.webp" alt="Edition 3 Poster" className="w-full h-auto object-contain" />
+								</a>
+							</div>
+						</div>
+					</div>
+									</div>
+									
+					{/* Coming Soon Section removed */}
 				</div>
-			</div>
 			
-			{/* Edition 1 Highlights Section */}
+				{/* Edition 1 Highlights Section */}
 			<section className="py-20 bg-muted/30">
 				<div className="container mx-auto px-4">
 					<div className="max-w-6xl mx-auto">
@@ -354,14 +259,14 @@ export default function Events() {
 								<div className="space-y-4">
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 1.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 151.webp" 
 											alt="Edition 1 yoga session" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 2.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 157.webp" 
 											alt="Edition 1 meditation session" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
@@ -370,14 +275,14 @@ export default function Events() {
 								<div className="space-y-4 pt-8">
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 17.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 161.webp" 
 											alt="Edition 1 community" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 20.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 176.webp" 
 											alt="Edition 1 wellness" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
@@ -455,14 +360,14 @@ export default function Events() {
 								<div className="space-y-4">
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 28.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 181.webp" 
 											alt="Edition 2 yoga session" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 55.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 183.webp" 
 											alt="Edition 2 meditation session" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
@@ -471,14 +376,14 @@ export default function Events() {
 								<div className="space-y-4 pt-8">
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 193.webp" 
 											alt="Edition 2 community" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>
 									</div>
 									<div className="aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
 										<img 
-											src="/Some edition 1 photos/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 90.jpg" 
+                                            src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 195.webp" 
 											alt="Edition 2 wellness" 
 											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 										/>

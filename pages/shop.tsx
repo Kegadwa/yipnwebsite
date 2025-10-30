@@ -850,14 +850,14 @@ export default function Shop() {
 								<label className="text-sm font-medium text-muted-foreground">
 									Price Range: KSh {priceRange[0].toLocaleString()} - KSh {priceRange[1].toLocaleString()}
 								</label>
-								<div className="flex gap-2">
+                                <div className="flex gap-2">
 									<input
 										type="range"
 										min="0"
 										max={maxPrice}
 										value={priceRange[0]}
 										onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-										className="flex-1"
+                                        className="flex-1 accent-primary"
 									/>
 									<input
 										type="range"
@@ -865,7 +865,7 @@ export default function Shop() {
 										max={maxPrice}
 										value={priceRange[1]}
 										onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-										className="flex-1"
+                                        className="flex-1 accent-primary"
 									/>
 								</div>
 							</div>

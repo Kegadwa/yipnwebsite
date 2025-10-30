@@ -78,7 +78,7 @@ export default function EventCountdown({ endTimeISO, label = "A Yoga in the Park
         <button
           aria-label="Event countdown"
           onClick={() => setIsModalOpen(true)}
-          className={`fixed z-50 right-4 bottom-4 md:right-6 md:bottom-6 rounded-xl shadow-lg px-4 py-3 bg-secondary text-secondary-foreground border border-secondary/30 hover:scale-[1.02] transition ${hideSticky ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`fixed z-30 right-4 bottom-4 md:right-6 md:bottom-6 rounded-xl shadow-lg px-4 py-3 bg-secondary text-secondary-foreground border border-secondary/30 hover:scale-[1.02] transition ${hideSticky ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
           <div className="text-left">
             <div className="text-xs font-semibold opacity-90">Edition 3 Countdown</div>

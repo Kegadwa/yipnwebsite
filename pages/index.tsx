@@ -200,33 +200,36 @@ export default function HomePage() {
             }}
           >
             <div className="absolute inset-0 bg-primary/70"></div>
-            <div className="relative z-10 text-center text-white px-4">
+            <div id="home-hero" className="relative z-10 text-center text-white px-4">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in">
                 Yoga in the Park Nairobi
               </h1>
-              <p className="text-xl md:text-2xl mb-4 text-white/90 animate-fade-in fade-in-delay-200">
-                Find Your Flow
-              </p>
               <div className="mb-6 flex justify-center">
                 <EventCountdown />
               </div>
+              <p className="text-xl md:text-2xl mb-4 text-white/90 animate-fade-in fade-in-delay-200">
+                Find Your Flow
+              </p>
               <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/80 animate-fade-in fade-in-delay-400">
                 Join our vibrant community for transformative yoga, meditation, and wellness experiences in the heart of Nairobi.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in fade-in-delay-500">
-                <Link href="/events">
-                  <button className="px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-semibold shadow-button hover:scale-110 transition animate-on-hover">
+                <Link href="/events" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-semibold shadow-button hover:scale-110 transition animate-on-hover">
                     Buy Tickets
                   </button>
                 </Link>
-                <Link href="/shop">
-                  <button className="px-6 py-3 rounded-lg border border-white text-white bg-white/10 hover:bg-white hover:text-primary hover:scale-110 transition animate-on-hover">
+                <Link href="/shop" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto px-6 py-3 rounded-lg border border-white text-white bg-white/10 hover:bg-white hover:text-primary hover:scale-110 transition animate-on-hover">
                     Explore Merchandise
                   </button>
                 </Link>
               </div>
             </div>
           </section>
+
+          {/* Sticky Countdown - hidden while hero is in view */}
+          <EventCountdown sticky anchorId="home-hero" />
 
           {/* Sponsor Logos Carousel */}
           <SponsorCarousel title="Our Sponsors" sponsors={sponsorLogos} backgroundClassName="bg-gradient-to-b from-background to-muted" />
@@ -310,8 +313,6 @@ export default function HomePage() {
                     </a>
                   </div>
                 </div>
-                    
-                {/* Edition 2 Preview removed */}
               </div>
             </div>
           </section>
@@ -418,8 +419,6 @@ export default function HomePage() {
               </div>
             </div>
           </section>
-
-          {/* Partners Section removed and replaced by SponsorCarousel */}
 
           {/* Visual Enrichment Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">

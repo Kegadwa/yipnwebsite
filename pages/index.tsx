@@ -8,6 +8,7 @@ import ReviewForm from "../components/ReviewForm";
 import Edition2Slideshow from "../components/Edition2Slideshow";
 import { reviewService } from "../lib/firebase-services";
 import SponsorCarousel from "../components/SponsorCarousel";
+import BentoWhyJoin from "../components/ui/homepage/BentoWhyJoin";
 import EventCountdown from "../components/EventCountdown";
 
 export default function HomePage() {
@@ -231,8 +232,8 @@ export default function HomePage() {
           {/* Sticky Countdown - hidden while hero is in view */}
           <EventCountdown sticky anchorId="home-hero" />
 
-          {/* Sponsor Logos Carousel */}
-          <SponsorCarousel title="Our Sponsors" sponsors={sponsorLogos} backgroundClassName="bg-gradient-to-b from-background to-muted" />
+          {/* Sponsor Ribbon (slim single row) */}
+          <SponsorCarousel title="" sponsors={sponsorLogos} backgroundClassName="bg-background/60 py-3" />
 
           {/* Welcome & Vision Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-background to-muted">
@@ -317,108 +318,8 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Why Join Us Section */}
-          <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-12 md:mb-16">
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 animate-slide-up text-foreground">
-                    Why Join YIPN?
-                  </h2>
-                  <p className="text-base md:text-lg lg:text-xl text-muted-foreground animate-slide-up slide-up-delay-200 max-w-3xl mx-auto">
-                    Discover the unique benefits that make our community special
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                  <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-300 animate-on-hover group">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary mx-auto mb-4 md:mb-6 flex items-center justify-center animate-float group-hover:scale-110 transition-transform">
-                      <FaLeaf className="text-2xl md:text-3xl text-secondary-foreground" />
-                    </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 md:mb-4 text-foreground">Outdoor Yoga Experience</h3>
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                      Practice in nature's embrace with fresh air, natural sounds, and the healing energy of Nairobi's green spaces.
-                    </p>
-                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 56.webp" 
-                        alt="Outdoor yoga experience" 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-400 animate-on-hover group">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary mx-auto mb-4 md:mb-6 flex items-center justify-center animate-float group-hover:scale-110 transition-transform">
-                      <FaUsers className="text-2xl md:text-3xl text-secondary-foreground" />
-                    </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 md:mb-4 text-foreground">Certified Instructors</h3>
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                      Learn from experienced, certified yoga teachers who are passionate about your wellness journey and safety.
-                    </p>
-                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 78.webp" 
-                        alt="Certified instructors" 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-500 animate-on-hover group md:col-span-2 lg:col-span-1">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary mx-auto mb-4 md:mb-6 flex items-center justify-center animate-float group-hover:scale-110 transition-transform">
-                      <FaHeart className="text-2xl md:text-3xl text-secondary-foreground" />
-                    </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 md:mb-4 text-foreground">Community Vibe</h3>
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                      Connect with like-minded individuals who share your passion for wellness, mindfulness, and personal growth.
-                    </p>
-                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 141.webp" 
-                        alt="Community vibe" 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-600 animate-on-hover group">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary mx-auto mb-4 md:mb-6 flex items-center justify-center animate-float group-hover:scale-110 transition-transform">
-                      <FaSun className="text-2xl md:text-3xl text-secondary-foreground" />
-                    </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 md:mb-4 text-foreground">All Levels Welcome</h3>
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                      Whether you're a beginner or advanced practitioner, our sessions are designed to accommodate everyone.
-                    </p>
-                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 139.webp" 
-                        alt="All levels welcome" 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-6 md:p-8 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-up slide-up-delay-700 animate-on-hover group">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary mx-auto mb-4 md:mb-6 flex items-center justify-center animate-float group-hover:scale-110 transition-transform">
-                      <FaMountain className="text-2xl md:text-3xl text-secondary-foreground" />
-                    </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 md:mb-4 text-foreground">Holistic Wellness</h3>
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                      Experience a complete wellness approach including yoga, meditation, breathing techniques, and mindfulness practices.
-                    </p>
-                    <div className="mt-4 aspect-square rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src="/Ed1webp/OUTFIT INSPO, YOGA IN THE GARDEN, BIO FOODS 151.webp" 
-                        alt="Holistic wellness" 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+          {/* Why Join - Bento grid (new component) */}
+          <BentoWhyJoin />
 
           {/* Visual Enrichment Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">

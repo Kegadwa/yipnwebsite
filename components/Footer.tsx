@@ -93,7 +93,7 @@ export default function Footer() {
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="text-sm opacity-60">
-            © 2025 Yoga in the Park Nairobi™. All rights reserved.
+            © 2026 Yoga in the Park Nairobi™. All rights reserved.
           </p>
         </div>
       </div>

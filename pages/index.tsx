@@ -266,61 +266,6 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Edition 3 Event Section */}
-          <section className="py-16 md:py-20 lg:py-24 bg-background">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center animate-slide-up slide-up-delay-200">
-                  <div>
-                    <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 text-foreground">
-                      Edition 3: A Yoga in the Park Nairobi Sundowner
-                    </h2>
-                    <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-4">
-                      Get ready to experience Edition 3: A Yoga in the Park Nairobi Sundowner, where wellness meets the magic of the golden hour! Join us on Saturday, November 8, 2025, from 3:00 PM to 9:00 PM at Amboseli lane, Lavington for an evening designed to restore your mind and body.
-                    </p>
-                    <p className="text-base md:text-lg text-muted-foreground mb-4">
-                      This special outdoor session invites you to slow down with a calming Golden Hour Yoga flow, followed by a deeply restorative Sunset Flow and Meditation with Breathwork under the stars.
-                    </p>
-                    <p className="text-base md:text-lg text-muted-foreground mb-4">
-                      Your ticket (KES 3,800) covers this entire rejuvenating experience, complete with warm infused teas and healthy gourmet snacks, all wrapped in soft music, fresh air, and the beautiful, supportive energy of the YIPN community.
-                    </p>
-                    <p className="text-base md:text-lg text-muted-foreground mb-6">
-                      It’s the perfect pause button for your busy life—a quiet, connected pause for your mind and spirit.
-                    </p>
-                    <a
-                      href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <button className="px-8 py-4 rounded-xl bg-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 text-lg">
-                        Buy Tickets
-                      </button>
-                    </a>
-                  </div>
-
-                  <div className="w-full">
-                    <a
-                      href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition"
-                    >
-                      <img
-                        src="https://static.kenyabuzz.com/posters/events/1759941621523.webp"
-                        alt="Edition 3: A Yoga in the Park Nairobi Sundowner Poster"
-                        className="w-full h-auto object-contain"
-                        loading="lazy"
-                      />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Why Join - Bento grid (new component) */}
-          <BentoWhyJoin />
-
           {/* Visual Enrichment Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">
             <div className="container mx-auto px-4">

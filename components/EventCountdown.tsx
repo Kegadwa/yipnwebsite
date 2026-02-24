@@ -7,17 +7,18 @@ type EventCountdownProps = {
   anchorId?: string; // if provided, hide sticky when this element is in view
 };
 
-const EVENT_URL = "https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg";
+const EVENT_URL = "https://www.kenyabuzz.com/events/event/wellfest";
 
-export default function EventCountdown({ endTimeISO, label = "A Yoga in the Park Nairobi Sundowner", sticky = false, anchorId }: EventCountdownProps) {
+export default function EventCountdown({ endTimeISO, label = "WellFest", sticky = false, anchorId }: EventCountdownProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
   const targetDate = useMemo(() => {
-    // Event local time: EAT (UTC+3) 2025-11-08 15:00
+    // Event local time: EAT (UTC+3) WellFest starts Sat Apr 25, 2026 09:00 EAT
     // Construct as UTC equivalent to avoid client TZ differences
     if (endTimeISO) return new Date(endTimeISO);
-    return new Date(Date.UTC(2025, 10, 8, 12, 0, 0)); // 15:00 EAT == 12:00 UTC (month is 0-based => 10 = November)
+    // Apr 25 2026 09:00 EAT == Apr 25 2026 06:00 UTC (month is 0-based => 3 = April)
+    return new Date(Date.UTC(2026, 3, 25, 6, 0, 0));
   }, [endTimeISO]);
 
   const [remainingMs, setRemainingMs] = useState<number>(Math.max(0, targetDate.getTime() - Date.now()));
@@ -96,7 +97,7 @@ export default function EventCountdown({ endTimeISO, label = "A Yoga in the Park
   return (
     <div id="home-hero-timer-anchor" className="inline-block" onClick={() => setIsModalOpen(true)}>
       <div className="inline-flex items-center gap-3 rounded-xl bg-white/15 text-white border border-white/20 px-4 py-3 backdrop-blur-sm cursor-pointer hover:bg-white/20 transition">
-        <span className="text-xs md:text-sm font-semibold">Edition 3 starts in</span>
+        <span className="text-xs md:text-sm font-semibold">WellFest starts in</span>
         {timeEl}
       </div>
       {isModalOpen && (
@@ -122,12 +123,17 @@ function Modal({ onClose }: { onClose: () => void }) {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative w-full md:w-[560px] bg-white rounded-t-2xl md:rounded-2xl p-6 md:p-8 shadow-2xl animate-[modalIn_180ms_ease-out]">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-lg md:text-xl font-bold text-gray-900">Edition 3: A Yoga in the Park Nairobi Sundowner</h3>
+          <h3 className="text-lg md:text-xl font-bold text-gray-900">WellFest — Apr 25–26, 2026</h3>
           <button aria-label="Close" onClick={onClose} className="text-gray-500 hover:text-gray-700">✕</button>
         </div>
         <div className="mt-3 text-gray-700 text-sm md:text-base">
-          <div className="font-medium">Sat, 8 Nov 2025, 3:00 PM - 9:00 PM</div>
-          <p className="mt-3">Join us for our sunset flow, meditation, and breathwork session! Tickets include warm infused teas and healthy gourmet snacks. Experience the magic of our sundowner event.</p>
+          <div className="font-medium">Sat, Apr 25, 2026 • 9:00 AM - 4:00 PM</div>
+          <div className="font-medium mt-1">Sun, Apr 26, 2026 • 9:00 AM - 4:00 PM</div>
+          <div className="mt-2 text-sm text-gray-600">Ulinzi Sports Complex</div>
+          <div className="mt-3 flex gap-4">
+            <img src="https://static.kenyabuzz.com/posters/events/1771403692393.webp" alt="WellFest poster" className="w-28 h-auto rounded-md object-cover shadow-sm" />
+            <p className="text-sm">Join WellFest for a weekend of wellness featuring yoga, movement sessions, workshops, healthy food vendors, and community activities. Bring friends and enjoy a mindful, active weekend.</p>
+          </div>
         </div>
         <div className="mt-6">
           <a

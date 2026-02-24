@@ -165,27 +165,27 @@ export default function Events() {
 					<div className="bg-card rounded-2xl shadow-card mb-8 p-4 sm:p-6 md:p-8">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start md:items-center">
 							<div>
-								<h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Edition 3: A Yoga in the Park Nairobi Sundowner</h2>
-								<div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-4">
-									<div className="inline-flex items-center gap-2"><FaCalendarAlt /> <span>Sat, 8 Nov 2025</span></div>
-									<div className="inline-flex items-center gap-2"><FaClock /> <span>3:00 PM - 9:00 PM</span></div>
-									<div className="inline-flex items-center gap-2"><FaMapMarkerAlt /> <span>Amboseli lane, Lavington</span></div>
-									<div className="inline-flex items-center gap-2"><FaTicketAlt /> <span>KES 3,800</span></div>
-								</div>
-								<p className="text-muted-foreground mb-3">Get ready to experience Edition 3 where wellness meets the magic of the golden hour. Slow down with a calming Golden Hour Yoga flow followed by a deeply restorative Sunset Flow and Meditation with Breathwork under the stars.</p>
-								<p className="text-muted-foreground mb-6">Your ticket covers the entire rejuvenating experience, with warm infused teas and healthy gourmet snacks — wrapped in soft music, fresh air, and the beautiful energy of the YIPN community.</p>
+											<h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">WellFest — Apr 25 &amp; 26, 2026</h2>
+											<div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-4">
+												<div className="inline-flex items-center gap-2"><FaCalendarAlt /> <span>Sat, Apr 25 &amp; Sun, Apr 26 2026</span></div>
+												<div className="inline-flex items-center gap-2"><FaClock /> <span>9:00 AM - 4:00 PM</span></div>
+												<div className="inline-flex items-center gap-2"><FaMapMarkerAlt /> <span>Ulinzi Sports Complex</span></div>
+												<div className="inline-flex items-center gap-2"><FaTicketAlt /> <span>See KenyaBuzz for pricing</span></div>
+											</div>
+											<p className="text-muted-foreground mb-3">Join WellFest for a weekend of wellness featuring yoga, movement sessions, workshops, healthy food vendors, and community activities. Bring friends and enjoy a mindful, active weekend.</p>
+											<p className="text-muted-foreground mb-6">Tickets and full schedule are available on the event page. We look forward to welcoming you to two days of movement, learning, and community.</p>
 								<div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
 									<div className="sm:self-start">
 										<EventCountdown />
 									</div>
-									<a href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-secondary text-secondary-foreground font-semibold shadow-button hover:scale-105 transition w-full sm:w-auto">
+									<a href="https://www.kenyabuzz.com/events/event/wellfest" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-secondary text-secondary-foreground font-semibold shadow-button hover:scale-105 transition w-full sm:w-auto">
 										Buy Tickets
 									</a>
 								</div>
 							</div>
 							<div>
-								<a href="https://kenyabuzz.com/events/event/a-yoga-in-the-park-nairobi-sundowner?fbclid=PAZXh0bgNhZW0CMTEAAacum_hZRm--l3Eck-R7jbgU1Mwc7PDXUvEuKL-GGI2zAntWLGLPuVCk9EQwCQ_aem_Mb01DgL5elAzmyQjGE-KQg" target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden shadow-card hover:shadow-xl transition">
-									<img src="https://static.kenyabuzz.com/posters/events/1759941621523.webp" alt="Edition 3 Poster" className="w-full h-full object-contain" />
+								<a href="https://www.kenyabuzz.com/events/event/wellfest" target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden shadow-card hover:shadow-xl transition">
+									<img src="https://static.kenyabuzz.com/posters/events/1771403692393.webp" alt="WellFest Poster" className="w-full h-full object-contain" />
 								</a>
 							</div>
 						</div>

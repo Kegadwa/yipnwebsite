@@ -318,6 +318,7 @@ export default function HomePage() {
           {/* Why Join - Bento grid (new component) */}
           <BentoWhyJoin />
 
+ 
           {/* Visual Enrichment Section */}
           <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-muted to-background">
             <div className="container mx-auto px-4">
